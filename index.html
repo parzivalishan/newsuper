@@ -48,7 +48,7 @@ h1 {
     font-size: 24px;
 }
 
-#connectWalletBtn, #networkBtn, #predictionMarketBtn {
+#connectWalletBtn, #networkBtn, #predictionMarketBtn , #disperseBtn  {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #0B0C0E; /* Button color for all three */
@@ -60,7 +60,7 @@ h1 {
     position: relative; /* Relative position for dropdown */
 }
 
-#connectWalletBtn:hover, #networkBtn:hover, #predictionMarketBtn:hover {
+#connectWalletBtn:hover, #networkBtn:hover, #predictionMarketBtn, #disperseBtn:hover {
     background-color: #0056b3; /* Hover color */
 }
 
@@ -190,6 +190,21 @@ progress::-webkit-progress-value {
 progress::-moz-progress-bar {
     background-color: #0B0C0E; /* Progress color for Firefox */
 }
+#disperseBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #0B0C0E; /* Match the button color with connect and network buttons */
+    color: white; /* Text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px; /* Space between buttons */
+    position: relative; /* Relative position for dropdown */
+}
+
+#disperseBtn:hover {
+    background-color: #0056b3; /* Hover color */
+}
 
 #predictionMarketBtn {
     padding: 10px 20px;
@@ -215,6 +230,8 @@ progress::-moz-progress-bar {
 <body>
     
     <div id="header">
+        
+        <button id="disperseBtn">Disperse Tokens </button> 
         <button id="predictionMarketBtn">Prediction Market</button> <!-- New Prediction Market button -->
         <button id="networkBtn">Network</button> <!-- Network button -->
         <div id="dropdownContent">
@@ -619,6 +636,10 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
 
 
      
+     document.getElementById("disperseBtn").addEventListener("click", function() {
+        window.location.href = "disperse.html"; // Change this to your actual disperse page file name
+    });
+
     document.getElementById("predictionMarketBtn").addEventListener("click", function() {
         window.location.href = "predictionmarket.html"; // Change this to your actual prediction market page file name
     });

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disperse Minato </title>
+    <title>MultiSender on Minato </title>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <style>
         body {
@@ -272,6 +272,35 @@ document.getElementById('connectWallet').onclick = async () => {
         });
 
 
+        // Define the token ABI (replace this with the actual ABI of your token)
+const tokenABI = [
+    {
+        "constant": true,
+        "inputs": [{"name": "_owner", "type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"name": "balance", "type": "uint256"}],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {"name": "_spender", "type": "address"},
+            {"name": "_value", "type": "uint256"}
+        ],
+        "name": "approve",
+        "outputs": [{"name": "", "type": "bool"}],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        // Add other function definitions as needed
+    }
+];
+
+
 // Disperse Ether or Tokens based on selection
 document.getElementById('disperseBtn').onclick = async () => {
     // Check if the user is on the Minato network
@@ -370,35 +399,48 @@ document.getElementById('disperseBtn').onclick = async () => {
                 alert("An error occurred while dispersing. Check the console for details.");
             });
 
-        } else {
+        } else {  // This else block was missing a closing brace in your original code.
             const tokenAddress = document.getElementById('contractAddress').value;
             if (!web3.utils.isAddress(tokenAddress)) {
                 alert("Invalid token contract address");
                 return;
             }
-            contract.methods.disperseToken(tokenAddress, recipients, values).send({ 
-                from: account, // Use the retrieved account
-                gas: 300000 
-            })
-            .on('transactionHash', function(hash) {
-                // Create hyperlink for the transaction hash immediately after confirmation
-                const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
-                const linkElement = document.createElement('a');
-                linkElement.href = explorerLink;
-                linkElement.target = '_blank'; // Open in a new tab
-                linkElement.textContent = `View Transaction: ${hash}`;
+
+            const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
+            const totalAmount = values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0); // Calculate total amount
+
+            try {
+                // Step 1: Approve the disperse contract to spend tokens
+                const approvalReceipt = await tokenContract.methods.approve(contractAddress, web3.utils.toWei(totalAmount.toString(), 'ether')).send({ from: account });
                 
-                // Append the link to the body or any other element
-                document.body.appendChild(linkElement);
-            })
-            .on('receipt', function(receipt) {
-                alert("Tokens dispersed successfully!");
-            })
-            .on('error', function(error) {
-                console.error("Error during disperse:", error.message || error);
-                alert("An error occurred while dispersing. Check the console for details.");
-            });
-        }
+                console.log("Approval successful:", approvalReceipt);
+
+                // Step 2: Now disperse tokens
+                await contract.methods.disperseToken(tokenAddress, recipients, values).send({ 
+                    from: account,
+                    gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account }) 
+                })
+                .on('transactionHash', function(hash) {
+                    const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
+                    const linkElement = document.createElement('a');
+                    linkElement.href = explorerLink;
+                    linkElement.target = '_blank';
+                    linkElement.textContent = `View Transaction: ${hash}`;
+                    document.body.appendChild(linkElement);
+                })
+                .on('receipt', function(receipt) {
+                    alert("Tokens dispersed successfully!");
+                })
+                .on('error', function(error) {
+                    console.error("Error during disperse:", error.message || error);
+                    alert("An error occurred while dispersing. Check the console for details.");
+                });
+
+            } catch (error) {
+                console.error("Error during approval or disperse:", error.message || error);
+                alert("An error occurred while approving or dispersing tokens. Check the console for details.");
+            }
+        }  // Closing brace for else block
 
     } catch (error) {
         console.error("Error during disperse:", error.message || error);

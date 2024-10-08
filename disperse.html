@@ -87,14 +87,67 @@
         }
 
         .contract-address-container {
-            display: none; /* Initially hide the contract address input */
-            margin-top: 10px; /* Add margin for spacing */
-        }
+    display: none; /* Initially hide the contract address input */
+    margin-top: 10px; /* Add margin for spacing */
+    width: 400px; /* Set a specific width for the container */
+}
+
+#contractAddress {
+    width: 100%; /* Make the input field take full width of the container */
+    padding: 10px; /* Add some padding for better appearance */
+    font-size: 16px; /* Increase font size if needed */
+}
 
         #balanceDisplay {
             margin-top: 10px; /* Add margin for spacing */
             font-weight: bold;
         }
+
+      
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 20% auto; /* Centered */
+    padding: 15px; /* Adjust padding for smaller size */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px; /* Set a fixed width for the modal */
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Success and Error Styles */
+.success {
+    color: green; /* Green text for success */
+}
+
+.error {
+    color: red; /* Red text for error */
+}
     </style>
 </head>
 <body>
@@ -126,6 +179,16 @@
     <textarea id="recipientsAndAmounts" placeholder="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 3.141592 0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe,2.7182 0x50D1c9771902476076eCFc8B2A83Ad6b9355a4c9=1.42069"></textarea><br>
     
     <button id="disperseBtn">Disperse</button>
+
+      <!-- Modal Structure -->
+      <div id="customAlert" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalMessage"></p>
+            <button onclick="closeModal()">OK</button>
+        </div>
+    </div>
 
     <script>
         const contractAddress = "0x6B05d60c86858AbAc4c616e7880A67713081829d";
@@ -300,12 +363,33 @@ const tokenABI = [
     }
 ];
 
+function openModal(title, message, type) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMessage').innerHTML = message; // Use innerHTML to allow HTML content
+
+    const modalContent = document.querySelector('.modal-content');
+
+    if (type === 'success') {
+        modalContent.classList.add('success');
+        modalContent.classList.remove('error');
+    } else if (type === 'error') {
+        modalContent.classList.add('error');
+        modalContent.classList.remove('success');
+    }
+
+    document.getElementById('customAlert').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('customAlert').style.display = 'none';
+}
 
 // Disperse Ether or Tokens based on selection
 document.getElementById('disperseBtn').onclick = async () => {
     // Check if the user is on the Minato network
     const networkId = await web3.eth.net.getId();
     const expectedNetworkId = 1946; // Minato network ID
+
     if (networkId !== expectedNetworkId) {
         const userConfirmed = confirm(`Please connect to the Minato network (Network ID: ${expectedNetworkId}). Would you like to switch networks?`);
         if (userConfirmed) {
@@ -315,7 +399,7 @@ document.getElementById('disperseBtn').onclick = async () => {
                     params: [{ chainId: MINATO_CHAIN_ID }], // Switch to Minato network
                 });
             } catch (switchError) {
-                // If the network is not added yet, we can attempt to add it
+                // Handle network switch errors
                 if (switchError.code === 4902) {
                     try {
                         await window.ethereum.request({
@@ -324,12 +408,12 @@ document.getElementById('disperseBtn').onclick = async () => {
                         });
                     } catch (addError) {
                         console.error("Error adding network:", addError);
-                        alert("Failed to add the Minato network. Please switch manually.");
+                        openModal("Error", "Failed to add the Minato network. Please switch manually.", "error");
                         return; // Exit if the network addition fails
                     }
                 } else {
                     console.error("Switching network error:", switchError);
-                    alert("Failed to switch networks. Please switch manually.");
+                    openModal("Error", "Failed to switch networks. Please switch manually.", "error");
                     return; // Exit if the network switch fails
                 }
             }
@@ -347,7 +431,7 @@ document.getElementById('disperseBtn').onclick = async () => {
     const recipients = [];
     const values = [];
 
-    // Split the input data by newlines and commas to handle both formats
+    // Split input data by newlines and commas
     const entries = data.split(/[\n,]+/); // Split by either newline or comma
 
     for (const entry of entries) {
@@ -361,11 +445,11 @@ document.getElementById('disperseBtn').onclick = async () => {
                 recipients.push(recipient);
                 values.push(web3.utils.toWei(value.toString(), 'ether'));
             } else {
-                alert(`Invalid input: "${entry}". Ensure the address is valid and the amount is a number.`);
+                openModal("Error", `Invalid input: "${entry}". Ensure the address is valid and the amount is a number.`, "error");
                 return;
             }
         } else {
-            alert(`Invalid input format for: "${entry}". Each entry should contain an address and an amount.`);
+            openModal("Error", `Invalid input format for: "${entry}". Each entry should contain an address and an amount.`, "error");
             return;
         }
     }
@@ -376,7 +460,7 @@ document.getElementById('disperseBtn').onclick = async () => {
     try {
         if (sendOption === "ether") {
             contract.methods.disperseEther(recipients, values).send({
-                from: account, // Use the retrieved account
+                from: account,
                 value: web3.utils.toWei(values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0).toString(), 'ether'),
                 gas: 300000 // Adjust as necessary
             })
@@ -388,21 +472,20 @@ document.getElementById('disperseBtn').onclick = async () => {
                 linkElement.target = '_blank'; // Open in a new tab
                 linkElement.textContent = `View Transaction: ${hash}`;
                 
-                // Append the link to the body or any other element
                 document.body.appendChild(linkElement);
             })
             .on('receipt', function(receipt) {
-                alert("Ether dispersed successfully!");
+                openModal("Success", `Ether dispersed successfully!<br><a href='https://explorer-testnet.soneium.org/tx/${receipt.transactionHash}' target='_blank'>View Transaction</a>`, "success");
             })
             .on('error', function(error) {
                 console.error("Error during disperse:", error.message || error);
-                alert("An error occurred while dispersing. Check the console for details.");
+                openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
             });
 
-        } else {  // This else block was missing a closing brace in your original code.
+        } else { 
             const tokenAddress = document.getElementById('contractAddress').value;
             if (!web3.utils.isAddress(tokenAddress)) {
-                alert("Invalid token contract address");
+                openModal("Error", "Invalid token contract address", "error");
                 return;
             }
 
@@ -416,9 +499,9 @@ document.getElementById('disperseBtn').onclick = async () => {
                 console.log("Approval successful:", approvalReceipt);
 
                 // Step 2: Now disperse tokens
-                await contract.methods.disperseToken(tokenAddress, recipients, values).send({ 
+                await contract.methods.disperseToken(tokenAddress, recipients, values).send({
                     from: account,
-                    gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account }) 
+                    gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account })
                 })
                 .on('transactionHash', function(hash) {
                     const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
@@ -429,27 +512,24 @@ document.getElementById('disperseBtn').onclick = async () => {
                     document.body.appendChild(linkElement);
                 })
                 .on('receipt', function(receipt) {
-                    alert("Tokens dispersed successfully!");
+                    openModal("Success", `Tokens dispersed successfully!<br><a href='https://explorer-testnet.soneium.org/tx/${receipt.transactionHash}' target='_blank'>View Transaction</a>`, "success");
                 })
                 .on('error', function(error) {
                     console.error("Error during disperse:", error.message || error);
-                    alert("An error occurred while dispersing. Check the console for details.");
+                    openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
                 });
 
             } catch (error) {
                 console.error("Error during approval or disperse:", error.message || error);
-                alert("An error occurred while approving or dispersing tokens. Check the console for details.");
+                openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
             }
-        }  // Closing brace for else block
+        }
 
     } catch (error) {
         console.error("Error during disperse:", error.message || error);
-        alert("An error occurred while dispersing. Check the console for details.");
+        openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
     }
 };
-
-
-
 
 
 

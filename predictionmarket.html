@@ -76,17 +76,40 @@
             align-items: center;
         }
         .kamala-image, .trump-image {
-            width: 500px;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-        .kamala-image {
-            margin-right: auto;
-        }
-        .trump-image {
-            margin-left: auto;
-        }
+    width: 500px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.kamala-image {
+    margin: 10px 0px 10px 0; /* Top, Right, Bottom, Left */
+}
+
+.trump-image {
+    margin: 10px 0 10px 0px; /* Top, Right, Bottom, Left */
+}
+
+
+.balance-container {
+    text-align: center; /* Center the container content */
+}
+
+#kamalaBalance {
+    display: inline-block; /* Keep the element on the same line */
+    text-align: center; /* Center text within this div */
+    margin: 10px 800px 10px 1px; /* Top, Right, Bottom, Left */
+}
+
+#trumpBalance {
+    display: inline-block; /* Keep the element on the same line */
+    text-align: center; /* Center text within this div */
+    margin: 1px 1px 1px 800px; /* Top, Right, Bottom, Left */
+}
+
+
+
+
         .bet-input-container {
             display: flex;
             justify-content: space-between;
@@ -136,11 +159,12 @@
         <img class="trump-image" src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/download.webp" alt="Donald Trump" title="Donald Trump" />
     </div>
 
-    <!-- Kamala Photo -->
-<div id="kamalaBalance" style="text-align: center; margin-top: 10px;"></div>
+ <!-- Kamala Photo -->
+<div id="kamalaBalance"></div>
 
 <!-- Trump Photo -->
-<div id="trumpBalance" style="text-align: center; margin-top: 10px;"></div>
+<div id="trumpBalance"></div>
+
 
     <div class="bet-input-container">
         <div>

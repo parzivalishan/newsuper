@@ -130,6 +130,28 @@ button#sendTransactionBtn:hover {
 
 
 
+    /* New CSS for the SCE Send Button */
+    button#sendSceTokenBtn {
+        padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007BFF; /* Same color as connect button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px; /* Space above the button */
+}
+
+    button#sendSceTokenBtn:hover {
+        background-color: #0056b3; /* Hover color */
+    }
+
+    /* Optional: Add margin-bottom to ensure input field doesn't overlap */
+    input#amountToSend {
+        margin-bottom: 10px; /* Space between input and buttons */
+    }
+
+
         input {
             width: calc(100% - 20px); /* Adjust width to fit within padding */
             padding: 10px;
@@ -142,7 +164,7 @@ button#sendTransactionBtn:hover {
 
         #txStatus {
             margin-top: 20px;
-            color: green;
+            color: rgb(191, 113, 135);
         }
 
         .hidden {
@@ -268,11 +290,17 @@ progress::-moz-progress-bar {
 <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
 
 
-            <input type="number" id="amountToSend" placeholder="Amount to Send (ETH)">
+            <input type="number" id="amountToSend" placeholder="Amount to Send ">
             <button id="sendTransactionBtn" class="hidden">
                 <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
                 Send
             </button>
+
+        
+<button id="sendSceTokenBtn">
+    <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+    Send 
+</button>
             
         </div>
 
@@ -598,7 +626,7 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
     const amountToSend = amountToSendInput.value; // Get the amount to send
 
     if (!amountToSend || !recipientAddress) {
-        alert('Please enter a recipient address and amount to send.');
+        alert('Please enter the amount to send.');
         return;
     }
 

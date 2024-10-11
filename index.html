@@ -345,6 +345,20 @@ function updateProgress() {
         const dropdownContent = document.getElementById('dropdownContent');
         const networkBtn = document.getElementById('networkBtn');
     
+
+
+        // Initially hide the recipient address input
+document.getElementById('recipientAddress').classList.add('hidden');
+
+// Function to show the recipient address input if needed
+function showRecipientAddress() {
+    document.getElementById('recipientAddress').classList.remove('hidden');
+}
+
+// Call this function when you want to show the input
+// showRecipientAddress();
+
+
       // Toggle dropdown visibility
 networkBtn.addEventListener('click', () => {
     if (dropdownContent.style.display === 'block') {
@@ -642,6 +656,9 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
 
     document.getElementById("predictionMarketBtn").addEventListener("click", function() {
         window.location.href = "predictionmarket.html"; // Change this to your actual prediction market page file name
+
+
+        
     });
 </script>
 

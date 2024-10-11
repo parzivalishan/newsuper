@@ -243,7 +243,23 @@ progress::-moz-progress-bar {
 #predictionMarketBtn:hover {
     background-color: #0056b3; /* Hover color */
 }
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
 
 
@@ -274,14 +290,26 @@ progress::-moz-progress-bar {
         <h1> SuperChain ( Minato Network ) </h1>
 
         <div id="accountDisplay" class="hidden">
-            <p>My Balance: <span id="balanceAmount"></span> ETH</p>
+            <p>
+                ETH Balance: <span id="balanceAmount"></span>  |
+                USDS Balance: <span id="tokenBalanceAmount"></span> 
+            </p>
         </div>
+        
         <p id="walletStatus" class="hidden">Please switch to Minato network</p>
 
         <div id="crypto-info">
             <h2></h2>
             <p>Current Price ETH: <span id="ethPrice">Fetching...</span></p>
-            <p id="raisedAmount" class="hidden">Raised Amount: 0.01 ETH</p>
+            <p id="raisedAmount" class="hidden">
+                Raised Amount: <span id="raisedEthAmount">0.01</span> ETH (~$<span id="raisedUsdAmount">0.00</span>)
+            </p>
+            <p> <span id="usdAmountRaised">0.00</span></p>
+            
+
+            <div id="result"></div>
+<div id="debug"></div>
+<div id="loading" class="loader" style="display: none;"></div>
 
 <label for="progressScale">Sale Progress:</label>
 <progress id="progressScale" value="0" max="100"></progress>
@@ -362,17 +390,19 @@ function updateProgress() {
         let currentNetwork = 'Minato';
     
         // DOM Elements
-        const accountDisplay = document.getElementById('accountDisplay');
-        const balanceAmount = document.getElementById('balanceAmount');
-        const walletStatus = document.getElementById('walletStatus');
-        const sendTransactionBtn = document.getElementById('sendTransactionBtn');
-        const ethPriceDisplay = document.getElementById('ethPrice');
-        const recipientAddressInput = document.getElementById('recipientAddress');
-        const amountToSendInput = document.getElementById('amountToSend');
-        const txStatus = document.getElementById('txStatus');
-        const dropdownContent = document.getElementById('dropdownContent');
-        const networkBtn = document.getElementById('networkBtn');
-    
+const accountDisplay = document.getElementById('accountDisplay');
+const balanceAmount = document.getElementById('balanceAmount');
+const tokenBalanceAmount = document.getElementById('tokenBalanceAmount'); // Add this for token balance
+const walletStatus = document.getElementById('walletStatus');
+const sendTransactionBtn = document.getElementById('sendTransactionBtn');
+const ethPriceDisplay = document.getElementById('ethPrice');
+const recipientAddressInput = document.getElementById('recipientAddress');
+const amountToSendInput = document.getElementById('amountToSend');
+const txStatus = document.getElementById('txStatus');
+const dropdownContent = document.getElementById('dropdownContent');
+const networkBtn = document.getElementById('networkBtn');
+const sendSceTokenBtn = document.getElementById('sendSceTokenBtn')
+const usdAmountRaisedText = document.getElementById("usdAmountRaised");
 
 
         // Initially hide the recipient address input
@@ -410,43 +440,57 @@ async function fetchETHPrice() {
     try {
         const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT');
         const data = await response.json();
-        ethPriceDisplay.innerText = `$${parseFloat(data.price).toFixed(2)}`; // Update price directly
+        return parseFloat(data.price); // Return the price as a float
     } catch (error) {
-        console.error('Error fetching price:', error); // Log error for debugging
+        console.error('Error fetching ETH price:', error);
+        return null; // Return null if there's an error
+    }
+}
+
+// Function to update the raised amount in USD based on current ETH price
+async function updateRaisedAmountAndProgress() {
+    const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Target address
+    const targetAddressBalance = await fetchTargetAddressBalance(targetAddress); // Fetch current balance
+    const raisedAmountElement = document.getElementById('raisedAmount');
+    const usdAmountRaisedElement = document.getElementById('usdAmountRaised'); // Element for USD amount
+
+    raisedAmountElement.innerText = `Raised Amount: ${targetAddressBalance} ETH`; // Update raised amount display
+
+    // Ensure it's a number for calculations
+    const raisedAmount = parseFloat(targetAddressBalance) || 0; 
+    const percentage = (raisedAmount / MAX_SALE_AMOUNT) * 100; // Calculate percentage
+    progressScale.value = percentage; // Update progress bar
+    progressPercentage.innerText = `${percentage.toFixed(2)}%`; // Update percentage text
+
+    // Fetch the current ETH price
+    const ethPrice = await fetchETHPrice();
+    if (ethPrice !== null) {
+        // Calculate and update USD amount raised
+        const usdAmountRaised = (raisedAmount * ethPrice).toFixed(2); 
+        usdAmountRaisedElement.innerText = `USD Amount Raised: $${usdAmountRaised}`; // Update USD amount display
     }
 }
 
 // Display initial price as loading
 ethPriceDisplay.innerText = 'Current Price ETH: $0.00'; // Initial state
 
-// Call fetchETHPrice at a regular interval (every 1 second)
-setInterval(fetchETHPrice, 1000); // Refresh every 1 second
-
-// Function to update raised amount and progress
-async function updateRaisedAmountAndProgress() {
-    const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Target address
-    const targetAddressBalance = await fetchTargetAddressBalance(targetAddress); // Fetch current balance
-    const raisedAmountElement = document.getElementById('raisedAmount');
-    
-    raisedAmountElement.innerText = `Raised Amount: ${targetAddressBalance} ETH`; // Update raised amount display
-    
-    // Update progress based on the raised amount
-    const raisedAmount = parseFloat(targetAddressBalance) || 0; // Ensure it's a number
-    const percentage = (raisedAmount / MAX_SALE_AMOUNT) * 100; // Calculate percentage
-    progressScale.value = percentage; // Update progress bar
-    progressPercentage.innerText = `${percentage.toFixed(18)}%`; // Update percentage text
+// Function to update ETH price display
+async function updateETHPriceDisplay() {
+    const ethPrice = await fetchETHPrice();
+    if (ethPrice !== null) {
+        ethPriceDisplay.innerText = `$${ethPrice.toFixed(2)}`; // Update price directly
+    }
 }
 
-// Call updateRaisedAmountAndProgress at a regular interval (every 1 second)
+// Call functions at regular intervals (every 1 second)
+setInterval(updateETHPriceDisplay, 1000); // Refresh ETH price every 1 second
 setInterval(updateRaisedAmountAndProgress, 1000); // Refresh raised amount and progress every 1 second
 
 // Initial fetch on load
-fetchETHPrice();
+updateETHPriceDisplay(); 
 updateRaisedAmountAndProgress(); // Initial call to set the values immediately
-
-
-
-        async function fetchTargetAddressBalance(targetAddress) {
+// Function to fetch target address balance
+async function fetchTargetAddressBalance(targetAddress) {
     try {
         const balance = await provider.getBalance(targetAddress);
         const balanceInEth = ethers.utils.formatEther(balance);
@@ -457,25 +501,69 @@ updateRaisedAmountAndProgress(); // Initial call to set the values immediately
         return 'Error fetching balance';
     }
 }
-    
-        // Check if current network matches the selected network
-        async function checkNetwork() {
-            if (!provider) return false;
-            try {
-                const network = await provider.getNetwork();
-                if (network.chainId !== networkParams[currentNetwork].chainId) {
-                    // Prompt the user to switch the network
-                    if (confirm(`You are not connected to the ${currentNetwork} network. Would you like to switch?`)) {
-                        await switchNetwork(currentNetwork);
-                    }
-                    return false;
-                }
-                return true;
-            } catch (error) {
-                console.error("Error checking network:", error);
-                return false;
-            }
+
+// Start fetching both ETH price and raised amount on load
+function startFetching() {
+    fetchETHPrice(); // Initial fetch for ETH price
+    setInterval(fetchETHPrice, 60000); // Fetch price every minute
+}
+
+// Call this function when the page loads
+startFetching();
+
+const tokenAddress = "0x2Dc1B05463Da50921FEf0F93235F28134ad44e9b"; // Token contract address
+const walletAddress = "0xad3a5DdCe484251f8839f185896b14605b8dd340"; // Wallet address
+
+async function getBalance() {
+    const resultElement = document.getElementById("result");
+
+    if (typeof window.ethereum !== 'undefined') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const contractABI = [
+            "function balanceOf(address owner) view returns (uint256)",
+            "function decimals() view returns (uint8)"
+        ];
+
+        const contract = new ethers.Contract(tokenAddress, contractABI, provider);
+
+        try {
+            const balance = await contract.balanceOf(walletAddress);
+            const decimals = await contract.decimals();
+            const formattedBalance = ethers.utils.formatUnits(balance, decimals); // Adjust based on token's decimals
+
+         
+        } catch (error) {
+            resultElement.innerText = "Error fetching balance: " + error.message; // Error handling
         }
+    } else {
+        resultElement.innerText = "Please install MetaMask!"; // MetaMask check
+    }
+}
+
+// Call the function on page load
+window.onload = getBalance;
+
+
+    
+// Check if current network matches the selected network
+async function checkNetwork() {
+    if (!provider) return false;
+    try {
+        const network = await provider.getNetwork();
+        if (network.chainId !== networkParams[currentNetwork].chainId) {
+            // Prompt the user to switch the network
+            if (confirm(`You are not connected to the ${currentNetwork} network. Would you like to switch?`)) {
+                await switchNetwork(currentNetwork);
+            }
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error("Error checking network:", error);
+        return false;
+    }
+}
+
     
         // Request to switch network
         async function switchNetwork(network) {
@@ -560,18 +648,51 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
     }
 });
 
-// Function to fetch and display the balance
+// Function to fetch and display ETH balance
 async function updateBalance(walletAddress) {
     const balance = await provider.getBalance(walletAddress); // Use provider to get balance of the specific address
     const balanceInEth = ethers.utils.formatEther(balance);
-    balanceAmount.innerText = balanceInEth;
+    document.getElementById('balanceAmount').innerText = balanceInEth;
+    
+    // Fetch token balance after updating ETH balance
+    await fetchTokenBalance(walletAddress); // Pass wallet address if needed
+
     updateProgress(); // Call this function to update the progress scale
 
-    console.log("Displaying balance:", balanceInEth);
+    console.log("Displaying ETH balance:", balanceInEth);
 }
 
+// Token contract address
+const TOKEN_CONTRACT_ADDRESS = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // Your token contract address
 
-    // Automatically switch to the connected network
+async function fetchTokenBalance(walletAddress) {
+    if (typeof window.ethereum !== 'undefined') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        
+        // Create a contract instance for the token using the signer
+        const tokenContract = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, [
+            "function balanceOf(address owner) view returns (uint256)"
+        ], provider.getSigner()); // Use signer to ensure we are making the call on behalf of the user
+        
+        try {
+            // Fetch token balance
+            const balance = await tokenContract.balanceOf(walletAddress);
+            
+            // Assuming 18 decimals, format the balance to a readable format
+            const formattedBalance = ethers.utils.formatUnits(balance, 18);
+            document.getElementById('tokenBalanceAmount').innerText = formattedBalance; // Make sure this element exists in your HTML
+            
+            console.log("Displaying token balance:", formattedBalance);
+        } catch (error) {
+            console.error('Error fetching token balance:', error);
+            document.getElementById('tokenBalanceAmount').innerText = 'Error fetching balance';
+        }
+    } else {
+        document.getElementById('tokenBalanceAmount').innerText = 'MetaMask not detected';
+    }
+}
+
+// Automatically switch to the connected network
 async function autoSwitchNetwork() {
     if (provider) {
         const network = await provider.getNetwork();
@@ -590,38 +711,38 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
     await autoSwitchNetwork(); // Automatically update network text
 });
 
-        // Change network to Minato
-        document.getElementById('minatoNetworkBtn').addEventListener('click', async () => {
-            if (currentNetwork !== 'Minato') {
-                currentNetwork = 'Minato';
-                await switchNetwork(currentNetwork);
-                walletStatus.classList.add('hidden'); // Hide status message
-                networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
-            }
-            dropdownContent.style.display = 'none'; // Close dropdown
-        });
+// Change network to Minato
+document.getElementById('minatoNetworkBtn').addEventListener('click', async () => {
+    if (currentNetwork !== 'Minato') {
+        currentNetwork = 'Minato';
+        await switchNetwork(currentNetwork);
+        walletStatus.classList.add('hidden'); // Hide status message
+        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
+    }
+    dropdownContent.style.display = 'none'; // Close dropdown
+});
 
-        // Change network to Sepolia
-        document.getElementById('sepoliaNetworkBtn').addEventListener('click', async () => {
-            if (currentNetwork !== 'Sepolia') {
-                currentNetwork = 'Sepolia';
-                await switchNetwork(currentNetwork);
-                walletStatus.classList.add('hidden'); // Hide status message
-                networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
-            }
-            dropdownContent.style.display = 'none'; // Close dropdown
-        });
+// Change network to Sepolia
+document.getElementById('sepoliaNetworkBtn').addEventListener('click', async () => {
+    if (currentNetwork !== 'Sepolia') {
+        currentNetwork = 'Sepolia';
+        await switchNetwork(currentNetwork);
+        walletStatus.classList.add('hidden'); // Hide status message
+        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
+    }
+    dropdownContent.style.display = 'none'; // Close dropdown
+});
 
-        // When connecting wallet, set the network button text based on the current network
-        async function checkNetworkAndUpdateText() {
-            const networkMatches = await checkNetwork();
-            if (networkMatches) {
-                networkBtn.innerText = `Connected: ${currentNetwork}`; // Update on initial connection
-            }
-        }
+// When connecting wallet, set the network button text based on the current network
+async function checkNetworkAndUpdateText() {
+    const networkMatches = await checkNetwork();
+    if (networkMatches) {
+        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update on initial connection
+    }
+}
 
-        // Send Transaction on Minato blockchain
-        sendTransactionBtn.addEventListener('click', async () => {
+// Send Transaction on Minato blockchain
+sendTransactionBtn.addEventListener('click', async () => {
     const recipientAddress = recipientAddressInput.value; // Get the recipient address
     const amountToSend = amountToSendInput.value; // Get the amount to send
 
@@ -643,7 +764,7 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
             value: ethers.utils.parseEther(amountToSend)
         });
 
-     // Create a link to the transaction based on the current network
+        // Create a link to the transaction based on the current network
         const txHashLink = currentNetwork === 'Sepolia'
             ? `https://sepolia.etherscan.io/tx/${tx.hash}`
             : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
@@ -654,7 +775,6 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
         
         // Update status after confirmation
         txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>`;
-
 
         // Update raised amount and call updateProgress
         const raisedAmountText = document.getElementById('raisedAmount').innerText; // Get current raised amount
@@ -671,6 +791,70 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
         console.error('Transaction failed:', error);
     }
 });
+
+
+// Send sce
+// Send Token button functionality
+document.getElementById('sendSceTokenBtn').addEventListener('click', async () => {
+    const recipientAddress = recipientAddressInput.value;
+    const amountToSend = tokenAmountInput.value;
+
+    if (!amountToSend || !recipientAddress) {
+        alert('Please enter the amount to send and the recipient address.');
+        return;
+    }
+
+    // Check if signer is available
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    if (!signer) {
+        alert('Please connect your MetaMask wallet.');
+        return;
+    }
+
+    // Check network before sending
+    const networkMatches = await checkNetwork();
+    if (!networkMatches) {
+        alert('Please switch to the correct network.');
+        return;
+    }
+
+    // Create token contract instance
+    const tokenContract = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, [
+        "function transfer(address to, uint256 value) returns (bool)"
+    ], signer);
+
+    try {
+        console.log('Initiating transfer...');
+        const balance = await tokenContract.balanceOf(await signer.getAddress());
+        const amountInUnits = ethers.utils.parseUnits(amountToSend, 18);
+
+        if (amountInUnits.gt(balance)) {
+            alert('Insufficient balance.');
+            return;
+        }
+
+        const tx = await tokenContract.transfer(recipientAddress, amountInUnits);
+        console.log('Transaction hash:', tx.hash); // Log transaction hash for debugging
+        
+        const txHashLink = currentNetwork === 'Sepolia'
+            ? `https://sepolia.etherscan.io/tx/${tx.hash}`
+            : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
+
+        txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>`;
+        
+        await tx.wait(); // Wait for the transaction to be confirmed
+        
+        // Update status after confirmation
+        txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>`;
+    } catch (error) {
+        txStatus.innerText = `Error: ${error.message}`;
+        console.error('Token transfer failed:', error);
+    }
+});
+
+
+
 
     
         // Fetch price on load

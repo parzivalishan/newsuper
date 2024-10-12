@@ -41,7 +41,8 @@
     text-align: center; /* Center text within the app */
     position: relative;
     top: 35%; /* Adjusted to be higher on the page */
-    transform: translateY(-50%); /* Adjust for centering */
+    transform: translateY(-50%);
+    left: 430px; /* Shift to the right by 50px */
 }
 
 h1 {
@@ -146,25 +147,49 @@ button#sendTransactionBtn:hover {
         background-color: #0056b3; /* Hover color */
     }
 
-    /* Optional: Add margin-bottom to ensure input field doesn't overlap */
-    input#amountToSend {
-        margin-bottom: 10px; /* Space between input and buttons */
-    }
+   /* Add margin to ensure input field doesn't overlap */
+input#amountToSend {
+    margin-bottom: 10px; /* Space between input and buttons */
+}
 
+/* Input field styling */
+input {
+    width: calc(100% - 20px); /* Adjust width to fit within padding */
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px; /* Softer rounded corners */
+    border: 1px solid #ccc;
+    background-color: #f5f5f5; /* Light background for a modern feel */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    box-sizing: border-box; /* Ensure padding is included in total width */
+    text-align: center; /* Center text in inputs */
+    font-size: 16px;
+    transition: all 0.3s ease; /* Smooth transition for effects */
+}
 
-        input {
-            width: calc(100% - 20px); /* Adjust width to fit within padding */
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            box-sizing: border-box; /* Ensure padding is included in total width */
-            text-align: center; /* Center text in inputs */
-        }
+/* Change border color and shadow on hover */
+input:hover {
+    border-color: #007BFF; /* Change to primary blue */
+}
+
+/* Change appearance on focus */
+input:focus {
+    border-color: #007BFF; /* Highlight border on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Increase shadow on focus */
+    background-color: #fff; /* Slightly brighten background on focus */
+}
+
+/* Placeholder text styling */
+input::placeholder {
+    color: #888; /* Light gray for placeholders */
+    font-style: italic;
+}
+
 
         #txStatus {
             margin-top: 20px;
-            color: rgb(191, 113, 135);
+            color: #eae6e8;
         }
 
         .hidden {
@@ -192,26 +217,41 @@ button#sendTransactionBtn:hover {
     transform: scale(1.1); /* Slight zoom effect on hover */
 }
 
+/* General progress bar styling */
 progress {
     appearance: none; /* Remove default styles */
     width: 100%; /* Full width */
     height: 20px; /* Height of the progress bar */
-    border-radius: 5px; /* Rounded corners */
-    background-color: #ccc; /* Background color */
+    border-radius: 8px; /* Softer, more modern rounded corners */
+    background-color: #e0e0e0; /* Light background color for contrast */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Subtle inner shadow for depth */
+    overflow: hidden; /* Ensure rounded corners remain visible */
 }
 
+/* Webkit-specific styling (Chrome, Safari, etc.) */
 progress::-webkit-progress-bar {
-    background-color: #d8d210; /* Background color */
+    background-color: #f0f0f0; /* Light background color */
 }
 
 progress::-webkit-progress-value {
-    background-color: #0B0C0E; /* Progress color */
-    border-radius: 5px; /* Rounded corners */
+    background-color: #007BFF; /* Modern blue progress fill */
+    border-radius: 8px; /* Keep the rounded corners for the progress value */
+    transition: width 0.4s ease; /* Smooth animation on progress change */
 }
 
+/* Mozilla Firefox-specific styling */
 progress::-moz-progress-bar {
-    background-color: #0B0C0E; /* Progress color for Firefox */
+    background-color: #007BFF; /* Same modern blue progress fill */
+    border-radius: 8px;
+    transition: width 0.4s ease; /* Smooth animation on progress change */
 }
+
+/* Optional: Add hover effect for extra interaction */
+progress:hover::-webkit-progress-value,
+progress:hover::-moz-progress-bar {
+    background-color: #0056b3; /* Slightly darker blue on hover */
+}
+
 #disperseBtn {
     padding: 10px 20px;
     font-size: 16px;
@@ -311,9 +351,12 @@ progress::-moz-progress-bar {
 <div id="debug"></div>
 <div id="loading" class="loader" style="display: none;"></div>
 
-<label for="progressScale">Sale Progress:</label>
-<progress id="progressScale" value="0" max="100"></progress>
-<p id="progressPercentage">0%</p>
+<label for="progressScale" id="progressLabel">Sale Progress:</label>
+<div class="progress-container">
+    <progress id="progressScale" value="0" max="100"></progress>
+    <p id="progressPercentage">0%</p>
+</div>
+
 
 <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
 

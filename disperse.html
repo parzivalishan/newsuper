@@ -576,10 +576,10 @@ document.getElementById('disperseBtn').onclick = async () => {
                 const approvalLinkElement = document.createElement('a');
                 approvalLinkElement.href = approvalExplorerLink;
                 approvalLinkElement.target = '_blank';
-                approvalLinkElement.textContent = `View Approval Transaction`; // Only show a user-friendly message
+                approvalLinkElement.textContent = `Approval successful`; // Only show a user-friendly message
 
                 // Update modal message to indicate approval success
-                openModal("Processing", `Approval successful!<br>${approvalLinkElement.outerHTML} Now confirm the transaction of dispersing tokens...`, "info");
+                openModal("Approval successful!", `${approvalLinkElement.outerHTML} .Confirm Token Disperse`, "info");
 
                 // Start polling for approval confirmation
                 const approvalInterval = setInterval(async () => {

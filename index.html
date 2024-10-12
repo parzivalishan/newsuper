@@ -7,6 +7,9 @@
     
     <!-- Ethers.js -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.6.9/dist/ethers.umd.min.js"></script>
+  
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         body {
@@ -48,6 +51,32 @@
 h1 {
     font-size: 24px;
 }
+#app2 {
+    background-color: rgb(50, 50, 50); /* Background color for app2 */
+    padding: 40px; /* Increased padding for more space inside */
+    border-radius: 15px; /* More rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow */
+    max-width: 750px; /* Increased max width */
+    width: calc(80% - 20px); /* Adjusted width for more margin */
+    position: absolute; /* Allows you to position the element freely */
+    top: 60px; /* Adjusted distance from the top */
+    left: 10px; /* Centering based on width */
+    right: 10px; /* Adjusted distance from the right edge */
+    text-align: center; /* Center align text in app2 */
+}
+
+
+
+
+    
+
+   
+
+    #myPieChart {
+        width: 350px !important; /* Set the width to 150px */
+        height: 350px !important; /* Set the height to 150px */
+    }
+   
 
 #connectWalletBtn, #networkBtn, #predictionMarketBtn , #disperseBtn  {
     padding: 10px 20px;
@@ -204,24 +233,23 @@ input::placeholder {
             display: none;
         }
 
-        #socialMedia {
+        #socials {
     position: fixed;
-    bottom: 10px;
-    right: 20px;
+    bottom: 10px; /* Adjusts vertical position */
+    right: 20px;  /* Adjusts horizontal position */
     display: flex; /* Align buttons in a row */
     gap: 10px; /* Space between buttons */
 }
 
-.social-icon {
+.social-icon img {
     width: 40px;
     height: 40px;
     background-color: #0B0C0E; /* Set to SpaceX-like color */
-    border-radius: 50%; /* Optional, to give a circular effect */
+    border-radius: 50%; /* Optional, for circular effect */
     transition: transform 0.2s; /* For hover effect */
 }
 
-
-.social-icon:hover {
+.social-icon:hover img {
     transform: scale(1.1); /* Slight zoom effect on hover */
 }
 
@@ -339,6 +367,111 @@ progress:hover::-moz-progress-bar {
         <button id="connectWalletBtn">Connect Wallet</button> <!-- Connect Wallet button -->
     </div>
 
+    <div id="app2">
+        <h1>Vitalik Token IDO</h1>
+        
+        <!-- Project Information -->
+        <div style="margin-top: 20px;">
+            <h2>About the Project</h2>
+            <p>
+                Vitalik L1 with a library of 30+ chicks under 25 planning to generate revenue from advertisements and micro transactions that are shared with other simps. Token utility includes L1 gas fees and Ftx Bankruptcy purchase currency for all game related NFTs. Players can play any game, use the same digital assets in multiple games and be rewarded daily for the activities. Web 2.5 infrastructure enables access to 3 billion players.
+            </p>
+        </div>
+    
+        <!-- Team Section -->
+        <div style="margin-top: 20px;">
+            <h2>Meet the Team</h2>
+            <ul>
+                <li><strong>Do Kwon</strong> - CEO & Founder</li>
+                <li><strong>Sam Altman</strong> - CTO & Co-Founder</li>
+                <li><strong>Su Zhu</strong> - Marketing Director</li>
+            </ul>
+        </div>
+    
+        <!-- Vesting Information -->
+        <div style="margin-top: 20px;">
+            <h2>Vesting Information</h2>
+            <p>
+                I will add it soon :_:
+            </p>
+        </div>
+    
+        <!-- Smaller Pie Chart Canvas -->
+        <div style="margin-top: 20px;">
+            <canvas id="myPieChart" width="2" height="2" style="max-width: 100%;"></canvas>
+        </div>
+        
+        <!-- Social Media Links -->
+        <div style="margin-top: 20px;">
+            <h2>Vitalik L1 Socials</h2>
+            <a href="https://telegram.org/" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" style="width: 30px; margin-right: 10px;">
+            </a>
+            <a href="https://x.com/" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter" style="width: 30px; margin-right: 10px;">
+            </a>
+            <a href="https://www.yourwebsite.com/" target="_blank">
+                <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/website%20logo.jpg" alt="Website" style="width: 30px; margin-right: 10px;">
+            </a>
+        </div>
+    </div>
+    
+    
+    
+    <script>
+        // Initialize the pie chart with some default data
+        const ctx = document.getElementById('myPieChart').getContext('2d');
+        let myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Private Sale', 'IDO', 'Liquidity', 'Team'], // These labels can be descriptive
+                datasets: [{
+                    label: 'Token Distribution',
+                    data: [30, 40, 20, 10], // Predefined data for the pie chart
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return `${tooltipItem.label}: ${tooltipItem.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    
+        // You can update the pie chart dynamically in the future if needed
+        // For example, using some predefined conditions or data fetch.
+        // Here's an example of how to update data programmatically:
+        setTimeout(() => {
+            const newData = [20, 30, 25, 25]; // New data for demonstration
+            myPieChart.data.datasets[0].data = newData;
+            myPieChart.update();
+        }, 5000); // Update after 5 seconds for demonstration
+    </script>
+    
+    
+    
     <div id="app">
         <h1> SuperChain ( Minato Network ) </h1>
 

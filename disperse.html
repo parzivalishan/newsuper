@@ -50,15 +50,17 @@
         }
 
         .option-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            background-color: #f0f0f0;
-        }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+    border: 1px solid #ccc; /* You can keep this or change it for better contrast */
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #ffcccb; /* Light pink background */
+}
+
+
 
         .radio-container {
             position: relative;
@@ -90,14 +92,38 @@
         .contract-address-container {
     display: none; /* Initially hide the contract address input */
     margin-top: 10px; /* Add margin for spacing */
-    width: 400px; /* Set a specific width for the container */
+    width: 100%; /* Make the container responsive */
+    max-width: 500px; /* Set a max-width for larger screens */
+    background: linear-gradient(135deg, #4a4a4a 0%, #e5e5e5 100%); /* Updated to gradient background */
+    border-radius: 8px; /* Rounded corners for smooth appearance */
+    padding: 15px; /* Add padding inside the container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: all 0.3s ease-in-out; /* Smooth transition for visibility changes */
+    box-sizing: border-box; /* Include padding and borders in the width calculation */
 }
 
 #contractAddress {
     width: 100%; /* Make the input field take full width of the container */
-    padding: 10px; /* Add some padding for better appearance */
-    font-size: 16px; /* Increase font size if needed */
+    padding: 12px 15px; /* Increase padding for a more clickable area */
+    font-size: 16px; /* Font size for readability */
+    border: 1px solid #ccc; /* Light border for definition */
+    border-radius: 6px; /* Rounded input field */
+    background-color: #fff; /* White background for input */
+    color: #333; /* Darker text color */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle inner shadow */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover/focus effects */
+    box-sizing: border-box; /* Include padding and borders in the width calculation */
 }
+
+/* Hover and focus states for better interaction */
+#contractAddress:hover, #contractAddress:focus {
+    border-color: #007bff; /* Highlight border on hover and focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
+    outline: none; /* Remove default outline */
+}
+
+
+
 
         #balanceDisplay {
             margin-top: 10px; /* Add margin for spacing */
@@ -174,10 +200,13 @@
         </div>
     </div>
 
-    <!-- Contract Address Input -->
-    <div class="contract-address-container" id="contractAddressContainer">
-        <input type="text" id="contractAddress" placeholder="Enter token contract address" />
-    </div>
+<!-- Contract Address Input -->
+<div class="contract-address-container" id="contractAddressContainer">
+    <input type="text" id="contractAddress" placeholder="Enter token contract address" style="font-style: italic; text-align: center;" />
+</div>
+
+
+
 
     <h3>Recipients and Amounts</h3>
     <p>Enter one address and amount in ETH on each line. Supports any format:</p>

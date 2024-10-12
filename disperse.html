@@ -75,14 +75,14 @@
         .radio-label {
             cursor: pointer;
             padding: 10px 20px;
-            background-color: white;
+            background-color: rgb(255, 255, 255);
             border-radius: 5px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .radio-container input:checked + .radio-label {
             background-color: #007BFF;
-            color: white;
+            color: rgb(255, 255, 255);
             transform: translateY(-4px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
@@ -162,7 +162,11 @@
     <div class="option-container">
         <div class="radio-container">
             <input type="radio" id="sendEther" name="sendOption" value="ether" checked>
-            <label for="sendEther" class="radio-label">Ether</label>
+            <label for="sendEther" class="radio-label">
+                <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png" alt="Ether Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+                Ether
+            </label>
+            
         </div>
         <div class="radio-container">
             <input type="radio" id="sendToken" name="sendOption" value="token">
@@ -179,7 +183,7 @@
     <p>Enter one address and amount in ETH on each line. Supports any format:</p>
     <textarea id="recipientsAndAmounts" placeholder="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 3.141592 0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe,2.7182 0x50D1c9771902476076eCFc8B2A83Ad6b9355a4c9=1.42069"></textarea><br>
     
-    <button id="disperseBtn">Disperse</button>
+    <button id="disperseBtn">Disperse ETH</button>
 
       <!-- Modal Structure -->
       <div id="customAlert" class="modal" style="display:none;">
@@ -532,6 +536,25 @@ document.getElementById('disperseBtn').onclick = async () => {
     }
 };
 
+
+ // Add this at the end of your script block
+ function updateDisperseButton() {
+        const etherRadio = document.getElementById('sendEther');
+        const button = document.getElementById('disperseBtn');
+        
+        if (etherRadio.checked) {
+            button.textContent = 'Disperse ETH';
+        } else {
+            button.textContent = 'Disperse Tokens';
+        }
+    }
+
+    // Event listeners for radio buttons
+    document.getElementById('sendEther').addEventListener('change', updateDisperseButton);
+    document.getElementById('sendToken').addEventListener('change', updateDisperseButton);
+
+    // Initial button text setup
+    updateDisperseButton();
 
 
 

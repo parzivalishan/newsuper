@@ -514,9 +514,12 @@ document.getElementById('disperseBtn').onclick = async () => {
 
     try {
     if (sendOption === "ether") {
-        contract.methods.disperseEther(recipients, values).send({
+        const totalValue = web3.utils.toWei(values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0).toString(), 'ether');
+
+        // Send ether and start polling for confirmation
+        const etherReceipt = await contract.methods.disperseEther(recipients, values).send({
             from: account,
-            value: web3.utils.toWei(values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0).toString(), 'ether'),
+            value: totalValue,
             gas: 300000 // Adjust as necessary
         })
         .on('transactionHash', function(hash) {
@@ -526,7 +529,7 @@ document.getElementById('disperseBtn').onclick = async () => {
             linkElement.href = explorerLink;
             linkElement.target = '_blank'; // Open in a new tab
             linkElement.textContent = `View Transaction: ${hash}`;
-            
+
             document.body.appendChild(linkElement);
 
             // Start polling for confirmation
@@ -567,35 +570,54 @@ document.getElementById('disperseBtn').onclick = async () => {
 
                 console.log("Approval successful:", approvalReceipt);
 
+                // Create hyperlink for the approval transaction hash
+                const approvalHash = approvalReceipt.transactionHash;
+                const approvalExplorerLink = `https://explorer-testnet.soneium.org/tx/${approvalHash}`;
+                const approvalLinkElement = document.createElement('a');
+                approvalLinkElement.href = approvalExplorerLink;
+                approvalLinkElement.target = '_blank';
+                approvalLinkElement.textContent = `View Approval Transaction`; // Only show a user-friendly message
+
                 // Update modal message to indicate approval success
-                openModal("Processing", "Approval successful! Now confirm the transaction of dispersing tokens...", "info");
+                openModal("Processing", `Approval successful!<br>${approvalLinkElement.outerHTML} Now confirm the transaction of dispersing tokens...`, "info");
 
-                // Step 3: Now disperse tokens
-                await contract.methods.disperseToken(tokenAddress, recipients, values).send({
-                    from: account,
-                    gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account })
-                })
-                .on('transactionHash', function(hash) {
-                    const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
-                    const linkElement = document.createElement('a');
-                    linkElement.href = explorerLink;
-                    linkElement.target = '_blank';
-                    linkElement.textContent = `View Transaction: ${hash}`;
-                    document.body.appendChild(linkElement);
+                // Start polling for approval confirmation
+                const approvalInterval = setInterval(async () => {
+                    const receipt = await web3.eth.getTransactionReceipt(approvalHash);
+                    if (receipt) {
+                        clearInterval(approvalInterval);
+                        
+                        // Stop polling if we have a receipt
+                        console.log("Approval confirmed:", receipt);
 
-                    // Start polling for confirmation
-                    const interval = setInterval(async () => {
-                        const receipt = await web3.eth.getTransactionReceipt(hash);
-                        if (receipt) {
-                            clearInterval(interval); // Stop polling if we have a receipt
-                            openModal("Success", `Tokens dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
-                        }
-                    }, 100); // Check every 100 milliseconds
-                })
-                .on('error', function(error) {
-                    console.error("Error during disperse:", error.message || error);
-                    openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
-                });
+                        // Step 3: Now disperse tokens
+                        const disperseReceipt = await contract.methods.disperseToken(tokenAddress, recipients, values).send({
+                            from: account,
+                            gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account })
+                        })
+                        .on('transactionHash', function(hash) {
+                            const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
+                            const linkElement = document.createElement('a');
+                            linkElement.href = explorerLink;
+                            linkElement.target = '_blank';
+                            linkElement.textContent = `View Transaction: ${hash}`;
+                            document.body.appendChild(linkElement);
+
+                            // Start polling for confirmation of disperse transaction
+                            const disperseInterval = setInterval(async () => {
+                                const disperseReceipt = await web3.eth.getTransactionReceipt(hash);
+                                if (disperseReceipt) {
+                                    clearInterval(disperseInterval); // Stop polling if we have a receipt
+                                    openModal("Success", `Tokens dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
+                                }
+                            }, 100); // Check every 100 milliseconds
+                        })
+                        .on('error', function(error) {
+                            console.error("Error during disperse:", error.message || error);
+                            openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
+                        });
+                    }
+                }, 100); // Check every 100 milliseconds for approval confirmation
 
             } catch (error) {
                 console.error("Error during approval or disperse:", error.message || error);

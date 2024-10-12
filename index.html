@@ -646,6 +646,8 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
         console.error("Connection Error:", error);
         alert('Failed to connect wallet. Please try again.');
     }
+
+    
 });
 
 // Function to fetch and display ETH balance
@@ -793,40 +795,43 @@ sendTransactionBtn.addEventListener('click', async () => {
 });
 
 
-// Send sce
 // Send Token button functionality
 document.getElementById('sendSceTokenBtn').addEventListener('click', async () => {
     const recipientAddress = recipientAddressInput.value;
-    const amountToSend = tokenAmountInput.value;
+    const amountToSend = amountToSendInput.value;
 
     if (!amountToSend || !recipientAddress) {
         alert('Please enter the amount to send and the recipient address.');
         return;
     }
 
-    // Check if signer is available
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    if (!signer) {
-        alert('Please connect your MetaMask wallet.');
+    if (!ethers.utils.isAddress(recipientAddress)) {
+        alert('Invalid recipient address.');
         return;
     }
 
+    // Initialize provider and request account access
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []); // Request account access
+    const signer = provider.getSigner();
+
     // Check network before sending
-    const networkMatches = await checkNetwork();
+    const networkMatches = await checkNetwork(); 
     if (!networkMatches) {
         alert('Please switch to the correct network.');
         return;
     }
 
-    // Create token contract instance
-    const tokenContract = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, [
-        "function transfer(address to, uint256 value) returns (bool)"
+    const tokenAddress = "0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9"; 
+    const tokenContract = new ethers.Contract(tokenAddress, [
+        "function transfer(address to, uint256 value) returns (bool)",
+        "function balanceOf(address owner) view returns (uint256)"
     ], signer);
 
     try {
         console.log('Initiating transfer...');
-        const balance = await tokenContract.balanceOf(await signer.getAddress());
+        const userAddress = await signer.getAddress();
+        const balance = await tokenContract.balanceOf(userAddress);
         const amountInUnits = ethers.utils.parseUnits(amountToSend, 18);
 
         if (amountInUnits.gt(balance)) {
@@ -835,23 +840,23 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
         }
 
         const tx = await tokenContract.transfer(recipientAddress, amountInUnits);
-        console.log('Transaction hash:', tx.hash); // Log transaction hash for debugging
-        
+        console.log('Transaction hash:', tx.hash);
+
         const txHashLink = currentNetwork === 'Sepolia'
             ? `https://sepolia.etherscan.io/tx/${tx.hash}`
             : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
-
+        
         txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>`;
+
+        await tx.wait();
         
-        await tx.wait(); // Wait for the transaction to be confirmed
-        
-        // Update status after confirmation
         txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>`;
     } catch (error) {
-        txStatus.innerText = `Error: ${error.message}`;
         console.error('Token transfer failed:', error);
+        txStatus.innerText = `Error: ${error.message}`;
     }
 });
+
 
 
 

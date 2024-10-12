@@ -186,12 +186,20 @@ input::placeholder {
     font-style: italic;
 }
 
+#txStatus {
+    display: none; /* Hide by default */
+    margin-top: 20px;
+    color: #ffffff; /* Change to white for better contrast */
+    background-color: #333333; /* Dark background for contrast */
+    padding: 10px; /* Add some padding for better spacing */
+    border-radius: 5px; /* Rounded corners for aesthetics */
+    font-weight: bold; /* Make text bold */
+    font-size: 16px; /* Increase font size for readability */
+}
 
-        #txStatus {
-            margin-top: 20px;
-            color: #eae6e8;
-        }
-
+#txStatus.show {
+    display: block; /* Show when this class is added */
+}
         .hidden {
             display: none;
         }
@@ -299,6 +307,11 @@ progress:hover::-moz-progress-bar {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+
+
+
+
+
 }
 
 
@@ -813,13 +826,23 @@ sendTransactionBtn.addEventListener('click', async () => {
         const txHashLink = currentNetwork === 'Sepolia'
             ? `https://sepolia.etherscan.io/tx/${tx.hash}`
             : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
+
+  // Show the transaction status element by adding a class
+  txStatus.classList.add('show');
         
-        txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>`;
-        
-        await tx.wait(); // Wait for the transaction to be confirmed
+  txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>. Waiting for confirmation... <span class="loading">⏳</span>`;
+
+// Start polling for confirmation
+const interval = setInterval(async () => {
+    const receipt = await provider.getTransactionReceipt(tx.hash); // Replace 'provider' with your actual provider variable
+
+    if (receipt && receipt.status !== null) {
+        clearInterval(interval); // Stop polling if we have a receipt
         
         // Update status after confirmation
-        txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>`;
+        txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>.`;
+    }
+}, 100); // Check every 100 milliseconds
 
         // Update raised amount and call updateProgress
         const raisedAmountText = document.getElementById('raisedAmount').innerText; // Get current raised amount
@@ -888,12 +911,24 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
         const txHashLink = currentNetwork === 'Sepolia'
             ? `https://sepolia.etherscan.io/tx/${tx.hash}`
             : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
-        
-        txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>`;
 
-        await tx.wait();
+
+              // Show the transaction status element by adding a class
+    txStatus.classList.add('show');
         
-        txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>`;
+    txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>. Waiting for confirmation... <span class="loading">⏳</span>`;
+
+// Start polling for confirmation
+const interval = setInterval(async () => {
+    const receipt = await provider.getTransactionReceipt(tx.hash); // Replace 'provider' with your actual provider variable
+
+    if (receipt && receipt.status !== null) {
+        clearInterval(interval); // Stop polling if we have a receipt
+        
+        // Update status after confirmation
+        txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>.`;
+    }
+}, 100); // Check every 100 milliseconds
     } catch (error) {
         console.error('Token transfer failed:', error);
         txStatus.innerText = `Error: ${error.message}`;

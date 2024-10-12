@@ -513,97 +513,107 @@ document.getElementById('disperseBtn').onclick = async () => {
     console.log("Values:", values);
 
     try {
-        if (sendOption === "ether") {
-            contract.methods.disperseEther(recipients, values).send({
-                from: account,
-                value: web3.utils.toWei(values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0).toString(), 'ether'),
-                gas: 300000 // Adjust as necessary
-            })
-            .on('transactionHash', function(hash) {
-                // Create hyperlink for the transaction hash immediately after confirmation
-                const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
-                const linkElement = document.createElement('a');
-                linkElement.href = explorerLink;
-                linkElement.target = '_blank'; // Open in a new tab
-                linkElement.textContent = `View Transaction: ${hash}`;
-                
-                document.body.appendChild(linkElement);
-            })
-            .on('receipt', function(receipt) {
-                openModal("Success", `Ether dispersed successfully!<br><a href='https://explorer-testnet.soneium.org/tx/${receipt.transactionHash}' target='_blank'>View Transaction</a>`, "success");
-            })
-            .on('error', function(error) {
-                console.error("Error during disperse:", error.message || error);
-                openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
-            });
+    if (sendOption === "ether") {
+        contract.methods.disperseEther(recipients, values).send({
+            from: account,
+            value: web3.utils.toWei(values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0).toString(), 'ether'),
+            gas: 300000 // Adjust as necessary
+        })
+        .on('transactionHash', function(hash) {
+            // Create hyperlink for the transaction hash immediately after confirmation
+            const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
+            const linkElement = document.createElement('a');
+            linkElement.href = explorerLink;
+            linkElement.target = '_blank'; // Open in a new tab
+            linkElement.textContent = `View Transaction: ${hash}`;
+            
+            document.body.appendChild(linkElement);
 
-        } else { 
-            const tokenAddress = document.getElementById('contractAddress').value;
-            if (!web3.utils.isAddress(tokenAddress)) {
-                openModal("Error", "Invalid token contract address", "error");
-                return;
-            }
-
-            const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
-            const totalAmount = values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0); // Calculate total amount
-
-            // Function to disperse tokens
-            async function disperseTokens() {
-                const button = document.getElementById('disperseBtn');
-
-                try {
-                    // Step 1: Disable the button to prevent further clicks
-                    button.disabled = true;
-                    openModal("Processing", "Please wait until the approval is completed.", "info");
-
-                    // Step 2: Approve the disperse contract to spend tokens
-                    const approvalReceipt = await tokenContract.methods.approve(contractAddress, web3.utils.toWei(totalAmount.toString(), 'ether')).send({ from: account });
-
-                    console.log("Approval successful:", approvalReceipt);
-
-                    // Update modal message to indicate approval success
-                    openModal("Processing", "Approval successful! Now Confirm the transaction of dispersing tokens...", "info");
-
-                    // Step 3: Now disperse tokens
-                    await contract.methods.disperseToken(tokenAddress, recipients, values).send({
-                        from: account,
-                        gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account })
-                    })
-                    .on('transactionHash', function(hash) {
-                        const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
-                        const linkElement = document.createElement('a');
-                        linkElement.href = explorerLink;
-                        linkElement.target = '_blank';
-                        linkElement.textContent = `View Transaction: ${hash}`;
-                        document.body.appendChild(linkElement);
-                    })
-                    .on('receipt', function(receipt) {
-                        openModal("Success", `Tokens dispersed successfully!<br><a href='https://explorer-testnet.soneium.org/tx/${receipt.transactionHash}' target='_blank'>View Transaction</a>`, "success");
-                    })
-                    .on('error', function(error) {
-                        console.error("Error during disperse:", error.message || error);
-                        openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
-                    });
-
-                } catch (error) {
-                    console.error("Error during approval or disperse:", error.message || error);
-                    openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
-                } finally {
-                    // Step 4: Re-enable the button after the transaction is complete
-                    button.disabled = false;
+            // Start polling for confirmation
+            const interval = setInterval(async () => {
+                const receipt = await web3.eth.getTransactionReceipt(hash);
+                if (receipt) {
+                    clearInterval(interval); // Stop polling if we have a receipt
+                    openModal("Success", `Ether dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
                 }
-            }
+            }, 100); // Check every 100 milliseconds
+        })
+        .on('error', function(error) {
+            console.error("Error during disperse:", error.message || error);
+            openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
+        });
 
-            // Call the disperseTokens function
-            await disperseTokens();
+    } else { 
+        const tokenAddress = document.getElementById('contractAddress').value;
+        if (!web3.utils.isAddress(tokenAddress)) {
+            openModal("Error", "Invalid token contract address", "error");
+            return;
         }
-    } catch (error) {
-        console.error("Error during processing:", error.message || error);
-        openModal("Error", "An error occurred while processing your request. Check the console for details.", "error");
+
+        const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
+        const totalAmount = values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0); // Calculate total amount
+
+        // Function to disperse tokens
+        async function disperseTokens() {
+            const button = document.getElementById('disperseBtn');
+
+            try {
+                // Step 1: Disable the button to prevent further clicks
+                button.disabled = true;
+                openModal("Processing", "Please wait until the approval is completed.", "info");
+
+                // Step 2: Approve the disperse contract to spend tokens
+                const approvalReceipt = await tokenContract.methods.approve(contractAddress, web3.utils.toWei(totalAmount.toString(), 'ether')).send({ from: account });
+
+                console.log("Approval successful:", approvalReceipt);
+
+                // Update modal message to indicate approval success
+                openModal("Processing", "Approval successful! Now confirm the transaction of dispersing tokens...", "info");
+
+                // Step 3: Now disperse tokens
+                await contract.methods.disperseToken(tokenAddress, recipients, values).send({
+                    from: account,
+                    gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account })
+                })
+                .on('transactionHash', function(hash) {
+                    const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
+                    const linkElement = document.createElement('a');
+                    linkElement.href = explorerLink;
+                    linkElement.target = '_blank';
+                    linkElement.textContent = `View Transaction: ${hash}`;
+                    document.body.appendChild(linkElement);
+
+                    // Start polling for confirmation
+                    const interval = setInterval(async () => {
+                        const receipt = await web3.eth.getTransactionReceipt(hash);
+                        if (receipt) {
+                            clearInterval(interval); // Stop polling if we have a receipt
+                            openModal("Success", `Tokens dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
+                        }
+                    }, 100); // Check every 100 milliseconds
+                })
+                .on('error', function(error) {
+                    console.error("Error during disperse:", error.message || error);
+                    openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
+                });
+
+            } catch (error) {
+                console.error("Error during approval or disperse:", error.message || error);
+                openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
+            } finally {
+                // Step 4: Re-enable the button after the transaction is complete
+                button.disabled = false;
+            }
+        }
+
+        // Call the disperseTokens function
+        await disperseTokens();
     }
+} catch (error) {
+    console.error("Error during processing:", error.message || error);
+    openModal("Error", "An error occurred while processing your request. Check the console for details.", "error");
+}
 };
-
-
 
 
  // Add this at the end of your script block
@@ -624,10 +634,6 @@ document.getElementById('disperseBtn').onclick = async () => {
 
     // Initial button text setup
     updateDisperseButton();
-
-
-
-
 
     </script>
 </body>

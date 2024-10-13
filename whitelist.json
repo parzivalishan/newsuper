@@ -1,6 +1,6 @@
 {
     "whitelistedAddresses": [
-        "0x1234567890abcdef1234567890abcdef12345678",
+        "0x000000000000000000000000000000000000dead",
         "0xabcdef1234567890abcdef1234567890abcdef12",
         "0x29de0cc374FC3432A9D9dE753BF12995E138DFf9",
         "0xE996BbDE2B2674bA8B4b3aae0E5C0E17e5B11dB9"

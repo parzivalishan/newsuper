@@ -1,6 +1,6 @@
 {
     "whitelistedAddresses": [
-        "0x000000000000000000000000000000000000dEaD", //dead address = no whitelist in the code of launchpad
+        "0x000000000000000000000000000000000000dEaD",
         "0x1234567890abcdef1234567890abcdef12345678",
         "0xabcdef1234567890abcdef1234567890abcdef12",
       "0x29de0cc374FC3432A9D9dE753BF12995E138DFf9"

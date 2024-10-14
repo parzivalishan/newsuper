@@ -2,7 +2,7 @@ If you have any suggestions , you can create an issue [here]([url](https://githu
 
 ---
 
-# Whitelist function can be removed by adding a dead address (0x000000000000000000000000000000000000dead) to the whitelist.json file. It takes a few minutes to update in the frontend of the Launchpad.
+#Whitelist function can be removed by adding a dead address (0x000000000000000000000000000000000000dead) to the whitelist.json file. It takes a few minutes to update in the frontend of the Launchpad.
 
 0x000000000000000000000000000000000000dead makes the whitelist function = false, and then every wallet can be used on the launchpad, example:
 

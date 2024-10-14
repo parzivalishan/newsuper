@@ -14,7 +14,7 @@ If you have any suggestions , you can create an issue [here]([url](https://githu
         "0x1736d80Db5da96ebA538Fb7CB90BF9d3eb0e0480"
     ]
 }
-
+---
 
 if you remove anything from 0x000000000000000000000000000000000000dead , for example if i remove the last d from 0x000000000000000000000000000000000000dead . It becomes 0x000000000000000000000000000000000000dea and the whitelist function= true, then only wallets which are in the json are able to buy in the launchpad
 

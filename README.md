@@ -20,6 +20,7 @@ if you remove anything from 0x000000000000000000000000000000000000dead , for exa
 
 
  #maxBuyLimit function is used to implement the max buy for each wallet address. example-
+   {
     "maxBuyLimits": {
         "0x000000000000000000000000000000000000dead" : 300,
         "0xad3a5DdCe484251f8839f185896b14605b8dd340": 5,

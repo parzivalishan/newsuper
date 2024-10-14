@@ -16,7 +16,7 @@ If you have any suggestions , you can create an issue [here]([url](https://githu
 
 if you remove anything from 0x000000000000000000000000000000000000dead , for example if i remove the last d from 0x000000000000000000000000000000000000dead . It becomes 0x000000000000000000000000000000000000dea and the whitelist function= true, then only wallets which are in the json are able to buy in the launchpad
 
-
+---
 
 
  #maxBuyLimit function is used to implement the max buy for each wallet address. example-

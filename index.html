@@ -986,6 +986,52 @@ async function isWhitelisted(walletAddress) {
     console.log("Is User Whitelisted:", isWhitelisted); // Log result of whitelisting check
     return isWhitelisted;
 }
+
+
+
+// Max buy limit
+let cachedMaxBuyLimits = {};
+let universalMaxBuyLimit = 0; // Variable for universal max buy limit
+
+// Function to fetch max buy limits
+async function fetchMaxBuyLimits() {
+    try {
+        const response = await fetch(`https://raw.githubusercontent.com/parzivalishan/newsuper/main/maxBuyLimits.json?timestamp=${new Date().getTime()}`, { cache: "no-store" });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Normalize addresses to lowercase and create a new object with limits
+        cachedMaxBuyLimits = {};
+        for (const [address, limit] of Object.entries(data.maxBuyLimits)) {
+            cachedMaxBuyLimits[address.toLowerCase()] = limit;
+        }
+
+        // Check if dead address has a limit and set universal limit
+        const deadAddress = '0x000000000000000000000000000000000000dead';
+        if (cachedMaxBuyLimits[deadAddress.toLowerCase()] !== undefined) {
+            universalMaxBuyLimit = cachedMaxBuyLimits[deadAddress.toLowerCase()];
+            console.log("Universal Max Buy Limit set to:", universalMaxBuyLimit);
+        } else {
+            universalMaxBuyLimit = 0; // Reset if dead address doesn't have a limit
+        }
+
+        console.log("Fetched Max Buy Limits:", cachedMaxBuyLimits);
+
+    } catch (error) {
+        console.error("Failed to fetch max buy limits:", error);
+    }
+}
+
+// Call this function initially to load the max buy limits
+fetchMaxBuyLimits();
+
+// Polling for updates every 10 seconds (10000 milliseconds)
+setInterval(fetchMaxBuyLimits, 10000);
+
 // Send Transaction on Minato blockchain
 sendTransactionBtn.addEventListener('click', async () => {
     const recipientAddress = recipientAddressInput.value; // Get the recipient address
@@ -1005,11 +1051,29 @@ sendTransactionBtn.addEventListener('click', async () => {
 
     // Get user's wallet address
     const userWalletAddress = await signer.getAddress();
+    const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
 
     // Check if user is whitelisted
     const whitelisted = await isWhitelisted(userWalletAddress);
     if (!whitelisted) {
         alert('Your wallet address is not whitelisted.');
+        return;
+    }
+
+    // Check max buy limit
+    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
+
+    // Allow for an additional $0.02 over the max buy limit
+    const adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.02;
+
+    // Calculate the total raised amount
+    const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
+    const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
+    const newRaisedAmount = currentRaisedAmount + parseFloat(amountToSend); 
+
+    if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { // Use adjusted limit for comparison
+        alert(`You cannot exceed the max buy limit of ${effectiveMaxBuyLimit} ETH.`);
         return;
     }
 
@@ -1024,7 +1088,7 @@ sendTransactionBtn.addEventListener('click', async () => {
             ? `https://sepolia.etherscan.io/tx/${tx.hash}`
             : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
 
-        // Show the transaction status element by adding a class
+        // Show transaction status element by adding a class
         txStatus.classList.add('show');
         
         txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>. Waiting for confirmation... <span class="loading">⏳</span>`;
@@ -1042,10 +1106,6 @@ sendTransactionBtn.addEventListener('click', async () => {
         }, 100); // Check every 100 milliseconds
 
         // Update raised amount and call updateProgress
-        const raisedAmountText = document.getElementById('raisedAmount').innerText; 
-        const raisedAmount = parseFloat(raisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
-        const newRaisedAmount = raisedAmount + parseFloat(amountToSend); 
-
         document.getElementById('raisedAmount').innerText = `Raised Amount: ${newRaisedAmount.toFixed(18)} ETH`;
         
         updateProgress();
@@ -1070,72 +1130,93 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
         return;
     }
 
-    // Initialize provider and request account access
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []); 
-    const signer = provider.getSigner();
+   // Initialize provider and request account access
+   const provider = new ethers.providers.Web3Provider(window.ethereum);
+   await provider.send("eth_requestAccounts", []); 
+   const signer = provider.getSigner();
 
-    // Check network before sending
-    const networkMatches = await checkNetwork(); 
-    if (!networkMatches) {
-        alert('Please switch to the correct network.');
-        return;
-    }
+   // Check network before sending
+   const networkMatches = await checkNetwork(); 
+   if (!networkMatches) {
+       alert('Please switch to the correct network.');
+       return;
+   }
 
-    // Get user's wallet address
-    const userWalletAddress = await signer.getAddress();
+   // Get user's wallet address
+   const userWalletAddress = await signer.getAddress();
+   const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
 
-    // Check if user is whitelisted
-    const whitelisted = await isWhitelisted(userWalletAddress);
-    if (!whitelisted) {
-        alert('Your wallet address is not whitelisted.');
-        return;
-    }
+   // Check if user is whitelisted
+   const whitelistedForTokenTransfer = await isWhitelisted(userWalletAddress);
+   if (!whitelistedForTokenTransfer) {
+       alert('Your wallet address is not whitelisted.');
+       return;
+   }
 
-    const tokenAddress = "0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9"; 
-    const tokenContract = new ethers.Contract(tokenAddress, [
-        "function transfer(address to, uint256 value) returns (bool)",
-        "function balanceOf(address owner) view returns (uint256)"
-    ], signer);
+   // Check max buy limit for tokens
+   const specificMaxBuyLimitForTokenTransfer = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+   console.log(`Fetched max buy limit for token transfer for address ${normalizedUserWalletAddress}: ${specificMaxBuyLimitForTokenTransfer} ETH`);
 
-    try {
-        console.log('Initiating transfer...');
-        const balance = await tokenContract.balanceOf(userWalletAddress);
-        const amountInUnits = ethers.utils.parseUnits(amountToSend, 18);
+   const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
 
-        if (amountInUnits.gt(balance)) {
-            alert('Insufficient balance.');
-            return;
-        }
+   // Allow for an additional $0.02 over the max buy limit for tokens
+   const adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.02;
 
-        const tx = await tokenContract.transfer(recipientAddress, amountInUnits);
-        
-        console.log('Transaction hash:', tx.hash);
+   // Calculate the total raised amount for tokens
+   const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
+   const currentRaisedAmountForTokenTransfer = parseFloat(currentRaisedAmountTextForTokenTransfer.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
+   
+   // Convert amount to send to units for comparison
+   const amountInUnitsForTokenTransfer = ethers.utils.parseUnits(amountToSend, 18);
+   const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
 
-        const txHashLink = currentNetwork === 'Sepolia'
-            ? `https://sepolia.etherscan.io/tx/${tx.hash}`
-            : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
+   if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
+       alert(`You cannot exceed the max buy limit of ${effectiveMaxBuyLimitForTokenTransfer} USD.`);
+       return;
+   }
 
-         // Show transaction status element
-         txStatus.classList.add('show');
-        
-         txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>. Waiting for confirmation... <span class="loading">⏳</span>`;
+   const tokenAddress = "0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9"; 
+   const tokenContract = new ethers.Contract(tokenAddress, [
+       "function transfer(address to, uint256 value) returns (bool)",
+       "function balanceOf(address owner) view returns (uint256)"
+   ], signer);
 
-         // Start polling for confirmation
-         const interval = setInterval(async () => {
-             const receipt = await provider.getTransactionReceipt(tx.hash);
+   try {
+       console.log('Initiating transfer...');
+       const balanceForTokenTransfer = await tokenContract.balanceOf(userWalletAddress);
 
-             if (receipt && receipt.status !== null) {
-                 clearInterval(interval);
-                 txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>.`;
-             }
-         }, 100);
-     } catch (error) {
-         console.error('Token transfer failed:', error);
-         txStatus.innerText = `Error: ${error.message}`;
-     }
+       if (amountInUnitsForTokenTransfer.gt(balanceForTokenTransfer)) {
+           alert('Insufficient balance.');
+           return;
+       }
+
+       const txForTokenTransfer = await tokenContract.transfer(recipientAddress, amountInUnitsForTokenTransfer);
+       
+       console.log('Transaction hash:', txForTokenTransfer.hash);
+
+       const txHashLinkForTokenTransfer = currentNetwork === 'Sepolia'
+           ? `https://sepolia.etherscan.io/tx/${txForTokenTransfer.hash}`
+           : `https://explorer-testnet.soneium.org/tx/${txForTokenTransfer.hash}`;
+
+       // Show transaction status element for token transfer
+       txStatus.classList.add('show');
+       
+       txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLinkForTokenTransfer}" target="_blank">${txForTokenTransfer.hash}</a>. Waiting for confirmation... <span class="loading">⏳</span>`;
+
+       // Start polling for confirmation for token transfer
+       const intervalForTokenTransfer = setInterval(async () => {
+           const receiptForTokenTransfer = await provider.getTransactionReceipt(txForTokenTransfer.hash);
+
+           if (receiptForTokenTransfer && receiptForTokenTransfer.status !== null) {
+               clearInterval(intervalForTokenTransfer);
+               txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLinkForTokenTransfer}" target="_blank">${txForTokenTransfer.hash}</a>.`;
+           }
+       }, 100);
+   } catch (error) {
+       console.error('Token transfer failed:', error);
+       txStatus.innerText = `Error: ${error.message}`;
+   }
 });
-
 
 
 

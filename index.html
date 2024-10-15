@@ -179,14 +179,9 @@ button#sendTransactionBtn:hover {
         background-color: #0056b3; /* Hover color */
     }
 
-   /* Add margin to ensure input field doesn't overlap */
-input#amountToSend {
-    margin-bottom: 10px; /* Space between input and buttons */
-}
-
 /* Input field styling */
 input {
-    width: calc(100% - 20px); /* Adjust width to fit within padding */
+    width: calc(100% - 110px); /* Adjust width to leave space for the button */
     padding: 12px;
     margin: 10px 0;
     border-radius: 8px; /* Softer rounded corners */
@@ -218,6 +213,37 @@ input::placeholder {
     font-style: italic;
 }
 
+/* Parent container for positioning */
+.button-container {
+    position: relative; /* Set the parent as relative */
+    width: calc(100% - 20px); /* Adjust width to fit within padding */
+    margin-top: 10px; /* Space above the container */
+}
+
+#maxButton {
+    position: absolute; 
+    background-color: #4CAF50; 
+    color: white; 
+    border: none; 
+    padding: 12px 20px; /* Match vertical padding with input field */
+    font-size: 16px; 
+    cursor: pointer; 
+    border-radius: 8px; 
+
+    right: 55px; /* Move it left from the right edge */
+    top: 10px;   
+    
+    height: calc(100% - 20px); /* Adjust height to match input field (considering margins) */
+}
+
+/* Hover and active states for Max button */
+#maxButton:hover {
+    background-color: #45a049; 
+}
+
+#maxButton:active {
+    transform: scale(0.95); 
+}
 #txStatus {
     display: none; /* Hide by default */
     margin-top: 20px;
@@ -509,14 +535,15 @@ progress:hover::-moz-progress-bar {
 
 <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
 
+<div class="button-container">
+    <input type="number" id="amountToSend" placeholder="Amount to Send ">
+    <button id="maxButton">Max</button>
+</div>
+<button id="sendTransactionBtn" class="hidden">
+    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/eth%20logo.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+    Send
+</button>
 
-            <input type="number" id="amountToSend" placeholder="Amount to Send ">
-            <button id="sendTransactionBtn" class="hidden">
-                <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/eth%20logo.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-                Send
-            </button>
-
-        
 <button id="sendSceTokenBtn">
     <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/usdt%20logo.png" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
     Send 
@@ -1031,6 +1058,29 @@ fetchMaxBuyLimits();
 
 // Polling for updates every 10 seconds (10000 milliseconds)
 setInterval(fetchMaxBuyLimits, 10000);
+
+// New function to set max amount
+async function setMaxAmount() {
+    const userWalletAddress = await signer.getAddress(); // Get user's wallet address
+    const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+
+    // Check max buy limit
+    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
+
+    // Allow for an additional $0.02 over the max buy limit
+    const adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.0;
+
+    // Set the amount to send input field
+    document.getElementById('amountToSend').value = adjustedEffectiveMaxBuyLimit.toFixed(2); // Adjust precision as needed
+}
+
+// Add event listener for the Max button
+document.getElementById('maxButton').addEventListener('click', async function() {
+    await setMaxAmount();
+});
+
+
 
 // Send Transaction on Minato blockchain
 sendTransactionBtn.addEventListener('click', async () => {

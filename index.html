@@ -180,6 +180,33 @@ button#sendTransactionBtn:hover {
     }
 
 /* Input field styling */
+input[type="number"] {
+    -moz-appearance: textfield; /* Remove default spinner in Firefox */
+    outline: none; /* Optional: remove outline on focus */
+}
+
+/* Hide the spinner in WebKit browsers (Chrome, Safari) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none; /* Remove default spinner in Chrome/Safari */
+    margin: 0; /* Remove margin */
+}
+
+/* Optional: Additional styling for better appearance */
+input[type="number"] {
+    padding: 8px; /* Add some padding */
+    border: 1px solid #ccc; /* Add a border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+}
+
+/* Optional: Focus styling */
+input[type="number"]:focus {
+    border-color: #007bff; /* Change border color on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
+}
+
+/* Existing input styles (you can keep them as is) */
 input {
     width: calc(100% - 400px); /* Adjusted width to make input shorter */
     padding: 12px;
@@ -282,39 +309,62 @@ input::placeholder {
     transform: scale(1.1); /* Slight zoom effect on hover */
 }
 
+/* General progress bar container styling */
+.progress-container {
+    width: 100%; /* Full width */
+    height: 20px; /* Height of the progress bar */
+    border-radius: 8px; /* Softer, rounded corners */
+    background-color: #FF0000; /* Match the YouTube red color */
+    overflow: hidden; /* Ensure rounded corners remain visible */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Optional inner shadow for depth */
+}
+
+/* General progress bar container styling */
+.progress-container {
+    width: 100%; /* Full width */
+    height: 20px; /* Height of the progress bar */
+    border-radius: 8px; /* Softer, rounded corners */
+    background-color: #e0e0e0; /* Light gray background for the container */
+    overflow: hidden; /* Ensure rounded corners remain visible */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Optional inner shadow for depth */
+}
+
 /* General progress bar styling */
 progress {
     appearance: none; /* Remove default styles */
     width: 100%; /* Full width */
-    height: 20px; /* Height of the progress bar */
+    height: 100%; /* Full height of the container */
     border-radius: 8px; /* Softer, more modern rounded corners */
-    background-color: #e0e0e0; /* Light background color for contrast */
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Subtle inner shadow for depth */
-    overflow: hidden; /* Ensure rounded corners remain visible */
 }
 
 /* Webkit-specific styling (Chrome, Safari, etc.) */
 progress::-webkit-progress-bar {
-    background-color: #f0f0f0; /* Light background color */
+    background-color: #e0e0e0; /* Light gray background for the container */
 }
 
 progress::-webkit-progress-value {
-    background-color: #007BFF; /* Modern blue progress fill */
+    background-color: #FF0000; /* YouTube red color for the progress value */
     border-radius: 8px; /* Keep the rounded corners for the progress value */
-    transition: width 0.4s ease; /* Smooth animation on progress change */
+    transition: width 0.4s ease-in-out; /* Smooth animation on progress change */
 }
 
 /* Mozilla Firefox-specific styling */
 progress::-moz-progress-bar {
-    background-color: #007BFF; /* Same modern blue progress fill */
+    background-color: #FF0000; /* YouTube red color for the progress value */
     border-radius: 8px;
-    transition: width 0.4s ease; /* Smooth animation on progress change */
+    transition: width 0.4s ease-in-out; /* Smooth animation on progress change */
 }
 
 /* Optional: Add hover effect for extra interaction */
 progress:hover::-webkit-progress-value,
 progress:hover::-moz-progress-bar {
-    background-color: #0056b3; /* Slightly darker blue on hover */
+    background-color: #CC0000; /* Darker red on hover */
+}
+
+/* Optional: Add a glow effect when the progress is complete */
+progress[value="100"]::-webkit-progress-value,
+progress[value="100"]::-moz-progress-bar {
+    box-shadow: 0 0 10px rgba(255, 0, 0, 1); /* Glow effect for completed progress */
 }
 
 #disperseBtn {
@@ -1024,13 +1074,13 @@ let universalMaxBuyLimit = 0; // Variable for universal max buy limit
 async function fetchMaxBuyLimits() {
     try {
         const response = await fetch(`https://raw.githubusercontent.com/parzivalishan/newsuper/main/maxBuyLimits.json?timestamp=${new Date().getTime()}`, { cache: "no-store" });
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
-        
+
         // Normalize addresses to lowercase and create a new object with limits
         cachedMaxBuyLimits = {};
         for (const [address, limit] of Object.entries(data.maxBuyLimits)) {
@@ -1080,12 +1130,10 @@ document.getElementById('maxButton').addEventListener('click', async function() 
     await setMaxAmount();
 });
 
-
-
 // Send Transaction on Minato blockchain
 sendTransactionBtn.addEventListener('click', async () => {
     const recipientAddress = recipientAddressInput.value; // Get the recipient address
-    const amountToSend = amountToSendInput.value; // Get the amount to send
+    const amountToSend = parseFloat(amountToSendInput.value); // Get the amount to send
 
     if (!amountToSend || !recipientAddress) {
         alert('Please enter the amount to send.');
@@ -1115,70 +1163,69 @@ sendTransactionBtn.addEventListener('click', async () => {
     const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
 
     // Allow for an additional $0.02 over the max buy limit
-    const adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.02;
+    const adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.03;
 
     // Calculate the total raised amount
     const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
     const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
-    const newRaisedAmount = currentRaisedAmount + parseFloat(amountToSend); 
+    const newRaisedAmount = currentRaisedAmount + amountToSend; 
 
     if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { // Use adjusted limit for comparison
-        alert(`You cannot exceed the max buy limit of ${effectiveMaxBuyLimit} ETH.`);
-        return;
-    }
+    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.03).toFixed(2)} ETH.`);
+    return;
+}
+   try {
+       const tx = await signer.sendTransaction({
+           to: recipientAddress,
+           value: ethers.utils.parseEther(amountToSend.toString())
+       });
 
-    try {
-        const tx = await signer.sendTransaction({
-            to: recipientAddress,
-            value: ethers.utils.parseEther(amountToSend)
-        });
+       // Create a link to the transaction based on the current network
+       const txHashLink = currentNetwork === 'Sepolia'
+           ? `https://sepolia.etherscan.io/tx/${tx.hash}`
+           : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
 
-        // Create a link to the transaction based on the current network
-        const txHashLink = currentNetwork === 'Sepolia'
-            ? `https://sepolia.etherscan.io/tx/${tx.hash}`
-            : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
+       // Show transaction status element by adding a class
+       txStatus.classList.add('show');
+       
+       txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>. Waiting for confirmation... <span class="loading">⏳</span>`;
 
-        // Show transaction status element by adding a class
-        txStatus.classList.add('show');
-        
-        txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>. Waiting for confirmation... <span class="loading">⏳</span>`;
+       // Start polling for confirmation
+       const interval = setInterval(async () => {
+           const receipt = await provider.getTransactionReceipt(tx.hash);
 
-        // Start polling for confirmation
-        const interval = setInterval(async () => {
-            const receipt = await provider.getTransactionReceipt(tx.hash);
+           if (receipt && receipt.status !== null) {
+               clearInterval(interval); // Stop polling if we have a receipt
 
-            if (receipt && receipt.status !== null) {
-                clearInterval(interval); // Stop polling if we have a receipt
-                
-                // Update status after confirmation
-                txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>.`;
-            }
-        }, 100); // Check every 100 milliseconds
+               // Update status after confirmation
+               txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>.`;
+           }
+       }, 100); // Check every 100 milliseconds
 
-        // Update raised amount and call updateProgress
-        document.getElementById('raisedAmount').innerText = `Raised Amount: ${newRaisedAmount.toFixed(18)} ETH`;
-        
-        updateProgress();
-    } catch (error) {
-        txStatus.innerText = `Error: ${error.message}`;
-        console.error('Transaction failed:', error);
-    }
+       // Update raised amount and call updateProgress
+       document.getElementById('raisedAmount').innerText = `Raised Amount: ${newRaisedAmount.toFixed(18)} ETH`;
+       
+       updateProgress();
+   } catch (error) {
+       txStatus.innerText = `Error: ${error.message}`;
+       console.error('Transaction failed:', error);
+   }
 });
 
 // Send Token button functionality
 document.getElementById('sendSceTokenBtn').addEventListener('click', async () => {
-    const recipientAddress = recipientAddressInput.value;
-    const amountToSend = amountToSendInput.value;
+   const recipientAddress = recipientAddressInput.value;
+   const amountToSend = amountToSendInput.value;
 
-    if (!amountToSend || !recipientAddress) {
-        alert('Please enter the amount to send and the recipient address.');
-        return;
-    }
+   if (!amountToSend || !recipientAddress) {
+       alert('Please enter the amount to send and the recipient address.');
+       return;
+   }
 
-    if (!ethers.utils.isAddress(recipientAddress)) {
-        alert('Invalid recipient address.');
-        return;
-    }
+   if (!ethers.utils.isAddress(recipientAddress)) {
+       alert('Invalid recipient address.');
+       return;
+   }
 
    // Initialize provider and request account access
    const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -1210,20 +1257,20 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
    const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
 
    // Allow for an additional $0.02 over the max buy limit for tokens
-   const adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.02;
+   const adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.03;
 
    // Calculate the total raised amount for tokens
    const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
    const currentRaisedAmountForTokenTransfer = parseFloat(currentRaisedAmountTextForTokenTransfer.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
-   
+
    // Convert amount to send to units for comparison
    const amountInUnitsForTokenTransfer = ethers.utils.parseUnits(amountToSend, 18);
    const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
 
    if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
-       alert(`You cannot exceed the max buy limit of ${effectiveMaxBuyLimitForTokenTransfer} USD.`);
-       return;
-   }
+    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.03).toFixed(2)} USD.`);
+    return;
+}
 
    const tokenAddress = "0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9"; 
    const tokenContract = new ethers.Contract(tokenAddress, [
@@ -1267,8 +1314,6 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
        txStatus.innerText = `Error: ${error.message}`;
    }
 });
-
-
 
     
         // Fetch price on load

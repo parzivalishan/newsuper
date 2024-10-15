@@ -181,7 +181,7 @@ button#sendTransactionBtn:hover {
 
 /* Input field styling */
 input {
-    width: calc(100% - 110px); /* Adjust width to leave space for the button */
+    width: calc(100% - 400px); /* Adjusted width to make input shorter */
     padding: 12px;
     margin: 10px 0;
     border-radius: 8px; /* Softer rounded corners */
@@ -230,7 +230,7 @@ input::placeholder {
     cursor: pointer; 
     border-radius: 8px; 
 
-    right: 55px; /* Move it left from the right edge */
+    right: 130px; /* Move it left from the right edge */
     top: 10px;   
     
     height: calc(100% - 20px); /* Adjust height to match input field (considering margins) */
@@ -570,7 +570,7 @@ progress:hover::-moz-progress-bar {
         const MINATO_CHAIN_ID = 1946;
         const SEPOLIA_CHAIN_ID = 11155111; // Sepolia Chain ID
         const MINATO_SYMBOL = 'ETH';
-        const MAX_SALE_AMOUNT = 100; // Set your fixed maximum sale amount here
+        const MAX_SALE_AMOUNT = 0.1; // Set your fixed maximum sale amount here
 
 
 // Function to update progress based on raised amount

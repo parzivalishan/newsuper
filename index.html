@@ -620,7 +620,7 @@ progress[value="100"]::-moz-progress-bar {
         const MINATO_CHAIN_ID = 1946;
         const SEPOLIA_CHAIN_ID = 11155111; // Sepolia Chain ID
         const MINATO_SYMBOL = 'ETH';
-        const MAX_SALE_AMOUNT = 0.1; // Set your fixed maximum sale amount here
+        const MAX_SALE_AMOUNT = 0.2; // Set your fixed maximum sale amount here
 
 
 // Function to update progress based on raised amount
@@ -1163,7 +1163,7 @@ sendTransactionBtn.addEventListener('click', async () => {
     const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
 
     // Allow for an additional $0.02 over the max buy limit
-    const adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.03;
+    const adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.2;
 
     // Calculate the total raised amount
     const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
@@ -1171,7 +1171,7 @@ sendTransactionBtn.addEventListener('click', async () => {
     const newRaisedAmount = currentRaisedAmount + amountToSend; 
 
     if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { // Use adjusted limit for comparison
-    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.03).toFixed(2)} ETH.`);
+    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.2).toFixed(2)} ETH.`);
     return;
 }
    try {
@@ -1257,7 +1257,7 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
    const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
 
    // Allow for an additional $0.02 over the max buy limit for tokens
-   const adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.03;
+   const adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.2;
 
    // Calculate the total raised amount for tokens
    const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
@@ -1268,7 +1268,7 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
    const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
 
    if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
-    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.03).toFixed(2)} USD.`);
+    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.2).toFixed(2)} USD.`);
     return;
 }
 

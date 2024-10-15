@@ -679,7 +679,7 @@ async function updateRaisedAmountAndProgress() {
     const raisedAmount = parseFloat(targetAddressBalance) || 0; 
     const percentage = (raisedAmount / MAX_SALE_AMOUNT) * 100; // Calculate percentage
     progressScale.value = percentage; // Update progress bar
-    progressPercentage.innerText = `${percentage.toFixed(2)}%`; // Update percentage text
+    progressPercentage.innerText = `${percentage.toFixed(4)}%`; // Update percentage text
 
     // Fetch the current ETH price
     const ethPrice = await fetchETHPrice();

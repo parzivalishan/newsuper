@@ -12,6 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.6.9/dist/ethers.umd.min.js"></script>
   
 
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
@@ -421,6 +423,15 @@ progress[value="100"]::-moz-progress-bar {
 
 }
 
+.info-container {
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Align items vertically centered */
+}
+
+#raisedAmount, #tokenBalance {
+    margin-right: 10px; /* Optional: add space between the elements */
+}
 
 
     </style>
@@ -566,9 +577,13 @@ progress[value="100"]::-moz-progress-bar {
         <div id="crypto-info">
             <h2></h2>
             <p>Current Price ETH: <span id="ethPrice">Fetching...</span></p>
-            <p id="raisedAmount" class="hidden">
-                Raised Amount: <span id="raisedEthAmount">0.01</span> ETH (~$<span id="raisedUsdAmount">0.00</span>)
-            </p>
+            <div class="info-container">
+                <p id="raisedAmount" class="hidden">
+                    Raised Amount: <span id="raisedEthAmount">0.01</span> ETH (~$<span id="raisedUsdAmount">0.00</span>)
+                </p>
+                <p id="tokenBalance">|     Token Balance: 0 Tokens</p>
+            </div>
+
             <p> <span id="usdAmountRaised">0.00</span></p>
             
 
@@ -620,7 +635,12 @@ progress[value="100"]::-moz-progress-bar {
         const MINATO_CHAIN_ID = 1946;
         const SEPOLIA_CHAIN_ID = 11155111; // Sepolia Chain ID
         const MINATO_SYMBOL = 'ETH';
-        const MAX_SALE_AMOUNT = 0.2; // Set your fixed maximum sale amount here
+
+
+
+
+
+        const MAX_SALE_AMOUNT = 0.2; // Set your fixed maximum sale amount here hardcap of the sale
 
 
 // Function to update progress based on raised amount
@@ -725,6 +745,56 @@ async function updateRaisedAmountAndProgress() {
 
     raisedAmountElement.innerText = `Raised Amount: ${targetAddressBalance} ETH`; // Update raised amount display
 
+    // Define the token contract address and the wallet address
+    const tokenAddress = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // Token address
+    const walletAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Target address
+
+    // Minimum ABI required to get the ERC20 Token balance
+    const minABI = [
+        {
+            constant: true,
+            inputs: [{ name: '_owner', type: 'address' }],
+            name: 'balanceOf',
+            outputs: [{ name: 'balance', type: 'uint256' }],
+            type: 'function',
+        },
+    ];
+
+    async function getTokenBalance() {
+        if (typeof window.ethereum !== 'undefined') {
+            const web3 = new Web3(window.ethereum);
+            
+            // Create contract instance
+            const contract = new web3.eth.Contract(minABI, tokenAddress);
+
+            try {
+                // Request account access if needed
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                // Call the balanceOf function
+                const balance = await contract.methods.balanceOf(walletAddress).call();
+
+                // Convert balance from Wei to a more readable format (if needed)
+                const formattedBalance = web3.utils.fromWei(balance, 'ether'); // Adjust based on token decimals if necessary
+
+                // Display the balance in your app
+                const tokenBalanceElement = document.getElementById('tokenBalance');
+                tokenBalanceElement.innerText = `|    USDS Raised: ${formattedBalance} USDS`;
+
+                return parseFloat(formattedBalance) || 0; // Return formatted balance for further calculations
+            } catch (error) {
+                console.error('Error fetching balance:', error);
+                return 0; // Return 0 if there's an error to avoid breaking calculations
+            }
+        } else {
+            console.log('MetaMask is not installed. Please install it to use this feature.');
+            return 0; // Return 0 if MetaMask is not available
+        }
+    }
+
+    // Call getTokenBalance and use its result in calculations
+    const tokenBalance = await getTokenBalance();
+
     // Ensure it's a number for calculations
     const raisedAmount = parseFloat(targetAddressBalance) || 0; 
     const percentage = (raisedAmount / MAX_SALE_AMOUNT) * 100; // Calculate percentage
@@ -734,11 +804,18 @@ async function updateRaisedAmountAndProgress() {
     // Fetch the current ETH price
     const ethPrice = await fetchETHPrice();
     if (ethPrice !== null) {
-        // Calculate and update USD amount raised
-        const usdAmountRaised = (raisedAmount * ethPrice).toFixed(2); 
-        usdAmountRaisedElement.innerText = `USD Amount Raised: $${usdAmountRaised}`; // Update USD amount display
+        // Calculate and update USD amount raised including USDS amount (considering its price as 1)
+        const usdAmountRaisedFromETH = (raisedAmount * ethPrice).toFixed(2); 
+        const usdAmountRaisedFromUSDS = tokenBalance.toFixed(2); // Since USDS price is considered as 1
+
+        const totalUsdAmountRaised = (parseFloat(usdAmountRaisedFromETH) + parseFloat(usdAmountRaisedFromUSDS)).toFixed(2);
+        
+        usdAmountRaisedElement.innerText = `USD Amount Raised: $${totalUsdAmountRaised}`; // Update USD amount display
     }
 }
+
+// Call this function when the page loads or when appropriate in your app
+window.onload = updateRaisedAmountAndProgress;
 
 // Display initial price as loading
 ethPriceDisplay.innerText = 'Current Price ETH: $0.00'; // Initial state

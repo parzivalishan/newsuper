@@ -833,7 +833,7 @@ async function updateRaisedAmountAndProgress() {
        usdAmountRaisedElement.innerText = `USD Amount Raised: $${totalUsdAmountRaised}`; // Update USD amount display
 
        // Calculate percentage raised after determining total USD amount raised
-       const hardCap = 5000; // Set your desired hard cap here
+       const hardCap = 10000; // Set your desired hard cap here hardcap
        const percentageRaised = (parseFloat(totalUsdAmountRaised) / hardCap) * 100;
 
        // Update percentage display
@@ -1258,7 +1258,7 @@ async function setMaxAmount() {
     const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
 
     // Calculate remaining amount based on hard cap (assuming hard cap is defined)
-    const hardCap = 5000; // Set your desired hard cap here
+    const hardCap = 10000; // Set your desired hard cap here hardcap
     const remainingAmountValue = hardCap - totalUsdAmountRaised;
 
     // If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
@@ -1325,7 +1325,7 @@ sendTransactionBtn.addEventListener('click', async () => {
     const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
    
     // Calculate remaining amount based on hard cap (assuming hard cap is defined)
-    const hardCap = 5000; // Set your desired hard cap here
+    const hardCap = 10000; // Set your desired hard cap here hardcap
     const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
     const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
     
@@ -1452,7 +1452,7 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
     const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
 
     // Calculate remaining amount based on hard cap (assuming hard cap is defined)
-    const hardCap = 5000; // Set your desired hard cap here
+    const hardCap = 10000; // Set your desired hard cap here
     const remainingAmountValue = hardCap - totalUsdAmountRaised;
 
     console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);

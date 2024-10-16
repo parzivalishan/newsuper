@@ -311,18 +311,26 @@ input::placeholder {
     transform: scale(1.1); /* Slight zoom effect on hover */
 }
 
-/* General progress bar container styling */
-.progress-container {
-    width: 100%; /* Full width */
-    height: 20px; /* Height of the progress bar */
-    border-radius: 8px; /* Softer, rounded corners */
-    background-color: #FF0000; /* Match the YouTube red color */
-    overflow: hidden; /* Ensure rounded corners remain visible */
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Optional inner shadow for depth */
+
+
+
+
+
+
+
+
+
+
+
+/* Hide original progress elements */
+#progressLabel,
+#progressPercentage,
+.progress-container-original {
+    display: none; /* Hide these elements */
 }
 
-/* General progress bar container styling */
-.progress-container {
+/* General progress bar container styling for the original progress bar */
+.progress-container-original {
     width: 100%; /* Full width */
     height: 20px; /* Height of the progress bar */
     border-radius: 8px; /* Softer, rounded corners */
@@ -331,43 +339,54 @@ input::placeholder {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Optional inner shadow for depth */
 }
 
-/* General progress bar styling */
-progress {
+/* New progress bar container styling for progressBar2 */
+.progress-container-2 {
+    width: 100%; /* Full width */
+    height: 20px; /* Height of the progress bar */
+    border-radius: 8px; /* Softer, rounded corners */
+    background-color: #e0e0e0; /* Light gray background for the container */
+    overflow: hidden; /* Ensure rounded corners remain visible */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Optional inner shadow for depth */
+}
+
+/* General progress bar styling for progressBar2 */
+#progressBar2 {
     appearance: none; /* Remove default styles */
     width: 100%; /* Full width */
     height: 100%; /* Full height of the container */
     border-radius: 8px; /* Softer, more modern rounded corners */
 }
 
-/* Webkit-specific styling (Chrome, Safari, etc.) */
-progress::-webkit-progress-bar {
+/* Webkit-specific styling (Chrome, Safari, etc.) for progressBar2 */
+#progressBar2::-webkit-progress-bar {
     background-color: #e0e0e0; /* Light gray background for the container */
 }
 
-progress::-webkit-progress-value {
+#progressBar2::-webkit-progress-value {
     background-color: #FF0000; /* YouTube red color for the progress value */
     border-radius: 8px; /* Keep the rounded corners for the progress value */
     transition: width 0.4s ease-in-out; /* Smooth animation on progress change */
 }
 
-/* Mozilla Firefox-specific styling */
-progress::-moz-progress-bar {
+/* Mozilla Firefox-specific styling for progressBar2 */
+#progressBar2::-moz-progress-bar {
     background-color: #FF0000; /* YouTube red color for the progress value */
     border-radius: 8px;
     transition: width 0.4s ease-in-out; /* Smooth animation on progress change */
 }
 
-/* Optional: Add hover effect for extra interaction */
-progress:hover::-webkit-progress-value,
-progress:hover::-moz-progress-bar {
+/* Optional: Add hover effect for extra interaction on progressBar2 */
+#progressBar2:hover::-webkit-progress-value,
+#progressBar2:hover::-moz-progress-bar {
     background-color: #CC0000; /* Darker red on hover */
 }
 
-/* Optional: Add a glow effect when the progress is complete */
-progress[value="100"]::-webkit-progress-value,
-progress[value="100"]::-moz-progress-bar {
+/* Optional: Add a glow effect when the progress is complete on progressBar2 */
+#progressBar2[value="100"]::-webkit-progress-value,
+#progressBar2[value="100"]::-moz-progress-bar {
     box-shadow: 0 0 10px rgba(255, 0, 0, 1); /* Glow effect for completed progress */
 }
+
 
 #disperseBtn {
     padding: 10px 20px;
@@ -585,17 +604,21 @@ progress[value="100"]::-moz-progress-bar {
             </div>
 
             <p> <span id="usdAmountRaised">0.00</span></p>
+
+            <p>Percentage Raised: <span id="percentageRaised">0%</span></p>
+            <div class="progress-container-2">
+                <progress id="progressBar2" value="0" max="100"></progress>
+            </div>
             
-
             <div id="result"></div>
-<div id="debug"></div>
-<div id="loading" class="loader" style="display: none;"></div>
-
-<label for="progressScale" id="progressLabel">Sale Progress:</label>
-<span id="progressPercentage">0%</span>
-<div class="progress-container">
-    <progress id="progressScale" value="0" max="100"></progress>
-</div>
+            <div id="debug"></div>
+            <div id="loading" class="loader" style="display: none;"></div>
+            
+            <label for="progressScale" id="progressLabel">Sale Progress:</label>
+            <span id="progressPercentage">0%</span>
+            <div class="progress-container-original">
+                <progress id="progressScale" value="0" max="100"></progress>
+            </div>
 
 
 <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
@@ -797,25 +820,46 @@ async function updateRaisedAmountAndProgress() {
 
     // Ensure it's a number for calculations
     const raisedAmount = parseFloat(targetAddressBalance) || 0; 
-    const percentage = (raisedAmount / MAX_SALE_AMOUNT) * 100; // Calculate percentage
-    progressScale.value = percentage; // Update progress bar
-    progressPercentage.innerText = `${percentage.toFixed(4)}%`; // Update percentage text
+   
+   // Fetch the current ETH price
+   const ethPrice = await fetchETHPrice();
+   if (ethPrice !== null) {
+       // Calculate and update USD amount raised including USDS amount (considering its price as 1)
+       const usdAmountRaisedFromETH = (raisedAmount * ethPrice).toFixed(2); 
+       const usdAmountRaisedFromUSDS = tokenBalance.toFixed(2); // Since USDS price is considered as 1
 
-    // Fetch the current ETH price
-    const ethPrice = await fetchETHPrice();
-    if (ethPrice !== null) {
-        // Calculate and update USD amount raised including USDS amount (considering its price as 1)
-        const usdAmountRaisedFromETH = (raisedAmount * ethPrice).toFixed(2); 
-        const usdAmountRaisedFromUSDS = tokenBalance.toFixed(2); // Since USDS price is considered as 1
+       const totalUsdAmountRaised = (parseFloat(usdAmountRaisedFromETH) + parseFloat(usdAmountRaisedFromUSDS)).toFixed(2);
+       
+       usdAmountRaisedElement.innerText = `USD Amount Raised: $${totalUsdAmountRaised}`; // Update USD amount display
 
-        const totalUsdAmountRaised = (parseFloat(usdAmountRaisedFromETH) + parseFloat(usdAmountRaisedFromUSDS)).toFixed(2);
-        
-        usdAmountRaisedElement.innerText = `USD Amount Raised: $${totalUsdAmountRaised}`; // Update USD amount display
-    }
+       // Calculate percentage raised after determining total USD amount raised
+       const hardCap = 5000; // Set your desired hard cap here
+       const percentageRaised = (parseFloat(totalUsdAmountRaised) / hardCap) * 100;
+
+       // Update percentage display
+       const percentageRaisedElement = document.getElementById("percentageRaised");
+       percentageRaisedElement.innerText = `${percentageRaised.toFixed(2)}%`; 
+
+       // Update progress bar value for progressBar2
+       const progressBar2 = document.getElementById("progressBar2");
+       progressBar2.value = percentageRaised; // Set the value of progressBar2
+   }
 }
 
 // Call this function when the page loads or when appropriate in your app
 window.onload = updateRaisedAmountAndProgress;
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Display initial price as loading
 ethPriceDisplay.innerText = 'Current Price ETH: $0.00'; // Initial state

@@ -990,8 +990,8 @@ async function checkNetwork() {
     
 
 
-// Connect MetaMask wallet
-document.getElementById('connectWalletBtn').addEventListener('click', async () => {
+// Function to connect MetaMask wallet
+async function connectWallet() {
     try {
         console.log("Requesting MetaMask connection...");
         provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -1038,9 +1038,7 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
                 await updateBalance(walletAddress);
             } else {
                 // Reset the UI if no accounts are connected
-                document.getElementById('connectWalletBtn').innerText = 'Connect Wallet';
-                walletAddressDiv.textContent = '';
-                userBalanceDiv.textContent = '';
+                resetUI();
             }
         });
 
@@ -1055,11 +1053,22 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
 
         sendTransactionBtn.classList.remove('hidden');
         walletStatus.classList.add('hidden');
+
+        // Store connection state in localStorage
+        localStorage.setItem('walletConnected', 'true');
     } catch (error) {
         console.error("Connection Error:", error);
         alert('Failed to connect wallet. Please try again.');
     }
-});
+}
+
+// Check if wallet was previously connected on page load
+window.onload = async () => {
+    const isConnected = localStorage.getItem('walletConnected');
+    if (isConnected === 'true') {
+        await connectWallet();
+    }
+};
 
 // Request to switch network function
 async function switchNetwork(chainId) {
@@ -1081,6 +1090,16 @@ async function switchNetwork(chainId) {
         console.error(`Failed to switch to network ${chainId}:`, error);
     }
 }
+
+// Reset UI function
+function resetUI() {
+    document.getElementById('connectWalletBtn').innerText = 'Connect Wallet';
+    walletAddressDiv.textContent = '';
+    userBalanceDiv.textContent = '';
+}
+
+// Connect button event listener
+document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
 
 // Function to fetch and display ETH balance
 async function updateBalance(walletAddress) {
@@ -1327,12 +1346,69 @@ sendTransactionBtn.addEventListener('click', async () => {
     const signer = provider.getSigner();
 
     // Check network before sending
-    const networkMatches = await checkNetwork(); 
-    if (!networkMatches) {
-        alert('Please switch to the correct network.');
-        return;
-    }
+const networkMatches = await checkNetwork(); 
+if (!networkMatches) {
+    // Show custom UI prompt instead of alert
+    showSwitchNetworkPrompt();
+    return; // Exit early
+}
 
+// Function to show custom prompt for switching networks
+function showSwitchNetworkPrompt() {
+    const userConfirmed = confirm('You are not connected to the correct network. Would you like to switch to Minato?');
+    if (userConfirmed) {
+        switchNetwork(MINATO_CHAIN_ID);
+    } else {
+        alert('Please switch to Minato manually in your MetaMask.');
+    }
+}
+
+// Function to check network
+async function checkNetwork() {
+    const currentChainId = await provider.getNetwork().then(network => network.chainId);
+    return currentChainId === MINATO_CHAIN_ID; // Check if current network matches Minato
+}
+
+// Request to switch network function
+async function switchNetwork(chainId) {
+    try {
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: `0x${chainId.toString(16)}` }],
+        });
+    } catch (error) {
+        // Handle errors, such as if the chain has not been added yet
+        if (error.code === 4902) {
+            // If the chain is not added, add it using wallet_addEthereumChain
+            await addNetwork(chainId);
+        } else {
+            console.error(`Failed to switch to network ${chainId}:`, error);
+            alert('Failed to switch networks. Please try switching manually in MetaMask.');
+        }
+    }
+}
+
+// Function to add a new network if it doesn't exist
+async function addNetwork(chainId) {
+    try {
+        await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+                chainId: `0x${chainId.toString(16)}`,
+                chainName: "Minato",
+                nativeCurrency: {
+                    name: "Minato",
+                    symbol: "ETH",
+                    decimals: 18,
+                },
+                rpcUrls: [MINATO_RPC_URL],
+            }],
+        });
+    } catch (error) {
+        console.error(`Failed to add network ${chainId}:`, error);
+        alert('Failed to add the new network. Please check your MetaMask settings.');
+    }
+}
     // Get user's wallet address
     const userWalletAddress = await signer.getAddress();
     const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
@@ -1445,11 +1521,69 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
     const signer = provider.getSigner();
 
     // Check network before sending
-    const networkMatches = await checkNetwork(); 
-    if (!networkMatches) {
-        alert('Please switch to the correct network.');
-        return;
+const networkMatches = await checkNetwork(); 
+if (!networkMatches) {
+    // Show custom UI prompt instead of alert
+    showSwitchNetworkPrompt();
+    return; // Exit early
+}
+
+// Function to show custom prompt for switching networks
+function showSwitchNetworkPrompt() {
+    const userConfirmed = confirm('You are not connected to the correct network. Would you like to switch to Minato?');
+    if (userConfirmed) {
+        switchNetwork(MINATO_CHAIN_ID);
+    } else {
+        alert('Please switch to Minato manually in your MetaMask.');
     }
+}
+
+// Function to check network
+async function checkNetwork() {
+    const currentChainId = await provider.getNetwork().then(network => network.chainId);
+    return currentChainId === MINATO_CHAIN_ID; // Check if current network matches Minato
+}
+
+// Request to switch network function
+async function switchNetwork(chainId) {
+    try {
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: `0x${chainId.toString(16)}` }],
+        });
+    } catch (error) {
+        // Handle errors, such as if the chain has not been added yet
+        if (error.code === 4902) {
+            // If the chain is not added, add it using wallet_addEthereumChain
+            await addNetwork(chainId);
+        } else {
+            console.error(`Failed to switch to network ${chainId}:`, error);
+            alert('Failed to switch networks. Please try switching manually in MetaMask.');
+        }
+    }
+}
+
+// Function to add a new network if it doesn't exist
+async function addNetwork(chainId) {
+    try {
+        await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+                chainId: `0x${chainId.toString(16)}`,
+                chainName: "Minato",
+                nativeCurrency: {
+                    name: "Minato",
+                    symbol: "ETH",
+                    decimals: 18,
+                },
+                rpcUrls: [MINATO_RPC_URL],
+            }],
+        });
+    } catch (error) {
+        console.error(`Failed to add network ${chainId}:`, error);
+        alert('Failed to add the new network. Please check your MetaMask settings.');
+    }
+}
 
     // Get user's wallet address
     const userWalletAddress = await signer.getAddress();

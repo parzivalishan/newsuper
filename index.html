@@ -843,12 +843,23 @@ async function updateRaisedAmountAndProgress() {
        // Update progress bar value for progressBar2
        const progressBar2 = document.getElementById("progressBar2");
        progressBar2.value = percentageRaised; // Set the value of progressBar2
+
+       // Call remaining amount calculation and display
+       remainingAmount(totalUsdAmountRaised, hardCap);
    }
+}
+
+// Function to calculate and display remaining amount to reach hard cap
+function remainingAmount(totalUsdAmountRaised, hardCap) {
+    const remaining = hardCap - totalUsdAmountRaised;
+
+    // Display remaining amount
+    const remainingAmountElement = document.getElementById('remainingAmount'); // Ensure you have an element for this
+    remainingAmountElement.innerText = `Remaining Amount to Fill Hard Cap: $${remaining.toFixed(2)}`;
 }
 
 // Call this function when the page loads or when appropriate in your app
 window.onload = updateRaisedAmountAndProgress;
-
 
 
 
@@ -1240,7 +1251,20 @@ async function setMaxAmount() {
     const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
 
     // Allow for an additional $0.02 over the max buy limit
-    const adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.0;
+    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.0;
+
+    // Fetch total USD amount raised from your existing logic (ensure this is defined and accessible)
+    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+
+    // Calculate remaining amount based on hard cap (assuming hard cap is defined)
+    const hardCap = 5000; // Set your desired hard cap here
+    const remainingAmountValue = hardCap - totalUsdAmountRaised;
+
+    // If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
+    if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
+        adjustedEffectiveMaxBuyLimit = remainingAmountValue; // Set it to remaining amount
+    }
 
     // Set the amount to send input field
     document.getElementById('amountToSend').value = adjustedEffectiveMaxBuyLimit.toFixed(2); // Adjust precision as needed
@@ -1257,12 +1281,22 @@ sendTransactionBtn.addEventListener('click', async () => {
     const amountToSend = parseFloat(amountToSendInput.value); // Get the amount to send
 
     if (!amountToSend || !recipientAddress) {
-        alert('Please enter the amount to send.');
+        alert('Please enter the amount to send and the recipient address.');
         return;
     }
 
+    if (!ethers.utils.isAddress(recipientAddress)) {
+        alert('Invalid recipient address.');
+        return;
+    }
+
+    // Initialize provider and request account access
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []); 
+    const signer = provider.getSigner();
+
     // Check network before sending
-    const networkMatches = await checkNetwork();
+    const networkMatches = await checkNetwork(); 
     if (!networkMatches) {
         alert('Please switch to the correct network.');
         return;
@@ -1284,18 +1318,44 @@ sendTransactionBtn.addEventListener('click', async () => {
     const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
 
     // Allow for an additional $0.02 over the max buy limit
-    const adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.2;
+    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.2;
 
     // Calculate the total raised amount
     const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
     const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
-    const newRaisedAmount = currentRaisedAmount + amountToSend; 
+   
+    // Calculate remaining amount based on hard cap (assuming hard cap is defined)
+    const hardCap = 5000; // Set your desired hard cap here
+    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+    
+    // Calculate remaining amount available based on hard cap
+    const remainingAmountValue = hardCap - totalUsdAmountRaised;
 
-    if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { // Use adjusted limit for comparison
-    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.2).toFixed(2)} ETH.`);
-    return;
-}
+    console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
+
+   // Check if input amount exceeds remaining amount
+   if (parseFloat(amountToSend) > remainingAmountValue) { 
+       alert(`You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+       return; // Prevent transaction initiation
+   }
+
+   // If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
+   if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
+       adjustedEffectiveMaxBuyLimit = remainingAmountValue; // Set it to remaining amount
+   }
+
+   // Calculate new raised amount
+   const newRaisedAmount = currentRaisedAmount + amountToSend;
+
+   // Check if new raised amount exceeds adjusted max buy limit and show alert if it does
+   if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
+       alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.2).toFixed(2)} ETH.`);
+       return; // Prevent transaction initiation
+   }
+
    try {
+       console.log('Initiating transfer...');
        const tx = await signer.sendTransaction({
            to: recipientAddress,
            value: ethers.utils.parseEther(amountToSend.toString())
@@ -1328,70 +1388,92 @@ sendTransactionBtn.addEventListener('click', async () => {
        
        updateProgress();
    } catch (error) {
-       txStatus.innerText = `Error: ${error.message}`;
        console.error('Transaction failed:', error);
+       txStatus.innerText = `Error: ${error.message}`;
    }
 });
 
 // Send Token button functionality
 document.getElementById('sendSceTokenBtn').addEventListener('click', async () => {
-   const recipientAddress = recipientAddressInput.value;
-   const amountToSend = amountToSendInput.value;
+    const recipientAddress = recipientAddressInput.value;
+    const amountToSend = amountToSendInput.value;
 
-   if (!amountToSend || !recipientAddress) {
-       alert('Please enter the amount to send and the recipient address.');
-       return;
+    if (!amountToSend || !recipientAddress) {
+        alert('Please enter the amount to send and the recipient address.');
+        return;
+    }
+
+    if (!ethers.utils.isAddress(recipientAddress)) {
+        alert('Invalid recipient address.');
+        return;
+    }
+
+    // Initialize provider and request account access
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []); 
+    const signer = provider.getSigner();
+
+    // Check network before sending
+    const networkMatches = await checkNetwork(); 
+    if (!networkMatches) {
+        alert('Please switch to the correct network.');
+        return;
+    }
+
+    // Get user's wallet address
+    const userWalletAddress = await signer.getAddress();
+    const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+
+    // Check if user is whitelisted
+    const whitelistedForTokenTransfer = await isWhitelisted(userWalletAddress);
+    if (!whitelistedForTokenTransfer) {
+        alert('Your wallet address is not whitelisted.');
+        return;
+    }
+
+    // Check max buy limit for tokens
+    const specificMaxBuyLimitForTokenTransfer = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+    console.log(`Fetched max buy limit for token transfer for address ${normalizedUserWalletAddress}: ${specificMaxBuyLimitForTokenTransfer} ETH`);
+
+    const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
+
+    // Allow for an additional $0.02 over the max buy limit for tokens
+    let adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.2;
+
+    // Calculate the total raised amount for tokens
+    const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
+    const currentRaisedAmountForTokenTransfer = parseFloat(currentRaisedAmountTextForTokenTransfer.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
+
+    // Convert amount to send to units for comparison
+    const amountInUnitsForTokenTransfer = ethers.utils.parseUnits(amountToSend, 18);
+    
+    // Fetch total USD amount raised from your existing logic (ensure this is defined and accessible)
+    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+
+    // Calculate remaining amount based on hard cap (assuming hard cap is defined)
+    const hardCap = 5000; // Set your desired hard cap here
+    const remainingAmountValue = hardCap - totalUsdAmountRaised;
+
+    console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
+
+   // Check if input amount exceeds remaining amount
+   if (parseFloat(amountToSend) > remainingAmountValue) { 
+       alert(`You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+       return; // Prevent transaction initiation
    }
 
-   if (!ethers.utils.isAddress(recipientAddress)) {
-       alert('Invalid recipient address.');
-       return;
+   // If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
+   if (remainingAmountValue < adjustedEffectiveMaxBuyLimitForTokenTransfer) {
+       adjustedEffectiveMaxBuyLimitForTokenTransfer = remainingAmountValue; // Set it to remaining amount
    }
 
-   // Initialize provider and request account access
-   const provider = new ethers.providers.Web3Provider(window.ethereum);
-   await provider.send("eth_requestAccounts", []); 
-   const signer = provider.getSigner();
-
-   // Check network before sending
-   const networkMatches = await checkNetwork(); 
-   if (!networkMatches) {
-       alert('Please switch to the correct network.');
-       return;
-   }
-
-   // Get user's wallet address
-   const userWalletAddress = await signer.getAddress();
-   const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
-
-   // Check if user is whitelisted
-   const whitelistedForTokenTransfer = await isWhitelisted(userWalletAddress);
-   if (!whitelistedForTokenTransfer) {
-       alert('Your wallet address is not whitelisted.');
-       return;
-   }
-
-   // Check max buy limit for tokens
-   const specificMaxBuyLimitForTokenTransfer = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
-   console.log(`Fetched max buy limit for token transfer for address ${normalizedUserWalletAddress}: ${specificMaxBuyLimitForTokenTransfer} ETH`);
-
-   const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
-
-   // Allow for an additional $0.02 over the max buy limit for tokens
-   const adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.2;
-
-   // Calculate the total raised amount for tokens
-   const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
-   const currentRaisedAmountForTokenTransfer = parseFloat(currentRaisedAmountTextForTokenTransfer.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
-
-   // Convert amount to send to units for comparison
-   const amountInUnitsForTokenTransfer = ethers.utils.parseUnits(amountToSend, 18);
+   // Check if new raised amount exceeds adjusted max buy limit
    const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
-
    if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
-    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.2).toFixed(2)} USD.`);
-    return;
-}
+       alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.2).toFixed(2)} USD.`);
+       return; // Prevent transaction initiation
+   }
 
    const tokenAddress = "0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9"; 
    const tokenContract = new ethers.Contract(tokenAddress, [
@@ -1408,6 +1490,7 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
            return;
        }
 
+       // Proceed with the transfer only if all checks are passed
        const txForTokenTransfer = await tokenContract.transfer(recipientAddress, amountInUnitsForTokenTransfer);
        
        console.log('Transaction hash:', txForTokenTransfer.hash);
@@ -1425,7 +1508,7 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
        const intervalForTokenTransfer = setInterval(async () => {
            const receiptForTokenTransfer = await provider.getTransactionReceipt(txForTokenTransfer.hash);
 
-           if (receiptForTokenTransfer && receiptForTokenTransfer.status !== null) {
+           if (receiptForTokenTransfer && receiptForTransaction.status !== null) {
                clearInterval(intervalForTokenTransfer);
                txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLinkForTokenTransfer}" target="_blank">${txForTokenTransfer.hash}</a>.`;
            }

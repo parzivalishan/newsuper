@@ -988,6 +988,8 @@ async function checkNetwork() {
             }
         }
     
+
+
 // Connect MetaMask wallet
 document.getElementById('connectWalletBtn').addEventListener('click', async () => {
     try {
@@ -1003,6 +1005,16 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
         balanceAmount.innerText = "Fetching..."; // Initial loading message
         document.getElementById('connectWalletBtn').innerText = `${accounts.slice(0, 5)}...${accounts.slice(-3)}`; // Update button text
         console.log("MetaMask connected with account:", accounts);
+
+        // Check current network
+        const currentChainId = await provider.getNetwork().then(network => network.chainId);
+        
+        // If not on Minato, switch network
+        if (currentChainId !== MINATO_CHAIN_ID) {
+            await switchNetwork(MINATO_CHAIN_ID);
+            location.reload(); // Refresh the page after switching network
+            return; // Exit early to prevent further execution until reload
+        }
 
         // Fetch and display balance
         await checkNetworkAndUpdateText(); // Update network button text
@@ -1047,9 +1059,28 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
         console.error("Connection Error:", error);
         alert('Failed to connect wallet. Please try again.');
     }
-
-    
 });
+
+// Request to switch network function
+async function switchNetwork(chainId) {
+    try {
+        await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+                chainId: `0x${chainId.toString(16)}`,
+                chainName: "Minato",
+                nativeCurrency: {
+                    name: "Minato",
+                    symbol: "ETH",
+                    decimals: 18
+                },
+                rpcUrls: [MINATO_RPC_URL],
+            }]
+        });
+    } catch (error) {
+        console.error(`Failed to switch to network ${chainId}:`, error);
+    }
+}
 
 // Function to fetch and display ETH balance
 async function updateBalance(walletAddress) {

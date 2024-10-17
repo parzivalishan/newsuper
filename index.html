@@ -278,21 +278,25 @@ input::placeholder {
 #txStatus {
     display: none; /* Hide by default */
     margin-top: 20px;
-    color: #333333; /* Change to white for better contrast */
-    background-color: #ffffff; /* Dark background for contrast */
+    color: #333333; /* Keep original text color */
+    background-color: #ffffff; /* Keep original background color */
     padding: 10px; /* Add some padding for better spacing */
     border-radius: 5px; /* Rounded corners for aesthetics */
     font-weight: bold; /* Make text bold */
     font-size: 16px; /* Increase font size for readability */
+    overflow-wrap: break-word; /* Break long words to prevent overflow */
+    white-space: normal; /* Allow wrapping of text */
+    overflow: hidden; /* Hide overflow content to avoid scrollbars */
+    max-width: 100%; /* Ensure it doesn't exceed parent width */
 }
 
 #txStatus.show {
     display: block; /* Show when this class is added */
 }
-        .hidden {
-            display: none;
-        }
 
+.hidden {
+    display: none; /* Keep hidden class as is */
+}
         #socials {
     position: fixed;
     bottom: 10px; /* Adjusts vertical position */
@@ -1513,7 +1517,7 @@ async function addNetwork(chainId) {
         // Show transaction status element by adding a class
         txStatus.classList.add('show');
        
-       txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>. Waiting for confirmation... <span class="loading">⏳</span>`;
+        txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>.<br>Waiting for confirmation... <span class="loading">⏳</span>`;
 
        // Start polling for confirmation
        const interval = setInterval(async () => {

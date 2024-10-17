@@ -40,26 +40,25 @@
             top: 0; /* Align to the top */
         }
         #app {
-    background-color: rgb(26, 60, 141);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, rgba(35, 130, 196, 1) 0%, rgba(26, 60, 141, 1) 100%); /* Gradient background */
+    padding: 20px; /* Padding for space inside */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow for depth */
     max-width: 600px; /* Increased width */
     width: 100%; /* Full width for responsiveness */
-    margin: auto;
+    margin: auto; /* Centering the app */
     text-align: center; /* Center text within the app */
-    position: relative;
+    position: relative; /* Positioning relative to its normal position */
     top: 35%; /* Adjusted to be higher on the page */
-    transform: translateY(-50%);
+    transform: translateY(-50%); /* Center vertically */
     left: 430px; /* Shift to the right by 50px */
 }
-
 
 h1 {
     font-size: 24px;
 }
 #app2 {
-    background-color: rgb(50, 50, 50); /* Background color for app2 */
+    background: linear-gradient(135deg, rgba(255, 94, 77, 1) 0%, rgba(255, 209, 102, 1) 100%); /* Gradient background */
     padding: 40px; /* Increased padding for more space inside */
     border-radius: 15px; /* More rounded corners */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow */
@@ -71,7 +70,6 @@ h1 {
     right: 10px; /* Adjusted distance from the right edge */
     text-align: center; /* Center align text in app2 */
 }
-
 
 
 
@@ -153,7 +151,7 @@ h1 {
 button#sendTransactionBtn {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #007BFF; /* Same color as connect button */
+    background: linear-gradient(135deg, rgba(128, 0, 128, 1) 0%, rgba(75, 0, 130, 1) 100%); /* Purple gradient background */
     color: white;
     border: none;
     border-radius: 5px;
@@ -162,16 +160,14 @@ button#sendTransactionBtn {
 }
 
 button#sendTransactionBtn:hover {
-    background-color: #0056b3; /* Hover color */
+    background: linear-gradient(135deg, rgba(75, 0, 130, 1) 0%, rgba(148, 0, 211, 1) 100%); /* Darker purple gradient for hover */
 }
 
-
-
-    /* New CSS for the SCE Send Button */
-    button#sendSceTokenBtn {
-        padding: 10px 20px;
+/* New CSS for the SCE Send Button */
+button#sendSceTokenBtn {
+    padding: 10px 20px;
     font-size: 16px;
-    background-color: #007BFF; /* Same color as connect button */
+    background: linear-gradient(135deg, rgba(128, 0, 128, 1) 0%, rgba(75, 0, 130, 1) 100%); /* Purple gradient background */
     color: white;
     border: none;
     border-radius: 5px;
@@ -179,10 +175,9 @@ button#sendTransactionBtn:hover {
     margin-top: 10px; /* Space above the button */
 }
 
-    button#sendSceTokenBtn:hover {
-        background-color: #0056b3; /* Hover color */
-    }
-
+button#sendSceTokenBtn:hover {
+    background: linear-gradient(135deg, rgba(75, 0, 130, 1) 0%, rgba(148, 0, 211,1)100%); /* Darker purple gradient for hover */
+}
 /* Input field styling */
 input[type="number"] {
     -moz-appearance: textfield; /* Remove default spinner in Firefox */
@@ -253,7 +248,7 @@ input::placeholder {
 
 #maxButton {
     position: absolute; 
-    background-color: #4CAF50; 
+    background: linear-gradient(135deg, rgba(76, 175, 80, 1) 0%, rgba(56, 142, 60, 1) 100%); /* Gradient background */
     color: white; 
     border: none; 
     padding: 12px 20px; /* Match vertical padding with input field */
@@ -269,7 +264,7 @@ input::placeholder {
 
 /* Hover and active states for Max button */
 #maxButton:hover {
-    background-color: #45a049; 
+    background-color: #45a049; /* Slightly darker green for hover state */
 }
 
 #maxButton:active {
@@ -493,8 +488,8 @@ input::placeholder {
         <button id="connectWalletBtn">Connect Wallet</button> <!-- Connect Wallet button -->
     </div>
 
-    <div id="app2">
-        <h1>Vitalik Token IDO</h1>
+    <div id="app2" style="font-family: Arial, sans-serif; color: #333;">
+        <h1 style="text-align: center; font-size: 2.5em;">Vitalik Token IDO</h1>
         
         <!-- Project Information -->
         <div style="margin-top: 20px;">
@@ -525,8 +520,9 @@ input::placeholder {
         <!-- Smaller Pie Chart Canvas -->
         <div style="margin-top: 20px;">
             <canvas id="myPieChart" width="2" height="2" style="max-width: 100%;"></canvas>
+            <div id="legendContainer" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div> <!-- Legend Container -->
         </div>
-        
+    
         <!-- Social Media Links -->
         <div style="margin-top: 20px;">
             <h2>Vitalik L1 Socials</h2>
@@ -542,65 +538,93 @@ input::placeholder {
         </div>
     </div>
     
-    
-    
     <script>
-        // Initialize the pie chart with some default data
-        const ctx = document.getElementById('myPieChart').getContext('2d');
-        let myPieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Private Sale', 'IDO', 'Liquidity', 'Team'], // These labels can be descriptive
-                datasets: [{
-                    label: 'Token Distribution',
-                    data: [30, 40, 20, 10], // Predefined data for the pie chart
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                return `${tooltipItem.label}: ${tooltipItem.raw}`;
-                            }
+    // Initialize the pie chart with some default data
+    const ctx = document.getElementById('myPieChart').getContext('2d');
+    let myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Private Sale', 'IDO', 'Liquidity', 'Team'],
+            datasets: [{
+                label: 'Token Distribution',
+                data: [30, 40, 20, 10],
+                backgroundColor: [
+                    'rgba(76, 175, 80, 0.6)', 
+                    'rgba(0, 206, 209, 0.6)', 
+                    'rgba(255, 165, 0, 0.6)', 
+                    'rgba(128, 0, 128, 0.6)'  
+                ],
+                borderColor: [
+                    'rgba(76, 175, 80, 1)', 
+                    'rgba(0, 206, 209, 1)', 
+                    'rgba(255, 165, 0, 1)', 
+                    'rgba(128, 0, 128, 1)'  
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false // Disable default legend
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            const total = tooltipItem.chart.data.datasets[0].data.reduce((a, b) => a + b);
+                            const currentValue = tooltipItem.raw;
+                            const percentage = ((currentValue / total) * 100).toFixed(2) + '%';
+                            return percentage; // Only show percentage
                         }
                     }
                 }
-            }
-        });
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+            },
+            cutoutPercentage: 0
+        }
+    });
     
-        // You can update the pie chart dynamically in the future if needed
-        // For example, using some predefined conditions or data fetch.
-        // Here's an example of how to update data programmatically:
-        setTimeout(() => {
-            const newData = [20, 30, 25, 25]; // New data for demonstration
-            myPieChart.data.datasets[0].data = newData;
-            myPieChart.update();
-        }, 5000); // Update after 5 seconds for demonstration
+    // Create custom legend below the chart
+    const legendContainer = document.getElementById('legendContainer');
+    myPieChart.data.labels.forEach((label, index) => {
+        const colorBox = document.createElement('span');
+        colorBox.style.display = 'inline-block';
+        colorBox.style.width = '15px';
+        colorBox.style.height = '15px';
+        colorBox.style.backgroundColor = myPieChart.data.datasets[0].backgroundColor[index];
+        colorBox.style.marginRight = '10px';
+    
+        const labelText = document.createElement('span');
+        labelText.textContent = label;
+        labelText.style.marginRight = '20px'; // Space between labels
+    
+        const legendItem = document.createElement('div');
+        legendItem.style.display = 'flex';
+        legendItem.style.alignItems = 'center';
+        
+        legendItem.appendChild(colorBox);
+        legendItem.appendChild(labelText);
+    
+        legendContainer.appendChild(legendItem);
+    });
+    
+    // Example to update the pie chart dynamically
+    setTimeout(() => {
+        const newData = [20, 30, 25, 25];
+        myPieChart.data.datasets[0].data = newData;
+        myPieChart.update();
+    }, 5000);
     </script>
     
     
     
-    <div id="app">
-        <h1> SuperChain ( Minato Network ) </h1>
-
+    <div id="app" style="font-family: 'Montserrat', sans-serif; color: #111;">
+        <h1>SuperChain (Minato Network)</h1>
+    
         <div id="accountDisplay" class="hidden">
             <p>
                 ETH Balance: <span id="balanceAmount"></span>  |
@@ -609,7 +633,7 @@ input::placeholder {
         </div>
         
         <p id="walletStatus" class="hidden">Please switch to Minato network</p>
-
+    
         <div id="crypto-info">
             <h2></h2>
             <p>Current Price ETH: <span id="ethPrice">Fetching...</span></p>
@@ -619,9 +643,9 @@ input::placeholder {
                 </p>
                 <p id="tokenBalance">|     Token Balance: 0 Tokens</p>
             </div>
-
-            <p> <span id="usdAmountRaised">0.00</span></p>
-
+    
+            <p><span id="usdAmountRaised">0.00</span></p>
+    
             <p>Percentage Raised: <span id="percentageRaised">0%</span></p>
             <div class="progress-container-2">
                 <div class="range" style="--p: 0;">
@@ -638,39 +662,41 @@ input::placeholder {
             <div class="progress-container-original">
                 <progress id="progressScale" value="0" max="100"></progress>
             </div>
-
-
-<input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
-
-<div class="button-container">
-    <input type="number" id="amountToSend" placeholder="Amount to Send ">
-    <button id="maxButton">Max</button>
-</div>
-<button id="sendTransactionBtn" class="hidden">
-    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/eth%20logo.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-    Send
-</button>
-
-<button id="sendSceTokenBtn">
-    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/usdt%20logo.png" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-    Send 
-</button>
+    
+            <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
+    
+            <div class="button-container">
+                <input type="number" id="amountToSend" placeholder="Amount to Send ">
+                <button id="maxButton">Max</button>
+            </div>
             
+            <button id="sendTransactionBtn" class="hidden">
+                <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/eth%20logo.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+                Send
+            </button>
+    
+            <button id="sendSceTokenBtn">
+                <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/usdt%20logo.png" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+                Send 
+            </button>
+                
         </div>
-
+    
         <div id="txStatus"></div>
     </div>
- <!-- Social Media Links -->
- <div id="socials" style="margin-top: 20px;">
-    <a href="https://x.com/superchainexch" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter" width="40" height="40">
-
-    </a>
-    <a href="https://t.me/superchainexchange" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" width="40" height="40">
-
-    </a>
-</div>
+    
+    <!-- Social Media Links -->
+    <div id="socials" style="margin-top: 20px;">
+        <a href="https://x.com/superchainexch" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter" width="40" height="40">
+        </a>
+        <a href="https://t.me/superchainexchange" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" width="40" height="40">
+        </a>
+    </div>
+    
+    <!-- Google Fonts Link -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script>
         const MINATO_RPC_URL = 'https://rpc.minato.soneium.org/';
         const SEPOLIA_RPC_URL = 'https://rpc.ankr.com/eth_sepolia'; // Replace with your Infura project ID

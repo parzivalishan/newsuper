@@ -82,7 +82,17 @@ h1 {
         height: 350px !important; /* Set the height to 150px */
     }
    
+    #legendContainer {
+    display: flex;
+    flex-direction: column; /* Stack legend items vertically */
+    position: absolute; /* Allows for precise positioning */
+    top: 600px; /* Adjust this value to move it up or down */
+    left: 500px; /* Move the legend container 500 pixels from the left */
+}
 
+
+
+    
 #connectWalletBtn, #networkBtn, #predictionMarketBtn , #disperseBtn  {
     padding: 10px 20px;
     font-size: 16px;
@@ -513,7 +523,8 @@ input::placeholder {
         <div style="margin-top: 20px;">
             <h2>Vesting Information</h2>
             <p>
-                I will add it soon :_:
+                15% Tge , 1 month cliff , Monthly unlock for the next 5 months (17% each month)
+
             </p>
         </div>
     
@@ -539,85 +550,89 @@ input::placeholder {
     </div>
     
     <script>
-    // Initialize the pie chart with some default data
-    const ctx = document.getElementById('myPieChart').getContext('2d');
-    let myPieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Private Sale', 'IDO', 'Liquidity', 'Team'],
-            datasets: [{
-                label: 'Token Distribution',
-                data: [30, 40, 20, 10],
-                backgroundColor: [
-                    'rgba(76, 175, 80, 0.6)', 
-                    'rgba(0, 206, 209, 0.6)', 
-                    'rgba(255, 165, 0, 0.6)', 
-                    'rgba(128, 0, 128, 0.6)'  
-                ],
-                borderColor: [
-                    'rgba(76, 175, 80, 1)', 
-                    'rgba(0, 206, 209, 1)', 
-                    'rgba(255, 165, 0, 1)', 
-                    'rgba(128, 0, 128, 1)'  
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false // Disable default legend
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            const total = tooltipItem.chart.data.datasets[0].data.reduce((a, b) => a + b);
-                            const currentValue = tooltipItem.raw;
-                            const percentage = ((currentValue / total) * 100).toFixed(2) + '%';
-                            return percentage; // Only show percentage
+        // Initialize the pie chart with some default data
+        const ctx = document.getElementById('myPieChart').getContext('2d');
+        let myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Private Sale', 'IDO', 'Liquidity', 'Team'],
+                datasets: [{
+                    label: 'Token Distribution',
+                    data: [30, 40, 20, 10],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',  // Red
+                        'rgba(54, 162, 235, 0.8)',   // Blue
+                        'rgba(255, 206, 86, 0.8)',   // Yellow
+                        'rgba(75, 192, 192, 0.8)',   // Teal
+                        'rgba(153, 102, 255, 0.8)',  // Purple
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)', 
+                        'rgba(54, 162, 235, 1)', 
+                        'rgba(255, 206, 86, 1)', 
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false // Disable default legend
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                const total = tooltipItem.chart.data.datasets[0].data.reduce((a, b) => a + b);
+                                const currentValue = tooltipItem.raw;
+                                const percentage = ((currentValue / total) * 100).toFixed(2) + '%';
+                                return `${tooltipItem.label}: ${percentage}`; // Show label and percentage
+                            }
                         }
                     }
-                }
-            },
-            animation: {
-                animateRotate: true,
-                animateScale: true,
-            },
-            cutoutPercentage: 0
-        }
-    });
-    
-    // Create custom legend below the chart
-    const legendContainer = document.getElementById('legendContainer');
-    myPieChart.data.labels.forEach((label, index) => {
-        const colorBox = document.createElement('span');
-        colorBox.style.display = 'inline-block';
-        colorBox.style.width = '15px';
-        colorBox.style.height = '15px';
-        colorBox.style.backgroundColor = myPieChart.data.datasets[0].backgroundColor[index];
-        colorBox.style.marginRight = '10px';
-    
-        const labelText = document.createElement('span');
-        labelText.textContent = label;
-        labelText.style.marginRight = '20px'; // Space between labels
-    
-        const legendItem = document.createElement('div');
-        legendItem.style.display = 'flex';
-        legendItem.style.alignItems = 'center';
+                },
+                animation: {
+                    animateRotate: true,
+                    animateScale: true,
+                },
+                cutoutPercentage: 0
+            }
+        });
         
-        legendItem.appendChild(colorBox);
-        legendItem.appendChild(labelText);
-    
-        legendContainer.appendChild(legendItem);
-    });
-    
-    // Example to update the pie chart dynamically
-    setTimeout(() => {
-        const newData = [20, 30, 25, 25];
-        myPieChart.data.datasets[0].data = newData;
-        myPieChart.update();
-    }, 5000);
+        // Create custom legend below the chart
+        const legendContainer = document.getElementById('legendContainer');
+        myPieChart.data.labels.forEach((label, index) => {
+            const colorBox = document.createElement('span');
+            colorBox.style.display = 'inline-block';
+            colorBox.style.width = '15px';
+            colorBox.style.height = '15px';
+            colorBox.style.backgroundColor = myPieChart.data.datasets[0].backgroundColor[index];
+            colorBox.style.borderRadius = '3px'; // Rounded corners for color boxes
+            colorBox.style.marginRight = '10px';
+        
+            const labelText = document.createElement('span');
+            labelText.textContent = label;
+            labelText.style.marginRight = '20px'; // Space between labels
+            labelText.style.fontWeight = 'bold'; // Bold text for better visibility
+        
+            const legendItem = document.createElement('div');
+            legendItem.style.display = 'flex';
+            legendItem.style.alignItems = 'center';
+            
+            legendItem.appendChild(colorBox);
+            legendItem.appendChild(labelText);
+        
+            legendContainer.appendChild(legendItem);
+        });
+        
+        // Example to update the pie chart dynamically
+        setTimeout(() => {
+            const newData = [20, 30, 25, 25];
+            myPieChart.data.datasets[0].data = newData;
+            myPieChart.update();
+        }, 5000);
     </script>
     
     

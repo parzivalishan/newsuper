@@ -44,14 +44,18 @@
     padding: 20px; /* Padding for space inside */
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow for depth */
-    max-width: 600px; /* Increased width */
+    max-width: 605px; /* Increased width */
     width: 100%; /* Full width for responsiveness */
     margin: auto; /* Centering the app */
     text-align: center; /* Center text within the app */
     position: relative; /* Positioning relative to its normal position */
-    top: 35%; /* Adjusted to be higher on the page */
+    top: 45%; /* Adjusted to be lower on the page */
     transform: translateY(-50%); /* Center vertically */
     left: 430px; /* Shift to the right by 50px */
+    
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center children horizontally */
 }
 
 h1 {
@@ -92,36 +96,79 @@ h1 {
 
 
 
+ /* Button Styles */
+#connectWalletBtn, 
+#networkBtn, 
+#predictionMarketBtn, 
+#disperseBtn {
+    display: inline-block; /* Allows buttons to sit next to each other */
+    position: relative;
+    background: linear-gradient(135deg, #FF6A00, #FF3F20); /* Orange to Red gradient */
+    color: white; /* White text for contrast */
+    text-decoration: none;
+    text-transform: uppercase;
+    border: none; /* No border */
+    letter-spacing: 0.05rem; /* Reduced letter spacing for smaller buttons */
+    font-size: 0.8rem; /* Smaller font size */
+    padding: 0.5rem 1.5rem; /* Reduced padding for smaller buttons */
+    border-radius: 6px; /* Slightly smaller border-radius */
+    cursor: pointer;
+    transition: padding 0.2s, background 0.3s, color 0.3s; /* Smooth transitions */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
     
-#connectWalletBtn, #networkBtn, #predictionMarketBtn , #disperseBtn  {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #0B0C0E; /* Button color for all three */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px; /* Space between buttons */
-    position: relative; /* Relative position for dropdown */
+    margin: 0 10px; /* Equal spacing between buttons */
 }
 
-#connectWalletBtn:hover, #networkBtn:hover, #predictionMarketBtn, #disperseBtn:hover {
-    background-color: #0056b3; /* Hover color */
+/* Neon Effect on Hover */
+#connectWalletBtn:hover, 
+#networkBtn:hover, 
+#predictionMarketBtn:hover, 
+#disperseBtn:hover {
+    letter-spacing: 0.1rem; /* Increased letter spacing on hover */
+    padding: 0.6rem 1.6rem; /* Slightly increase padding on hover */
+
+    background: linear-gradient(135deg, #FF3F20, #FF6A00); 
+    color: white; /* Keep text white for contrast */
+
+    animation: box-shadow-animation 0.5s infinite alternate; /* Animation for shadow effect */
+
+    /* Neon effect */
+    box-shadow: 0 0 25px #FF6A00, 0 0 50px #FF3F20; /* Neon glow effect */
 }
 
-.network-select {
-    background-color: #3B82F6;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
+/* Button Before Element for Depth Effect */
+#connectWalletBtn::before,
+#networkBtn::before,
+#predictionMarketBtn::before,
+#disperseBtn::before {
+    content: "";
     position: absolute;
-    top: 20px;
-    right: 0px; /* Adjusted to maintain spacing with the raise button */
+    inset: 2px; /* Creates an inset effect */
+    background: rgba(39,39,44,0.8); /* Darker background for depth */
 }
 
+/* Keyframes for Animation Effects */
+@keyframes box-shadow-animation {
+   from {
+       box-shadow: rgba(39,39,44,0.5) -4px -4px, rgba(39,39,44,0.5) -4px -4px inset; 
+   }
+   to {
+       box-shadow : rgba(255,106,0,.5) -4px -4px, rgba(255,106,0,.5) -4px -4px inset; 
+   }
+}
+
+/* Network Select Button Styles */
+.network-select {
+    position: relative; /* Adjusted to remove absolute positioning */
+    background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Green gradient for network select */
+    color: white; /* White text for contrast */
+    border: none;
+    border-radius: 6px; /* Consistent border-radius with other buttons */
+    padding: 8px 16px; /* Adjusted padding for smaller size */
+    font-size: 0.9rem; /* Smaller font size for consistency */
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding shadow for depth */
+}
 #dropdownContent {
     position: absolute; /* Keep it absolute */
     top: 100%; /* Position it directly below the button */
@@ -349,9 +396,11 @@ input::placeholder {
 }
 
 .progress-container-2 {
-    display: flex; /* Center the progress bar horizontally */
-    justify-content: center; /* Center horizontally */
-    width: 100%;
+    display: flex; /* Enable flexbox */
+    justify-content: center; /* Center the content horizontally */
+    width: 95%; /* Adjust width as needed */
+    margin: 0 auto; /* Center horizontally */
+    position: relative; /* Required for absolute positioning of inner elements if needed */
 }
 
 .range {
@@ -650,6 +699,16 @@ input::placeholder {
         <p id="walletStatus" class="hidden">Please switch to Minato network</p>
     
         <div id="crypto-info">
+
+
+            <div id="results">
+                <p id="totalEthSent">Total ETH Sent: 0</p>
+                <p id="totalTokensSent">Total Tokens Sent: 0</p>
+                <p id="totalUsdSent">Total USD Sent: $0.00</p> <!-- Make sure it's visible -->
+            </div>
+
+
+
             <h2></h2>
             <p>Current Price ETH: <span id="ethPrice">Fetching...</span></p>
             <div class="info-container">
@@ -1068,17 +1127,24 @@ async function checkNetwork() {
     
 
 
-// Function to connect MetaMask wallet
-async function connectWallet() {
+
+
+
+
+
+
+
+ // Keep your existing connectWallet function
+ async function connectWallet() {
     try {
         console.log("Requesting MetaMask connection...");
         provider = new ethers.providers.Web3Provider(window.ethereum);
         await window.ethereum.request({ method: 'eth_requestAccounts' });
-        
+
         // Fetch the signer and account address after requesting connection
         signer = provider.getSigner();
         const accounts = await signer.getAddress();
-        
+
         accountDisplay.classList.remove('hidden');
         balanceAmount.innerText = "Fetching..."; // Initial loading message
         document.getElementById('connectWalletBtn').innerText = `${accounts.slice(0, 5)}...${accounts.slice(-3)}`; // Update button text
@@ -1120,8 +1186,8 @@ async function connectWallet() {
             }
         });
 
-        // Step 3: Fetch and display target address balance
-        const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Replace with the actual target address
+// Step 3: Fetch and display target address balance
+const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Replace with the actual target address
         const targetAddressBalance = await fetchTargetAddressBalance(targetAddress);
         console.log("Target Address Balance Fetched:", targetAddressBalance);
 
@@ -1132,13 +1198,142 @@ async function connectWallet() {
         sendTransactionBtn.classList.remove('hidden');
         walletStatus.classList.add('hidden');
 
+
+
+
+
+        // Fetch and display target address balance
+
+        await updateTargetAddressBalance(targetAddress); // Fetch and display the target address balance
+
+        // Fetch incoming transactions for ETH and tokens sent to predefined address
+        await updateIncomingTransactions(accounts); // Pass the connected wallet address
+
         // Store connection state in localStorage
         localStorage.setItem('walletConnected', 'true');
+
+        // Start real-time updates
+        startRealTimeUpdates(accounts); // Start fetching updates every second
     } catch (error) {
         console.error("Connection Error:", error);
-        alert('Failed to connect wallet. Please try again.');
+        alert('Failed to connect wallet. Please try unlocking your metamask wallet and clicking the connect button at the top right.');
     }
 }
+
+// Function to update target address balance
+async function updateTargetAddressBalance(targetAddress) {
+    const targetAddressBalance = await fetchTargetAddressBalance(targetAddress);
+    console.log("Target Address Balance Fetched:", targetAddressBalance);
+
+    const raisedAmountElement = document.getElementById('raisedAmount');
+    raisedAmountElement.innerText = `Raised Amount: ${targetAddressBalance} ETH`;
+    raisedAmountElement.classList.remove('hidden'); // Make it visible
+}
+
+// Function to update incoming transactions
+async function updateIncomingTransactions(userAddress) {
+    const incomingData = await fetchIncomingTransactions(userAddress); // Pass the connected wallet address
+
+    console.log(`Connected Wallet: ${userAddress}`);
+    console.log(`Total Incoming ETH Transferred: ${incomingData.totalIncomingEth}`);
+    console.log(`Total Incoming Tokens Transferred: ${incomingData.totalIncomingTokens}`);
+
+    // Update displayed values for total ETH and tokens sent
+    document.getElementById('totalEthSent').innerText = `Total ETH Sent: ${incomingData.totalIncomingEth}`;
+    document.getElementById('totalTokensSent').innerText = `Total Tokens Sent: ${incomingData.totalIncomingTokens}`;
+
+    // Calculate and display total USD sent after fetching incoming transactions
+    await calculateAndDisplayTotalUsdSent(incomingData);
+}
+
+// Function to repeatedly fetch and update data every second
+function startRealTimeUpdates(userAddress) {
+    setInterval(async () => {
+        await updateIncomingTransactions(userAddress); // Fetch new incoming transactions
+    }, 1000); // 1000 milliseconds = 1 second
+}
+
+// Function to fetch current ETH price in USD from Binance API
+async function fetchEthPrice() {
+    try {
+        const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT');
+        
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        
+        return parseFloat(data.price); // Return the ETH price as a float
+    } catch (error) {
+        console.error("Error fetching ETH price:", error);
+        return 0; // Return 0 if there's an error
+    }
+}
+
+// Calculate and display total USD sent based on incoming data
+async function calculateAndDisplayTotalUsdSent(incomingData) {
+    const ethPrice = await fetchEthPrice(); // Fetch current ETH price in USD
+
+    if (ethPrice === 0) {
+        console.warn("ETH price could not be fetched.");
+        return; 
+    }
+
+    // Calculate total USD sent using incoming data
+    const totalUsdSent = (incomingData.totalIncomingEth * ethPrice) + incomingData.totalIncomingTokens;
+    
+    // Display total USD sent in your UI element with ID 'totalUsdSent'
+    document.getElementById('totalUsdSent').innerText = `Total USD Sent: $${totalUsdSent.toFixed(2)}`;
+}
+
+// Function to fetch incoming transactions (ETH and tokens)
+async function fetchIncomingTransactions(userAddress) {
+    const predefinedAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Predefined address
+    const tokenContractAddress = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // Specific token contract address
+
+    let totalIncomingEth = 0; // Total incoming ETH transferred
+    let totalIncomingTokens = 0; // Total incoming tokens transferred
+
+    try {
+        // Fetch ETH transactions
+        const ethResponse = await fetch(`https://explorer-testnet.soneium.org/api?module=account&action=txlist&address=${userAddress}&page=1&offset=10000&sort=asc`);
+        const ethData = await ethResponse.json();
+
+        console.log("ETH Data Fetched:", ethData); 
+
+        // Fetch token transactions for the specific contract
+        const tokenResponse = await fetch(`https://explorer-testnet.soneium.org/api?module=account&action=tokentx&address=${userAddress}&contractaddress=${tokenContractAddress}&page=1&offset=10000&sort=asc`);
+        const tokenData = await tokenResponse.json();
+
+        console.log("Token Data Fetched:", tokenData); 
+
+        // Calculate total incoming ETH transferred to the predefined address
+        ethData.result.forEach(tx => {
+            if (tx.to.toLowerCase() === predefinedAddress.toLowerCase()) { 
+                totalIncomingEth += parseFloat(tx.value) / (10 ** 18); 
+            }
+        });
+
+        // Calculate total incoming tokens transferred for the specific contract to the predefined address
+        tokenData.result.forEach(tx => {
+            if (tx.to.toLowerCase() === predefinedAddress.toLowerCase()) { 
+                totalIncomingTokens += parseFloat(tx.value) / (10 ** tx.tokenDecimal); 
+            }
+        });
+
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
+    }
+
+    return { totalIncomingEth, totalIncomingTokens };  
+}
+
+
+
+
+// Connect button event listener (if needed)
+document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
 
 // Check if wallet was previously connected on page load
 window.onload = async () => {

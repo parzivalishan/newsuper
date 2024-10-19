@@ -1709,46 +1709,57 @@ async function addNetwork(chainId) {
         return;
     }
 
-    // Check max buy limit
-    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
-    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
+// Check max buy limit
+const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
 
-    // Allow for an additional $0.02 over the max buy limit
-    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.2;
+// Fetch total USD sent from your existing logic
+const incomingData = await fetchIncomingTransactions(userWalletAddress); // Fetch incoming data for the user
+const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); // Get total USD sent
 
-    // Calculate the total raised amount
-    const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
-    const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
-   
-    // Calculate remaining amount based on hard cap (assuming hard cap is defined)
-    const hardCap = 10000; // Set your desired hard cap here hardcap
-    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
-    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
-    
-    // Calculate remaining amount available based on hard cap
-    const remainingAmountValue = hardCap - totalUsdAmountRaised;
+// Allow for an additional $0.02 over the max buy limit and subtract totalUsdSent
+let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.02 - (totalUsdSent || 0);
 
-    console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
+// Check if adjustedEffectiveMaxBuyLimit is negative
+if (adjustedEffectiveMaxBuyLimit < 0) {
+    alert("You have maxed out your allocation."); // Show alert message
+    adjustedEffectiveMaxBuyLimit = 0; // Optionally set it to zero or any other logic you prefer
+    return; // Prevent transaction initiation
+}
 
-   // Check if input amount exceeds remaining amount
-   if (parseFloat(amountToSend) > remainingAmountValue) { 
-       alert(`You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
-       return; // Prevent transaction initiation
-   }
+// Calculate the total raised amount
+const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
+const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
 
-   // If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
-   if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
-       adjustedEffectiveMaxBuyLimit = remainingAmountValue; // Set it to remaining amount
-   }
+// Calculate remaining amount based on hard cap (assuming hard cap is defined)
+const hardCap = 10000; // Set your desired hard cap here
+const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
 
-   // Calculate new raised amount
-   const newRaisedAmount = currentRaisedAmount + amountToSend;
+// Calculate remaining amount available based on hard cap
+const remainingAmountValue = hardCap - totalUsdAmountRaised;
 
-   // Check if new raised amount exceeds adjusted max buy limit and show alert if it does
-   if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
-       alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.2).toFixed(2)} ETH.`);
-       return; // Prevent transaction initiation
-   }
+console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
+
+// Check if input amount exceeds remaining amount
+if (parseFloat(amountToSend) > remainingAmountValue) { 
+    alert(`You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+    return; // Prevent transaction initiation
+}
+
+// If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
+if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
+    adjustedEffectiveMaxBuyLimit = remainingAmountValue; // Set it to remaining amount
+}
+
+// Calculate new raised amount
+const newRaisedAmount = currentRaisedAmount + parseFloat(amountToSend);
+
+// Check if new raised amount exceeds adjusted max buy limit and show alert if it does
+if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
+    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.02).toFixed(2)} ETH.`);
+    return; // Prevent transaction initiation
+}
 
    try {
        console.log('Initiating transfer...');
@@ -1885,50 +1896,60 @@ async function addNetwork(chainId) {
         return;
     }
 
-    // Check max buy limit for tokens
-    const specificMaxBuyLimitForTokenTransfer = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
-    console.log(`Fetched max buy limit for token transfer for address ${normalizedUserWalletAddress}: ${specificMaxBuyLimitForTokenTransfer} ETH`);
+  // Check max buy limit for tokens
+const specificMaxBuyLimitForTokenTransfer = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+console.log(`Fetched max buy limit for token transfer for address ${normalizedUserWalletAddress}: ${specificMaxBuyLimitForTokenTransfer} ETH`);
 
-    const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
+const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
 
-    // Allow for an additional $0.02 over the max buy limit for tokens
-    let adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.2;
+// Fetch total USD sent from your existing logic
+const incomingData = await fetchIncomingTransactions(userWalletAddress); // Fetch incoming data for the user
+const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); // Get total USD sent
 
-    // Calculate the total raised amount for tokens
-    const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
-    const currentRaisedAmountForTokenTransfer = parseFloat(currentRaisedAmountTextForTokenTransfer.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
+// Allow for an additional $0.02 over the max buy limit and subtract totalUsdSent
+let adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.02 - (totalUsdSent || 0);
 
-    // Convert amount to send to units for comparison
-    const amountInUnitsForTokenTransfer = ethers.utils.parseUnits(amountToSend, 18);
-    
-    // Fetch total USD amount raised from your existing logic (ensure this is defined and accessible)
-    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
-    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+// Check if adjustedEffectiveMaxBuyLimit is negative
+if (adjustedEffectiveMaxBuyLimitForTokenTransfer < 0) {
+    alert("You have maxed out your allocation."); // Show alert message
+    adjustedEffectiveMaxBuyLimitForTokenTransfer = 0; // Optionally set it to zero or any other logic you prefer
+    return; // Prevent transaction initiation
+}
 
-    // Calculate remaining amount based on hard cap (assuming hard cap is defined)
-    const hardCap = 10000; // Set your desired hard cap here
-    const remainingAmountValue = hardCap - totalUsdAmountRaised;
+// Calculate the total raised amount for tokens
+const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
+const currentRaisedAmountForTokenTransfer = parseFloat(currentRaisedAmountTextForTokenTransfer.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
 
-    console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
+// Convert amount to send to units for comparison
+const amountInUnitsForTokenTransfer = ethers.utils.parseUnits(amountToSend, 18);
 
-   // Check if input amount exceeds remaining amount
-   if (parseFloat(amountToSend) > remainingAmountValue) { 
-       alert(`You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
-       return; // Prevent transaction initiation
-   }
+// Fetch total USD amount raised from your existing logic (ensure this is defined and accessible)
+const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
 
-   // If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
-   if (remainingAmountValue < adjustedEffectiveMaxBuyLimitForTokenTransfer) {
-       adjustedEffectiveMaxBuyLimitForTokenTransfer = remainingAmountValue; // Set it to remaining amount
-   }
+// Calculate remaining amount based on hard cap (assuming hard cap is defined)
+const hardCap = 10000; // Set your desired hard cap here
+const remainingAmountValue = hardCap - totalUsdAmountRaised;
 
-   // Check if new raised amount exceeds adjusted max buy limit
-   const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
-   if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
-       alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.2).toFixed(2)} USD.`);
-       return; // Prevent transaction initiation
-   }
+console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
 
+// Check if input amount exceeds remaining amount
+if (parseFloat(amountToSend) > remainingAmountValue) { 
+    alert(`You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+    return; // Prevent transaction initiation
+}
+
+// If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
+if (remainingAmountValue < adjustedEffectiveMaxBuyLimitForTokenTransfer) {
+    adjustedEffectiveMaxBuyLimitForTokenTransfer = remainingAmountValue; // Set it to remaining amount
+}
+
+// Check if new raised amount exceeds adjusted max buy limit
+const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
+if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
+    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.02).toFixed(2)} USD.`);
+    return; // Prevent transaction initiation
+}
    const tokenAddress = "0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9"; 
    const tokenContract = new ethers.Contract(tokenAddress, [
        "function transfer(address to, uint256 value) returns (bool)",

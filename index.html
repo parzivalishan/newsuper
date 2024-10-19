@@ -1272,19 +1272,22 @@ async function fetchEthPrice() {
 }
 
 // Calculate and display total USD sent based on incoming data
+// Calculate and return total USD sent based on incoming data
 async function calculateAndDisplayTotalUsdSent(incomingData) {
     const ethPrice = await fetchEthPrice(); // Fetch current ETH price in USD
 
     if (ethPrice === 0) {
         console.warn("ETH price could not be fetched.");
-        return; 
+        return null; // Return null if the ETH price cannot be fetched
     }
 
     // Calculate total USD sent using incoming data
     const totalUsdSent = (incomingData.totalIncomingEth * ethPrice) + incomingData.totalIncomingTokens;
-    
+
     // Display total USD sent in your UI element with ID 'totalUsdSent'
     document.getElementById('totalUsdSent').innerText = `Total USD Sent: $${totalUsdSent.toFixed(2)}`;
+
+    return totalUsdSent; // Return the calculated total USD sent
 }
 
 // Function to fetch incoming transactions (ETH and tokens)
@@ -1568,7 +1571,6 @@ fetchMaxBuyLimits();
 // Polling for updates every 10 seconds (10000 milliseconds)
 setInterval(fetchMaxBuyLimits, 10000);
 
-// New function to set max amount
 async function setMaxAmount() {
     const userWalletAddress = await signer.getAddress(); // Get user's wallet address
     const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
@@ -1577,15 +1579,25 @@ async function setMaxAmount() {
     const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
     const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
 
+    // Fetch total USD sent from your existing logic
+    const incomingData = await fetchIncomingTransactions(userWalletAddress); // Fetch incoming data for the user
+    const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); // Get total USD sent
+
     // Allow for an additional $0.02 over the max buy limit
-    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.0;
+    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.0 - (totalUsdSent || 0); // Subtract totalUsdSent
+
+    // Check if adjustedEffectiveMaxBuyLimit is negative
+    if (adjustedEffectiveMaxBuyLimit < 0) {
+        alert("You have maxed out your allocation."); // Show alert message
+        adjustedEffectiveMaxBuyLimit = 0; // Optionally set it to zero or any other logic you prefer
+    }
 
     // Fetch total USD amount raised from your existing logic (ensure this is defined and accessible)
     const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
     const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
 
     // Calculate remaining amount based on hard cap (assuming hard cap is defined)
-    const hardCap = 10000; // Set your desired hard cap here hardcap
+    const hardCap = 10000; // Set your desired hard cap here
     const remainingAmountValue = hardCap - totalUsdAmountRaised;
 
     // If remaining amount is less than adjusted effective max buy limit, set it to remaining amount

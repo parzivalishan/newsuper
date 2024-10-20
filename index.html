@@ -349,26 +349,6 @@ input::placeholder {
 .hidden {
     display: none; /* Keep hidden class as is */
 }
-        #socials {
-    position: fixed;
-    bottom: 10px; /* Adjusts vertical position */
-    right: 20px;  /* Adjusts horizontal position */
-    display: flex; /* Align buttons in a row */
-    gap: 10px; /* Space between buttons */
-}
-
-.social-icon img {
-    width: 40px;
-    height: 40px;
-    background-color: #0B0C0E; /* Set to SpaceX-like color */
-    border-radius: 50%; /* Optional, for circular effect */
-    transition: transform 0.2s; /* For hover effect */
-}
-
-.social-icon:hover img {
-    transform: scale(1.1); /* Slight zoom effect on hover */
-}
-
 
 
 
@@ -519,6 +499,85 @@ input::placeholder {
 
 #raisedAmount, #tokenBalance {
     margin-right: 10px; /* Optional: add space between the elements */
+}
+footer {
+    position: absolute; /* Allows positioning relative to the nearest positioned ancestor */
+    left: 0; /* Aligns it to the left */
+    right: 0; /* Aligns it to the right */
+    bottom: 0; /* Adjust this value as needed */
+    top: 1200px; /* You can set a top value in px if needed */
+    color: white; /* Text color */
+    padding: 20px; /* Padding for spacing */
+    text-align: center; /* Center text */
+    z-index: 1000; /* Ensures it stays above other content */
+}
+
+
+.footer-container {
+    display: flex; /* Flexbox layout */
+    justify-content: space-between; /* Space between items */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.footer-container div {
+    flex: 1; /* Allow each section to grow */
+    margin: 10px; /* Margin around sections */
+}
+
+/* Animation styles for each section - unchanged */
+#one {
+    animation: one 5s ease-in-out infinite alternate;
+}
+
+#two {
+    width: 90%;
+    animation: two 4s ease-in-out infinite alternate;
+}
+
+#three {
+    width: 80%;
+    animation: three 3s ease-in-out infinite alternate;
+}
+
+#four {
+    width: 70%;
+    animation: four 2s ease-in-out infinite alternate;
+}
+
+#five {
+    width: 60%;
+    animation: five 1s ease-in-out infinite alternate;
+}
+
+/* Keyframes for animations - unchanged */
+@keyframes one {
+    from { box-shadow: 0 0 250px 20px #473C78; }
+    to { box-shadow: 0 0 100px 15px #F72A3B; }
+}
+
+@keyframes two {
+    from { box-shadow: 0 0 250px 20px #18C499; }
+    to { box-shadow: 0 0 100px 15px #D8F05E; }
+}
+
+@keyframes three {
+    from { box-shadow: 0 0 250px 20px #FFDD00; }
+    to { box-shadow: 0 0 100px 15px #3E33FF; }
+}
+
+@keyframes four {
+    from { box-shadow: 0 0 250px 20px #781848; }
+    to { box-shadow: 0 0 100px 15px #F2BBE9; }
+}
+
+@keyframes five {
+    from { box-shadow: 0 0 250px 20px #42F2A1; }
+    to { box-shadow: 0 0 100px 15px #F4F6AD; }
+}
+
+/* Optional padding for content above footer (adjust as needed) */
+.content-wrap {
+    padding-bottom: 80px; /* Adjust this value based on footer height */
 }
 
 
@@ -759,16 +818,7 @@ input::placeholder {
         <div id="txStatus"></div>
     </div>
     
-    <!-- Social Media Links -->
-    <div id="socials" style="margin-top: 20px;">
-        <a href="https://x.com/superchainexch" target="_blank">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter" width="40" height="40">
-        </a>
-        <a href="https://t.me/superchainexchange" target="_blank">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" width="40" height="40">
-        </a>
-    </div>
-    
+  
     <!-- Google Fonts Link -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script>
@@ -2013,6 +2063,35 @@ if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransf
 </script>
 
     </script>
-    
+
+
+
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="contact-info" id="one">
+                <h3>Contact For Help in Raising Funds </h3>
+                
+                <p>Telegram: @crypticishan </p>
+
+            </div>
+         
+            <div class="social-media" id="three">
+                <h3>Follow Us</h3>
+                <a href="https://x.com/superchainexch" target="_blank">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter" width="40" height="40">
+                </a>
+                <a href="https://t.me/superchainexchange" target="_blank">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" width="40" height="40">
+                </a>
+            </div>
+            
+
+
+
+
+        </div>
+       
+    </footer>
 </body>
 </html>

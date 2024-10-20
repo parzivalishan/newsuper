@@ -235,10 +235,29 @@ button#sendSceTokenBtn {
 button#sendSceTokenBtn:hover {
     background: linear-gradient(135deg, rgba(75, 0, 130, 1) 0%, rgba(148, 0, 211,1)100%); /* Darker purple gradient for hover */
 }
-/* Input field styling */
+@import url("https://fonts.googleapis.com/css?family=Raleway");
+
+:root {
+  --glow-color: #00CED1; /* Dark Turquoise */
+  --skin-color: #FAD6B8; /* Soft Peach */
+  --text-color: #333; /* Darker text color for visibility */
+}
+
 input[type="number"] {
-    -moz-appearance: textfield; /* Remove default spinner in Firefox */
-    outline: none; /* Optional: remove outline on focus */
+    font-family: "Raleway", sans-serif; /* Use Raleway font */
+    padding: 15px; /* Increase padding for a larger feel */
+    border: 0.15em solid var(--glow-color); /* Border with glowing color */
+    border-radius: 0.45em; /* Rounded corners */
+    background-color: var(--skin-color); /* Skin tone background */
+    color: var(--text-color); /* Darker text color for visibility */
+    font-size: 18px; /* Increase font size */
+    text-align: center; /* Center the text inside the input box */
+    box-shadow: inset 0px 0px 0.5em var(--glow-color), 
+                0px 0px 1em var(--glow-color); /* Initial glow effect */
+    transition: all 0.3s ease; /* Smooth transition for effects */
+    outline: none; /* Remove outline on focus */
+    animation: glow-animation 1s infinite alternate; /* Glowing animation */
+    width: calc(100% - 300px); /* Adjusted width to make input larger */
 }
 
 /* Hide the spinner in WebKit browsers (Chrome, Safari) */
@@ -248,54 +267,41 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 0; /* Remove margin */
 }
 
-/* Optional: Additional styling for better appearance */
-input[type="number"] {
-    padding: 8px; /* Add some padding */
-    border: 1px solid #ccc; /* Add a border */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 16px; /* Font size */
-}
-
-/* Optional: Focus styling */
+/* Focus styling */
 input[type="number"]:focus {
-    border-color: #007bff; /* Change border color on focus */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
-}
-
-/* Existing input styles (you can keep them as is) */
-input {
-    width: calc(100% - 400px); /* Adjusted width to make input shorter */
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px; /* Softer rounded corners */
-    border: 1px solid #ccc;
-    background-color: #f5f5f5; /* Light background for a modern feel */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    box-sizing: border-box; /* Ensure padding is included in total width */
-    text-align: center; /* Center text in inputs */
-    font-size: 16px;
-    transition: all 0.3s ease; /* Smooth transition for effects */
-}
-
-/* Change border color and shadow on hover */
-input:hover {
-    border-color: #007BFF; /* Change to primary blue */
-}
-
-/* Change appearance on focus */
-input:focus {
-    border-color: #007BFF; /* Highlight border on focus */
-    outline: none; /* Remove default outline */
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Increase shadow on focus */
-    background-color: #fff; /* Slightly brighten background on focus */
+    border-color: rgba(255, 255, 255, 0.8); /* Change border color on focus */
+    box-shadow: 0 0 20px rgba(0, 206, 209, 1), 
+                inset 0px 0px 2em rgba(255, 255, 255, 0.5); /* Enhanced shadow on focus */
 }
 
 /* Placeholder text styling */
-input::placeholder {
-    color: #888; /* Light gray for placeholders */
+input[type="number"]::placeholder {
+    color: rgba(51, 51, 51, 0.5); /* Light gray for placeholders with better visibility */
     font-style: italic;
 }
 
+/* General input styles (for all input types) */
+input {
+    margin: 10px 0;
+    transition: all 0.3s ease; /* Smooth transition for effects */
+}
+
+/* Change appearance on hover */
+input:hover {
+    border-color: rgba(255, 255, 255, 1); /* Change to white on hover */
+}
+
+/* Keyframes for stronger glowing animation */
+@keyframes glow-animation {
+    from {
+        box-shadow: inset 0px 0px 0.5em var(--glow-color), 
+                    0px 0px 1em var(--glow-color);
+    }
+    to {
+        box-shadow: inset 0px 0px 1.5em var(--glow-color), 
+                    0px 0px 4em var(--glow-color); /* Increased glow intensity */
+    }
+}
 /* Parent container for positioning */
 .button-container {
     position: relative; /* Set the parent as relative */
@@ -313,7 +319,7 @@ input::placeholder {
     cursor: pointer; 
     border-radius: 8px; 
 
-    right: 130px; /* Move it left from the right edge */
+    right: 70px; /* Move it left from the right edge */
     top: 10px;   
     
     height: calc(100% - 20px); /* Adjust height to match input field (considering margins) */

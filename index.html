@@ -44,14 +44,10 @@
     padding: 20px; /* Padding for space inside */
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow for depth */
-    max-width: 605px; /* Increased width */
-    width: 100%; /* Full width for responsiveness */
-    margin: auto; /* Centering the app */
+    max-width: 605px; /* Increased width (corrected from 6050px) */
+    width: calc(100% - 20px); /* Full width for responsiveness minus margins */
+    margin: 40px auto; /* Increased vertical spacing above and below app */
     text-align: center; /* Center text within the app */
-    position: relative; /* Positioning relative to its normal position */
-    top: 45%; /* Adjusted to be lower on the page */
-    transform: translateY(-50%); /* Center vertically */
-    left: 430px; /* Shift to the right by 50px */
     
     display: flex; /* Use flexbox for layout */
     flex-direction: column; /* Stack children vertically */
@@ -61,17 +57,15 @@
 h1 {
     font-size: 24px;
 }
+
 #app2 {
-    background: linear-gradient(135deg, rgba(255, 94, 77, 1) 0%, rgba(255, 209, 102, 1) 100%); /* Gradient background */
+    background: linear-gradient(135deg, rgba(255, 94, 77, 1) 0%, rgba(255, 209, 102, 1) 100%);
     padding: 40px; /* Increased padding for more space inside */
     border-radius: 15px; /* More rounded corners */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow */
-    max-width: 750px; /* Increased max width */
-    width: calc(80% - 20px); /* Adjusted width for more margin */
-    position: absolute; /* Allows you to position the element freely */
-    top: 60px; /* Adjusted distance from the top */
-    left: 10px; /* Centering based on width */
-    right: 10px; /* Adjusted distance from the right edge */
+    max-width: 1950px; /* Increased max width */
+    width: calc(100% - 20px); /* Set width to full minus margins */
+    margin: 60px auto; /* Centering with vertical spacing from the top */
     text-align: center; /* Center align text in app2 */
 }
 
@@ -507,17 +501,13 @@ input:hover {
     margin-right: 10px; /* Optional: add space between the elements */
 }
 footer {
-    position: absolute; /* Allows positioning relative to the nearest positioned ancestor */
-    left: 0; /* Aligns it to the left */
-    right: 0; /* Aligns it to the right */
-    bottom: 0; /* Adjust this value as needed */
-    top: 1200px; /* You can set a top value in px if needed */
+    background-color: #333; /* Dark background for visibility */
     color: white; /* Text color */
     padding: 20px; /* Padding for spacing */
     text-align: center; /* Center text */
-    z-index: 1000; /* Ensures it stays above other content */
+    width: calc(100% - 40px); /* Full width minus margins */
+    margin-top: 60px; /* Increased space above the footer */
 }
-
 
 .footer-container {
     display: flex; /* Flexbox layout */
@@ -583,9 +573,8 @@ footer {
 
 /* Optional padding for content above footer (adjust as needed) */
 .content-wrap {
-    padding-bottom: 80px; /* Adjust this value based on footer height */
+    padding-bottom: calc(80px + [footer height]); /* Adjust this value based on footer height */
 }
-
 
     </style>
 </head>

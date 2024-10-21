@@ -19,18 +19,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, rgba(30, 30, 45, 1) 0%, rgba(20, 20, 30, 1) 100%); /* Dark Gray Gradient */
-    color: #E0E0E0; /* Light Gray Text for Contrast */
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: flex-start;
-}
+ body {
+            font-family: Arial, sans-serif;
+            background-color: #0B0C0E; /* Dark black color resembling SpaceX */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            height: 100vh; /* Full height */
+            display: flex; /* Use flexbox for alignment */
+            flex-direction: column; /* Column layout */
+            align-items: flex-end; /* Align items to the right */
+            justify-content: flex-start; /* Align items to the top */
+        }
+
 
         #header {
             width: 100%; /* Full width */
@@ -829,7 +829,7 @@ footer {
      <!--          enabled code  <button id="sendSceTokenBtn" class="hidden">               -->
     <!--          disbled code    <button id="sendSceTokenBtn" disabled>      -->
 
-            <button id="sendSceTokenBtn" > <!-- button id="sendSceTokenBtn" disabled -->
+            <button id="sendSceTokenBtn"  > <!-- button id="sendSceTokenBtn" disabled -->
                 <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/usdt%20logo.png" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
                 Send 
             </button>
@@ -1691,7 +1691,7 @@ sendTransactionBtn.addEventListener('click', async () => {
     const amountToSend = parseFloat(amountToSendInput.value); // Get the amount to send
 
     if (!amountToSend || !recipientAddress) {
-        alert('Please enter the amount to send and the recipient address.');
+        alert('Please enter the amount to send.');
         return;
     }
 
@@ -1877,7 +1877,7 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
     const amountToSend = amountToSendInput.value;
 
     if (!amountToSend || !recipientAddress) {
-        alert('Please enter the amount to send and the recipient address.');
+        alert('Please enter the amount to send.');
         return;
     }
 

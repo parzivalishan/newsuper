@@ -19,9 +19,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        body {
+body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #FF6E7F, #DCE35B); /* Sunset Bliss */
+    background: linear-gradient(135deg, rgba(30, 30, 45, 1) 0%, rgba(20, 20, 30, 1) 100%); /* Dark Gray Gradient */
+    color: #E0E0E0; /* Light Gray Text for Contrast */
     margin: 0;
     padding: 0;
     height: 100vh;
@@ -89,15 +90,14 @@ h1 {
 }
 
 
-
- /* Button Styles */
+/* Button Styles */
 #connectWalletBtn, 
 #networkBtn, 
 #predictionMarketBtn, 
 #disperseBtn {
     display: inline-block; /* Allows buttons to sit next to each other */
     position: relative;
-    background: linear-gradient(135deg, #FF6A00, #FF3F20); /* Orange to Red gradient */
+    background: linear-gradient(135deg, rgba(0, 150, 255, 1) 0%, rgba(0, 100, 200, 1) 100%); /* Blue gradient */
     color: white; /* White text for contrast */
     text-decoration: none;
     text-transform: uppercase;
@@ -108,7 +108,7 @@ h1 {
     border-radius: 6px; /* Slightly smaller border-radius */
     cursor: pointer;
     transition: padding 0.2s, background 0.3s, color 0.3s; /* Smooth transitions */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Darker shadow for depth */
     
     margin: 0 10px; /* Equal spacing between buttons */
 }
@@ -121,13 +121,13 @@ h1 {
     letter-spacing: 0.1rem; /* Increased letter spacing on hover */
     padding: 0.6rem 1.6rem; /* Slightly increase padding on hover */
 
-    background: linear-gradient(135deg, #FF3F20, #FF6A00); 
+    background: linear-gradient(135deg, rgba(255, 150, 50, 1) 0%, rgba(255, 100, 50, 1) 100%); /* Warm gradient on hover */
     color: white; /* Keep text white for contrast */
 
     animation: box-shadow-animation 0.5s infinite alternate; /* Animation for shadow effect */
 
     /* Neon effect */
-    box-shadow: 0 0 25px #FF6A00, 0 0 50px #FF3F20; /* Neon glow effect */
+    box-shadow: 0 0 25px rgba(255,150,50,.7), 0 0 50px rgba(255,100,50,.7); /* Neon glow effect */
 }
 
 /* Button Before Element for Depth Effect */
@@ -147,7 +147,7 @@ h1 {
        box-shadow: rgba(39,39,44,0.5) -4px -4px, rgba(39,39,44,0.5) -4px -4px inset; 
    }
    to {
-       box-shadow : rgba(255,106,0,.5) -4px -4px, rgba(255,106,0,.5) -4px -4px inset; 
+       box-shadow : rgba(255,150,50,.5) -4px -4px, rgba(255,150,50,.5) -4px -4px inset; 
    }
 }
 
@@ -199,6 +199,13 @@ h1 {
     vertical-align: middle; /* Align logo vertically in line with text (not strictly necessary with flexbox) */
 }
 
+
+/* Hide the button when it is disabled */
+button:disabled {
+    display: none; /* Completely hide the button */
+}
+
+/* Button Styles */
 button#sendTransactionBtn {
     padding: 10px 20px;
     font-size: 16px;
@@ -210,10 +217,17 @@ button#sendTransactionBtn {
     margin-top: 10px; /* Space above the button */
 }
 
-button#sendTransactionBtn:hover {
+/* Hover Effect */
+button#sendTransactionBtn:hover:not(:disabled) {
     background: linear-gradient(135deg, rgba(75, 0, 130, 1) 0%, rgba(148, 0, 211, 1) 100%); /* Darker purple gradient for hover */
 }
 
+/* Disabled Button Styles */
+button#sendTransactionBtn:disabled {
+    background: rgba(128, 0, 128, 0.5); /* Lighter purple to indicate disabled state */
+    color: rgba(255, 255, 255, 0.5); /* Lighter text color */
+    cursor: not-allowed; /* Change cursor to indicate disabled state */
+}
 /* New CSS for the SCE Send Button */
 button#sendSceTokenBtn {
     padding: 10px 20px;
@@ -501,12 +515,13 @@ input:hover {
     margin-right: 10px; /* Optional: add space between the elements */
 }
 footer {
-    background-color: #333; /* Dark background for visibility */
+    background: none; /* Remove any background color */
     color: white; /* Text color */
     padding: 20px; /* Padding for spacing */
     text-align: center; /* Center text */
     width: calc(100% - 40px); /* Full width minus margins */
     margin-top: 60px; /* Increased space above the footer */
+    position: relative; /* Positioning for absolute children */
 }
 
 .footer-container {
@@ -575,6 +590,8 @@ footer {
 .content-wrap {
     padding-bottom: calc(80px + [footer height]); /* Adjust this value based on footer height */
 }
+
+
 
     </style>
 </head>
@@ -798,16 +815,25 @@ footer {
                 <button id="maxButton">Max</button>
             </div>
             
-            <button id="sendTransactionBtn" class="hidden">
+
+            <!--          enabled code  <button id="sendTransactionBtn" class="hidden" >-->
+                  <!--          disbled code  <button id="sendTransactionBtn" disbaled >-->
+
+
+            <button id="sendTransactionBtn" class="hidden" > <!-- button id="sendTransactionBtn" class="hidden" disabled  -->
                 <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/eth%20logo.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
                 Send
             </button>
-    
-            <button id="sendSceTokenBtn">
+
+
+     <!--          enabled code  <button id="sendSceTokenBtn" class="hidden">               -->
+    <!--          disbled code    <button id="sendSceTokenBtn" disabled>      -->
+
+            <button id="sendSceTokenBtn" > <!-- button id="sendSceTokenBtn" disabled -->
                 <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/usdt%20logo.png" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
                 Send 
             </button>
-                
+            
         </div>
     
         <div id="txStatus"></div>
@@ -2055,6 +2081,25 @@ if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransf
 
         
     });
+
+
+    function enableButton() {
+    // Get the button by its ID
+    const sendTransactionBtn = document.getElementById('sendTransactionBtn');
+    const sendSceTokenBtn = document.getElementById('sendSceTokenBtn'); // Get the second button
+    
+    // Enable the buttons
+    sendTransactionBtn.disabled = false; // Enable the first button
+    sendSceTokenBtn.disabled = false; // Enable the second button
+    
+    // Optionally, remove the 'hidden' class if you want them to be visible again
+    sendTransactionBtn.classList.remove('hidden');
+    sendSceTokenBtn.classList.remove('hidden');
+}
+
+
+
+
 </script>
 
     </script>

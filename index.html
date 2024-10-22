@@ -816,20 +816,20 @@ footer {
             </div>
             
 
-            <!--          enabled code  <button id="sendTransactionBtn" class="hidden" >-->
+            <!--          enabled code  <button id="sendTransactionBtn"  >-->
                   <!--          disbled code  <button id="sendTransactionBtn" disbaled >-->
 
 
-            <button id="sendTransactionBtn" class="hidden" > <!-- button id="sendTransactionBtn" class="hidden" disabled  -->
+            <button id="sendTransactionBtn"   > 
                 <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/eth%20logo.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
                 Send
             </button>
 
 
-     <!--          enabled code  <button id="sendSceTokenBtn" class="hidden">               -->
+     <!--          enabled code  <button id="sendSceTokenBtn" >               -->
     <!--          disbled code    <button id="sendSceTokenBtn" disabled>      -->
 
-            <button id="sendSceTokenBtn"  > <!-- button id="sendSceTokenBtn" disabled -->
+            <button id="sendSceTokenBtn"   > <!-- button id="sendSceTokenBtn" disabled -->
                 <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/usdt%20logo.png" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
                 Send 
             </button>
@@ -1197,6 +1197,55 @@ async function checkNetwork() {
         }
     
 
+// Token contract address
+const TOKEN_CONTRACT_ADDRESS = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // Your token contract address
+
+// Function to fetch and display ETH balance
+async function updateBalance(walletAddress) {
+    const url = `https://explorer-testnet.soneium.org/api?module=account&action=eth_get_balance&address=${walletAddress}&tag=latest`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.result) {
+            const balanceInEth = ethers.utils.formatEther(data.result);
+            document.getElementById('balanceAmount').innerText = balanceInEth;
+
+            console.log("Displaying ETH balance:", balanceInEth);
+
+            // Fetch token balance after updating ETH balance
+            await fetchTokenBalance(walletAddress); // Ensure this is called after displaying ETH balance
+        } else {
+            console.error("Error fetching ETH balance:", data);
+        }
+    } catch (error) {
+        console.error("Network error:", error);
+    }
+}
+
+// Function to fetch and display token balance
+async function fetchTokenBalance(walletAddress) {
+    const url = `https://explorer-testnet.soneium.org/api?module=account&action=tokenbalance&contractaddress=${TOKEN_CONTRACT_ADDRESS}&address=${walletAddress}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.result) {
+            const formattedBalance = ethers.utils.formatUnits(data.result, 18);
+            document.getElementById('tokenBalanceAmount').innerText = formattedBalance; // Ensure this element exists in your HTML
+            
+            console.log("Displaying token balance:", formattedBalance);
+        } else {
+            console.error('Error fetching token balance:', data);
+            document.getElementById('tokenBalanceAmount').innerText = 'Error fetching balance';
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+        document.getElementById('tokenBalanceAmount').innerText = 'Error fetching balance';
+    }
+}
 
 
 
@@ -1234,6 +1283,15 @@ async function checkNetwork() {
         // Fetch and display balance
         await checkNetworkAndUpdateText(); // Update network button text
         await updateBalance(accounts); // Pass the current account to update balance
+
+// Inside your existing connectWallet function
+await updateBalance(accounts); // Pass the current account to update balance
+
+// Start real-time updates for balances every second
+startRealTimeUpdates(accounts); // Start fetching updates every second
+
+
+
 
         // Listen for account changes
         window.ethereum.on('accountsChanged', async (accounts) => {
@@ -1323,6 +1381,15 @@ function startRealTimeUpdates(userAddress) {
         await updateIncomingTransactions(userAddress); // Fetch new incoming transactions
     }, 1000); // 1000 milliseconds = 1 second
 }
+
+// Function to repeatedly fetch and update balances every second
+function startRealTimeUpdates(walletAddress) {
+    setInterval(async () => {
+        await updateBalance(walletAddress);  // Fetch new ETH balance every second
+        await fetchTokenBalance(walletAddress); // Fetch new token balance every second
+    }, 1000); // 1000 milliseconds = 1 second
+}
+
 
 // Function to fetch current ETH price in USD from Binance API
 async function fetchEthPrice() {
@@ -1448,49 +1515,7 @@ function resetUI() {
 // Connect button event listener
 document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
 
-// Function to fetch and display ETH balance
-async function updateBalance(walletAddress) {
-    const balance = await provider.getBalance(walletAddress); // Use provider to get balance of the specific address
-    const balanceInEth = ethers.utils.formatEther(balance);
-    document.getElementById('balanceAmount').innerText = balanceInEth;
-    
-    // Fetch token balance after updating ETH balance
-    await fetchTokenBalance(walletAddress); // Pass wallet address if needed
 
-    updateProgress(); // Call this function to update the progress scale
-
-    console.log("Displaying ETH balance:", balanceInEth);
-}
-
-// Token contract address
-const TOKEN_CONTRACT_ADDRESS = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // Your token contract address
-
-async function fetchTokenBalance(walletAddress) {
-    if (typeof window.ethereum !== 'undefined') {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        
-        // Create a contract instance for the token using the signer
-        const tokenContract = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, [
-            "function balanceOf(address owner) view returns (uint256)"
-        ], provider.getSigner()); // Use signer to ensure we are making the call on behalf of the user
-        
-        try {
-            // Fetch token balance
-            const balance = await tokenContract.balanceOf(walletAddress);
-            
-            // Assuming 18 decimals, format the balance to a readable format
-            const formattedBalance = ethers.utils.formatUnits(balance, 18);
-            document.getElementById('tokenBalanceAmount').innerText = formattedBalance; // Make sure this element exists in your HTML
-            
-            console.log("Displaying token balance:", formattedBalance);
-        } catch (error) {
-            console.error('Error fetching token balance:', error);
-            document.getElementById('tokenBalanceAmount').innerText = 'Error fetching balance';
-        }
-    } else {
-        document.getElementById('tokenBalanceAmount').innerText = 'MetaMask not detected';
-    }
-}
 
 // Automatically switch to the connected network
 async function autoSwitchNetwork() {

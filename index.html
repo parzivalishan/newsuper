@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -364,13 +365,101 @@ input:hover {
     display: none; /* Keep hidden class as is */
 }
 
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker background with opacity */
+    backdrop-filter: blur(5px); /* Blur effect for the background */
+}
 
+.modal-content {
+    background-color: #36454F; /* Charcoal */
+    margin: 10% auto; /* Centered with less margin */
+    padding: 20px; /* Increased padding */
+    border-radius: 15px; /* More rounded corners */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Deeper shadow for depth */
+    width: 90%; /* Responsive width */
+    max-width: 500px; /* Maximum width for larger screens */
+    animation: fadeIn 0.3s; /* Animation for opening */
+    
+    word-wrap: break-word; /* Allow long words to break and wrap onto the next line */
+    overflow-wrap: break-word; /* Breaks long words if necessary */
+    white-space: normal; /* Allows text to wrap normally */
+}
 
+/* Animation for modal appearance */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 24px;
+}
 
+.close-button:hover,
+.close-button:focus {
+    color: #ff0000; /* Change color on hover */
+    text-decoration: none;
+    cursor: pointer;
+}
 
+h2 {
+    margin-top: 0; /* Remove top margin from title */
+}
 
+/* Button styles */
+button {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Loader styles */
+.loader {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Transaction hash link styles */
+.modal-content a {
+    color: #00BFFF; /* Bright Blue for links */
+    text-decoration: underline; /* Underline for better visibility */
+}
+
+.modal-content a:hover {
+    color: #1E90FF; /* Lighter Blue on hover */
+}
+
+/* Center content in processing modal */
+#processingModal .modal-content {
+    text-align: center; /* Center content */
+}
 
 
 
@@ -384,6 +473,7 @@ input:hover {
 
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
 
 *, *:before, *:after {
     box-sizing: border-box;
@@ -778,8 +868,25 @@ footer {
                 <p id="totalUsdSent">Total USD Sent: $0.00</p> <!-- Make sure it's visible -->
             </div>
 
+<!-- Modal Structure -->
+<div id="customAlert" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalMessage"></p>
+        <button onclick="closeModal()">OK</button>
+    </div>
+</div>
 
 
+<!-- Processing Modal -->
+<div id="processingModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h2>Processing...</h2>
+        <p>Please confirm the transaction in your metamask</p>
+        <div class="loader"></div> <!-- Optional loading spinner -->
+    </div>
+</div>
 
             <h2></h2>
             <p>Current Price ETH: <span id="ethPrice">Fetching...</span></p>
@@ -949,6 +1056,29 @@ async function fetchETHPrice() {
         console.error('Error fetching ETH price:', error);
         return null; // Return null if there's an error
     }
+}
+
+function openModal(title, message) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMessage').innerHTML = message; // Use innerHTML to allow HTML content
+    document.getElementById('customAlert').style.display = 'block';
+}
+
+function closeModal() {
+    const modal = document.getElementById('customAlert');
+    modal.style.opacity = '0'; // Fade out effect
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.style.opacity = '1'; // Reset opacity for next open
+    }, 300); // Match the duration of the fade-in animation
+}
+
+function showProcessingModal() {
+    document.getElementById('processingModal').style.display = 'block';
+}
+
+function hideProcessingModal() {
+    document.getElementById('processingModal').style.display = 'none';
 }
 
 // Function to update the raised amount in USD based on current ETH price
@@ -1700,18 +1830,36 @@ async function setMaxAmount() {
 document.getElementById('maxButton').addEventListener('click', async function() {
     await setMaxAmount();
 });
+
+
+
+
+
+
+
 // Send Transaction on Minato blockchain
 sendTransactionBtn.addEventListener('click', async () => {
+    const sendButton = sendTransactionBtn; // Reference to the button
     const recipientAddress = recipientAddressInput.value; // Get the recipient address
     const amountToSend = parseFloat(amountToSendInput.value); // Get the amount to send
 
+    // Show processing modal
+    showProcessingModal(); // Added line
+
+    // Disable button to prevent multiple clicks
+    sendButton.disabled = true;
+
     if (!amountToSend || !recipientAddress) {
-        alert('Please enter the amount to send.');
+        openModal('Error', 'Please enter the amount to send.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
         return;
     }
 
     if (!ethers.utils.isAddress(recipientAddress)) {
-        alert('Invalid recipient address.');
+        openModal('Error', 'Invalid recipient address.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
         return;
     }
 
@@ -1721,69 +1869,14 @@ sendTransactionBtn.addEventListener('click', async () => {
     const signer = provider.getSigner();
 
     // Check network before sending
-const networkMatches = await checkNetwork(); 
-if (!networkMatches) {
-    // Show custom UI prompt instead of alert
-    showSwitchNetworkPrompt();
-    return; // Exit early
-}
-
-// Function to show custom prompt for switching networks
-function showSwitchNetworkPrompt() {
-    const userConfirmed = confirm('You are not connected to the correct network. Would you like to switch to Minato?');
-    if (userConfirmed) {
-        switchNetwork(MINATO_CHAIN_ID);
-    } else {
-        alert('Please switch to Minato manually in your MetaMask.');
+    const networkMatches = await checkNetwork(); 
+    if (!networkMatches) {
+        showSwitchNetworkPrompt();
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return; // Exit early
     }
-}
 
-// Function to check network
-async function checkNetwork() {
-    const currentChainId = await provider.getNetwork().then(network => network.chainId);
-    return currentChainId === MINATO_CHAIN_ID; // Check if current network matches Minato
-}
-
-// Request to switch network function
-async function switchNetwork(chainId) {
-    try {
-        await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: `0x${chainId.toString(16)}` }],
-        });
-    } catch (error) {
-        // Handle errors, such as if the chain has not been added yet
-        if (error.code === 4902) {
-            // If the chain is not added, add it using wallet_addEthereumChain
-            await addNetwork(chainId);
-        } else {
-            console.error(`Failed to switch to network ${chainId}:`, error);
-            alert('Failed to switch networks. Please try switching manually in MetaMask.');
-        }
-    }
-}
-
-// Function to add a new network if it doesn't exist
-async function addNetwork(chainId) {
-    try {
-        await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-                chainId: `0x${chainId.toString(16)}`,
-                chainName: "Minato",
-                nativeCurrency: {
-                    name: "Minato",
-                    symbol: "ETH",
-                    decimals: 18,
-                },
-                rpcUrls: [MINATO_RPC_URL],
-            }],
-        });
-    } catch (error) {
-        console.error(`Failed to add network ${chainId}:`, error);
-        alert('Failed to add the new network. Please check your MetaMask settings.');
-    }
-}
     // Get user's wallet address
     const userWalletAddress = await signer.getAddress();
     const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
@@ -1791,61 +1884,60 @@ async function addNetwork(chainId) {
     // Check if user is whitelisted
     const whitelisted = await isWhitelisted(userWalletAddress);
     if (!whitelisted) {
-        alert('Your wallet address is not whitelisted.');
+        openModal('Error', 'Your wallet address is not whitelisted.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
         return;
     }
 
-// Check max buy limit
-const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
-const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
+    // Check max buy limit
+    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); 
 
-// Fetch total USD sent from your existing logic
-const incomingData = await fetchIncomingTransactions(userWalletAddress); // Fetch incoming data for the user
-const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); // Get total USD sent
+    // Fetch total USD sent from your existing logic
+    const incomingData = await fetchIncomingTransactions(userWalletAddress); 
+    const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); 
 
-// Allow for an additional $0.02 over the max buy limit and subtract totalUsdSent
-let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.02 - (totalUsdSent || 0);
+    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.02 - (totalUsdSent || 0);
 
-// Check if adjustedEffectiveMaxBuyLimit is negative
-if (adjustedEffectiveMaxBuyLimit < 0) {
-    alert("You have maxed out your allocation."); // Show alert message
-    adjustedEffectiveMaxBuyLimit = 0; // Optionally set it to zero or any other logic you prefer
-    return; // Prevent transaction initiation
-}
+    if (adjustedEffectiveMaxBuyLimit < 0) {
+        openModal("Error", "You have maxed out your allocation.");
+        adjustedEffectiveMaxBuyLimit = 0; 
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return; 
+    }
 
-// Calculate the total raised amount
-const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
-const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
+    const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
+    const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
 
-// Calculate remaining amount based on hard cap (assuming hard cap is defined)
-const hardCap = 10000; // Set your desired hard cap here
-const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
-const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+    const hardCap = 10000; 
+    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
 
-// Calculate remaining amount available based on hard cap
-const remainingAmountValue = hardCap - totalUsdAmountRaised;
+    const remainingAmountValue = hardCap - totalUsdAmountRaised;
 
-console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
+    console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
 
-// Check if input amount exceeds remaining amount
-if (parseFloat(amountToSend) > remainingAmountValue) { 
-    alert(`You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
-    return; // Prevent transaction initiation
-}
+    if (parseFloat(amountToSend) > remainingAmountValue) { 
+        openModal(`Error`, `You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; 
+        return; 
+    }
 
-// If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
-if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
-    adjustedEffectiveMaxBuyLimit = remainingAmountValue; // Set it to remaining amount
-}
+    if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
+        adjustedEffectiveMaxBuyLimit = remainingAmountValue; 
+    }
 
-// Calculate new raised amount
-const newRaisedAmount = currentRaisedAmount + parseFloat(amountToSend);
-
-// Check if new raised amount exceeds adjusted max buy limit and show alert if it does
-if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
-    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.02).toFixed(2)} ETH.`);
-    return; // Prevent transaction initiation
-}
+    const newRaisedAmount = currentRaisedAmount + parseFloat(amountToSend);
+    
+    if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
+        openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.02).toFixed(2)} ETH.`);
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; 
+        return; 
+    }
 
    try {
        console.log('Initiating transfer...');
@@ -1854,188 +1946,165 @@ if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) {
            value: ethers.utils.parseEther(amountToSend.toString())
        });
 
+       // Hide processing modal after transaction initiation
+       hideProcessingModal(); // Added line
+
        // Create a link to the transaction based on the current network
        const txHashLink = currentNetwork === 'Sepolia'
            ? `https://sepolia.etherscan.io/tx/${tx.hash}`
            : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
 
-        // Show transaction status element by adding a class
-        txStatus.classList.add('show');
-       
-        txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>.<br>Waiting for confirmation... <span class="loading">⏳</span>`;
+       // Show transaction status in modal for token transfer
+       openModal('Transaction Sent', `
+    Waiting for confirmation... <span class="loading">⏳</span><br>
+    Hash: <a href="${txHashLink}" target="_blank" style="color: #00BFFF; text-decoration: underline;">${tx.hash}</a>
+`);
+// Start polling for confirmation
+const interval = setInterval(async () => {
+    const receipt = await provider.getTransactionReceipt(tx.hash);
 
-       // Start polling for confirmation
-       const interval = setInterval(async () => {
-           const receipt = await provider.getTransactionReceipt(tx.hash);
+    if (receipt && receipt.status !== null) {
+        clearInterval(interval); 
 
-           if (receipt && receipt.status !== null) {
-               clearInterval(interval); // Stop polling if we have a receipt
+        openModal('Transaction Confirmed', `
+            Hash: <a href="${txHashLink}" target="_blank" style="color: #00BFFF; text-decoration: underline;">${tx.hash}</a>.
+        `);
+        sendButton.disabled = false; // Re-enable button after confirmation
 
-               // Update status after confirmation
-               txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLink}" target="_blank">${tx.hash}</a>.`;
-           }
-       }, 100); // Check every 100 milliseconds
+        // Update raised amount and call updateProgress
+        document.getElementById('raisedAmount').innerText = `Raised Amount: ${newRaisedAmount.toFixed(18)} ETH`;
+        updateProgress();
+    }
+}, 100);
 
-       // Update raised amount and call updateProgress
-       document.getElementById('raisedAmount').innerText = `Raised Amount: ${newRaisedAmount.toFixed(18)} ETH`;
-       
-       updateProgress();
    } catch (error) {
-       txStatus.innerText = `Error: ${error.message}`;
        console.error('Transaction failed:', error);
+       openModal('Error', `Error: ${error.message}`);
+       hideProcessingModal(); // Added line on error
+       sendButton.disabled = false; // Re-enable button on error
    }
 });
 
-// Send Token button functionality
+// Functions for showing and hiding the processing modal
+
+function showProcessingModal() {
+   document.getElementById('processingModal').style.display = 'block';
+}
+
+function hideProcessingModal() {
+   document.getElementById('processingModal').style.display = 'none';
+}
+
+
+
+
+
+
+
+//send scetokenbtn 
+
 document.getElementById('sendSceTokenBtn').addEventListener('click', async () => {
+    const sendButton = document.getElementById('sendSceTokenBtn');
+    
+    // Show processing modal
+    showProcessingModal(); // Added line
+
+    // Disable button to prevent multiple clicks
+    sendButton.disabled = true;
+
     const recipientAddress = recipientAddressInput.value;
     const amountToSend = amountToSendInput.value;
 
     if (!amountToSend || !recipientAddress) {
-        alert('Please enter the amount to send.');
+        openModal('Error', 'Please enter the amount to send.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
         return;
     }
 
     if (!ethers.utils.isAddress(recipientAddress)) {
-        alert('Invalid recipient address.');
+        openModal('Error', 'Invalid recipient address.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
         return;
     }
 
     // Initialize provider and request account access
     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    
     await provider.send("eth_requestAccounts", []); 
     const signer = provider.getSigner();
 
-    // Check network before sending
-const networkMatches = await checkNetwork(); 
-if (!networkMatches) {
-    // Show custom UI prompt instead of alert
-    showSwitchNetworkPrompt();
-    return; // Exit early
-}
+   // Check network before sending
+   const networkMatches = await checkNetwork(); 
+   if (!networkMatches) {
+       showSwitchNetworkPrompt();
+       hideProcessingModal(); // Added line
+       sendButton.disabled = false; // Re-enable button
+       return; // Exit early
+   }
 
-// Function to show custom prompt for switching networks
-function showSwitchNetworkPrompt() {
-    const userConfirmed = confirm('You are not connected to the correct network. Would you like to switch to Minato?');
-    if (userConfirmed) {
-        switchNetwork(MINATO_CHAIN_ID);
-    } else {
-        alert('Please switch to Minato manually in your MetaMask.');
-    }
-}
+   const userWalletAddress = await signer.getAddress();
+   const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
 
-// Function to check network
-async function checkNetwork() {
-    const currentChainId = await provider.getNetwork().then(network => network.chainId);
-    return currentChainId === MINATO_CHAIN_ID; // Check if current network matches Minato
-}
+   const whitelistedForTokenTransfer = await isWhitelisted(userWalletAddress);
+   if (!whitelistedForTokenTransfer) {
+       openModal('Error', 'Your wallet address is not whitelisted.');
+       hideProcessingModal(); // Added line
+       sendButton.disabled = false; // Re-enable button
+       return;
+   }
 
-// Request to switch network function
-async function switchNetwork(chainId) {
-    try {
-        await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: `0x${chainId.toString(16)}` }],
-        });
-    } catch (error) {
-        // Handle errors, such as if the chain has not been added yet
-        if (error.code === 4902) {
-            // If the chain is not added, add it using wallet_addEthereumChain
-            await addNetwork(chainId);
-        } else {
-            console.error(`Failed to switch to network ${chainId}:`, error);
-            alert('Failed to switch networks. Please try switching manually in MetaMask.');
-        }
-    }
-}
+   const specificMaxBuyLimitForTokenTransfer = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+   console.log(`Fetched max buy limit for token transfer for address ${normalizedUserWalletAddress}: ${specificMaxBuyLimitForTokenTransfer} ETH`);
 
-// Function to add a new network if it doesn't exist
-async function addNetwork(chainId) {
-    try {
-        await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-                chainId: `0x${chainId.toString(16)}`,
-                chainName: "Minato",
-                nativeCurrency: {
-                    name: "Minato",
-                    symbol: "ETH",
-                    decimals: 18,
-                },
-                rpcUrls: [MINATO_RPC_URL],
-            }],
-        });
-    } catch (error) {
-        console.error(`Failed to add network ${chainId}:`, error);
-        alert('Failed to add the new network. Please check your MetaMask settings.');
-    }
-}
+   const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
 
-    // Get user's wallet address
-    const userWalletAddress = await signer.getAddress();
-    const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+   const incomingData = await fetchIncomingTransactions(userWalletAddress);
+   const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData);
 
-    // Check if user is whitelisted
-    const whitelistedForTokenTransfer = await isWhitelisted(userWalletAddress);
-    if (!whitelistedForTokenTransfer) {
-        alert('Your wallet address is not whitelisted.');
-        return;
-    }
+   let adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.02 - (totalUsdSent || 0);
 
-  // Check max buy limit for tokens
-const specificMaxBuyLimitForTokenTransfer = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
-console.log(`Fetched max buy limit for token transfer for address ${normalizedUserWalletAddress}: ${specificMaxBuyLimitForTokenTransfer} ETH`);
+   if (adjustedEffectiveMaxBuyLimitForTokenTransfer < 0) {
+       openModal("Error", "You have maxed out your allocation.");
+       adjustedEffectiveMaxBuyLimitForTokenTransfer = 0; 
+       hideProcessingModal(); // Added line
+       sendButton.disabled = false; // Re-enable button
+       return; 
+   }
 
-const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
+   const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
+   const currentRaisedAmountForTokenTransfer = parseFloat(currentRaisedAmountTextForTokenTransfer.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
 
-// Fetch total USD sent from your existing logic
-const incomingData = await fetchIncomingTransactions(userWalletAddress); // Fetch incoming data for the user
-const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); // Get total USD sent
+   const amountInUnitsForTokenTransfer = ethers.utils.parseUnits(amountToSend, 18);
 
-// Allow for an additional $0.02 over the max buy limit and subtract totalUsdSent
-let adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.02 - (totalUsdSent || 0);
+   const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+   const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
 
-// Check if adjustedEffectiveMaxBuyLimit is negative
-if (adjustedEffectiveMaxBuyLimitForTokenTransfer < 0) {
-    alert("You have maxed out your allocation."); // Show alert message
-    adjustedEffectiveMaxBuyLimitForTokenTransfer = 0; // Optionally set it to zero or any other logic you prefer
-    return; // Prevent transaction initiation
-}
+   const hardCap = 10000; 
+   const remainingAmountValue = hardCap - totalUsdAmountRaised;
 
-// Calculate the total raised amount for tokens
-const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
-const currentRaisedAmountForTokenTransfer = parseFloat(currentRaisedAmountTextForTokenTransfer.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
+   console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
 
-// Convert amount to send to units for comparison
-const amountInUnitsForTokenTransfer = ethers.utils.parseUnits(amountToSend, 18);
+   if (parseFloat(amountToSend) > remainingAmountValue) { 
+       openModal(`Error`, `You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+       hideProcessingModal(); // Added line
+       sendButton.disabled = false; 
+       return; 
+   }
 
-// Fetch total USD amount raised from your existing logic (ensure this is defined and accessible)
-const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
-const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+   if (remainingAmountValue < adjustedEffectiveMaxBuyLimitForTokenTransfer) {
+       adjustedEffectiveMaxBuyLimitForTokenTransfer = remainingAmountValue; 
+   }
 
-// Calculate remaining amount based on hard cap (assuming hard cap is defined)
-const hardCap = 10000; // Set your desired hard cap here
-const remainingAmountValue = hardCap - totalUsdAmountRaised;
+   const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
+   if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
+       openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.02).toFixed(2)} USD.`);
+       hideProcessingModal(); // Added line
+       sendButton.disabled = false; 
+       return; 
+   }
 
-console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
-
-// Check if input amount exceeds remaining amount
-if (parseFloat(amountToSend) > remainingAmountValue) { 
-    alert(`You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
-    return; // Prevent transaction initiation
-}
-
-// If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
-if (remainingAmountValue < adjustedEffectiveMaxBuyLimitForTokenTransfer) {
-    adjustedEffectiveMaxBuyLimitForTokenTransfer = remainingAmountValue; // Set it to remaining amount
-}
-
-// Check if new raised amount exceeds adjusted max buy limit
-const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
-if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
-    alert(`You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.02).toFixed(2)} USD.`);
-    return; // Prevent transaction initiation
-}
    const tokenAddress = "0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9"; 
    const tokenContract = new ethers.Contract(tokenAddress, [
        "function transfer(address to, uint256 value) returns (bool)",
@@ -2044,14 +2113,16 @@ if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransf
 
    try {
        console.log('Initiating transfer...');
+       
        const balanceForTokenTransfer = await tokenContract.balanceOf(userWalletAddress);
 
        if (amountInUnitsForTokenTransfer.gt(balanceForTokenTransfer)) {
-           alert('Insufficient balance.');
+           openModal('Error', 'Insufficient balance.');
+           hideProcessingModal(); // Added line
+           sendButton.disabled = false; // Re-enable button
            return;
        }
 
-       // Proceed with the transfer only if all checks are passed
        const txForTokenTransfer = await tokenContract.transfer(recipientAddress, amountInUnitsForTokenTransfer);
        
        console.log('Transaction hash:', txForTokenTransfer.hash);
@@ -2060,23 +2131,34 @@ if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransf
            ? `https://sepolia.etherscan.io/tx/${txForTokenTransfer.hash}`
            : `https://explorer-testnet.soneium.org/tx/${txForTokenTransfer.hash}`;
 
-      // Show transaction status element for token transfer
-      txStatus.classList.add('show');
-       
-       txStatus.innerHTML = `Transaction sent! Hash: <a href="${txHashLinkForTokenTransfer}" target="_blank">${txForTokenTransfer.hash}</a>. Waiting for confirmation... <span class="loading">⏳</span>`;
+  // Show transaction status in modal for token transfer
+  openModal('Transaction Sent', `
+    Waiting for confirmation... <span class="loading">⏳</span><br>
+    Hash: <a href="${txHashLinkForTokenTransfer}" target="_blank" style="color: #00BFFF; text-decoration: underline;">${txForTokenTransfer.hash}</a>
+`);
 
-       // Start polling for confirmation for token transfer
-       const intervalForTokenTransfer = setInterval(async () => {
-           const receiptForTokenTransfer = await provider.getTransactionReceipt(txForTokenTransfer.hash);
+// Start polling for confirmation for token transfer
+const intervalForTokenTransfer = setInterval(async () => {
+    const receiptForTokenTransfer = await provider.getTransactionReceipt(txForTokenTransfer.hash);
 
-           if (receiptForTokenTransfer && receiptForTokenTransfer.status !== null) {
-               clearInterval(intervalForTokenTransfer);
-               txStatus.innerHTML = `Transaction confirmed! Hash: <a href="${txHashLinkForTokenTransfer}" target="_blank">${txForTokenTransfer.hash}</a>.`;
-           }
-       }, 100);
+    if (receiptForTokenTransfer && receiptForTokenTransfer.status !== null) {
+        clearInterval(intervalForTokenTransfer);
+        
+        // Update modal with confirmation message
+        openModal('Transaction Confirmed', `
+            Hash: <a href="${txHashLinkForTokenTransfer}" target="_blank">${txForTokenTransfer.hash}</a>.
+        `);
+        sendButton.disabled = false; // Re-enable button after confirmation
+    }
+}, 100);
+      
+      hideProcessingModal(); // Added line after starting polling
+
    } catch (error) {
        console.error('Token transfer failed:', error);
-       txStatus.innerText = `Error: ${error.message}`;
+       openModal('Error', `Error: ${error.message}`);
+       hideProcessingModal(); // Added line on error
+       sendButton.disabled = false; // Re-enable button on error
    }
 });
 

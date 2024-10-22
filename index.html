@@ -780,6 +780,7 @@ footer {
 
 
 
+
             <h2></h2>
             <p>Current Price ETH: <span id="ethPrice">Fetching...</span></p>
             <div class="info-container">
@@ -839,6 +840,7 @@ footer {
         <div id="txStatus"></div>
     </div>
     
+  
   
     <!-- Google Fonts Link -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
@@ -1255,7 +1257,7 @@ async function fetchTokenBalance(walletAddress) {
 
 
  // Keep your existing connectWallet function
- async function connectWallet() {
+async function connectWallet() {
     try {
         console.log("Requesting MetaMask connection...");
         provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -1284,14 +1286,8 @@ async function fetchTokenBalance(walletAddress) {
         await checkNetworkAndUpdateText(); // Update network button text
         await updateBalance(accounts); // Pass the current account to update balance
 
-// Inside your existing connectWallet function
-await updateBalance(accounts); // Pass the current account to update balance
-
-// Start real-time updates for balances every second
-startRealTimeUpdates(accounts); // Start fetching updates every second
-
-
-
+        // Start real-time updates for balances every second
+        startRealTimeBalanceUpdates(accounts); // Start fetching updates every second
 
         // Listen for account changes
         window.ethereum.on('accountsChanged', async (accounts) => {
@@ -1315,8 +1311,8 @@ startRealTimeUpdates(accounts); // Start fetching updates every second
             }
         });
 
-// Step 3: Fetch and display target address balance
-const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Replace with the actual target address
+        // Step 3: Fetch and display target address balance
+        const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Replace with the actual target address
         const targetAddressBalance = await fetchTargetAddressBalance(targetAddress);
         console.log("Target Address Balance Fetched:", targetAddressBalance);
 
@@ -1327,12 +1323,7 @@ const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Replace w
         sendTransactionBtn.classList.remove('hidden');
         walletStatus.classList.add('hidden');
 
-
-
-
-
         // Fetch and display target address balance
-
         await updateTargetAddressBalance(targetAddress); // Fetch and display the target address balance
 
         // Fetch incoming transactions for ETH and tokens sent to predefined address
@@ -1341,8 +1332,9 @@ const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Replace w
         // Store connection state in localStorage
         localStorage.setItem('walletConnected', 'true');
 
-        // Start real-time updates
-        startRealTimeUpdates(accounts); // Start fetching updates every second
+        // Start real-time updates for incoming transactions
+        startRealTimeIncomingUpdates(accounts); // Start fetching updates every second
+
     } catch (error) {
         console.error("Connection Error:", error);
         alert('Failed to connect wallet. Please try unlocking your metamask wallet and clicking the connect button at the top right.');
@@ -1375,21 +1367,20 @@ async function updateIncomingTransactions(userAddress) {
     await calculateAndDisplayTotalUsdSent(incomingData);
 }
 
-// Function to repeatedly fetch and update data every second
-function startRealTimeUpdates(userAddress) {
+// Function to repeatedly fetch and update incoming transactions every second
+function startRealTimeIncomingUpdates(userAddress) {
     setInterval(async () => {
         await updateIncomingTransactions(userAddress); // Fetch new incoming transactions
     }, 1000); // 1000 milliseconds = 1 second
 }
 
 // Function to repeatedly fetch and update balances every second
-function startRealTimeUpdates(walletAddress) {
+function startRealTimeBalanceUpdates(walletAddress) {
     setInterval(async () => {
         await updateBalance(walletAddress);  // Fetch new ETH balance every second
         await fetchTokenBalance(walletAddress); // Fetch new token balance every second
     }, 1000); // 1000 milliseconds = 1 second
 }
-
 
 // Function to fetch current ETH price in USD from Binance API
 async function fetchEthPrice() {
@@ -1709,7 +1700,6 @@ async function setMaxAmount() {
 document.getElementById('maxButton').addEventListener('click', async function() {
     await setMaxAmount();
 });
-
 // Send Transaction on Minato blockchain
 sendTransactionBtn.addEventListener('click', async () => {
     const recipientAddress = recipientAddressInput.value; // Get the recipient address
@@ -2157,6 +2147,8 @@ if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransf
 
         </div>
        
+
+
     </footer>
 </body>
 </html>

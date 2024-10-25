@@ -95,7 +95,9 @@ h1 {
 #connectWalletBtn, 
 #networkBtn, 
 #predictionMarketBtn, 
-#disperseBtn {
+#disperseBtn,
+#copyAddressBtn,
+.connectwalletbtn { /* Added connectwalletbtn */
     display: inline-block; /* Allows buttons to sit next to each other */
     position: relative;
     background: linear-gradient(135deg, rgba(0, 150, 255, 1) 0%, rgba(0, 100, 200, 1) 100%); /* Blue gradient */
@@ -104,13 +106,12 @@ h1 {
     text-transform: uppercase;
     border: none; /* No border */
     letter-spacing: 0.05rem; /* Reduced letter spacing for smaller buttons */
-    font-size: 0.8rem; /* Smaller font size */
-    padding: 0.5rem 1.5rem; /* Reduced padding for smaller buttons */
+    font-size: 1rem; /* Adjusted font size for consistency */
+    padding: 0.75rem 1.5rem; /* Adjusted padding for consistency */
     border-radius: 6px; /* Slightly smaller border-radius */
     cursor: pointer;
     transition: padding 0.2s, background 0.3s, color 0.3s; /* Smooth transitions */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Darker shadow for depth */
-    
     margin: 0 10px; /* Equal spacing between buttons */
 }
 
@@ -118,16 +119,14 @@ h1 {
 #connectWalletBtn:hover, 
 #networkBtn:hover, 
 #predictionMarketBtn:hover, 
-#disperseBtn:hover {
+#disperseBtn:hover,
+#copyAddressBtn:hover,
+.connectwalletbtn:hover { /* Added connectwalletbtn hover effect */
     letter-spacing: 0.1rem; /* Increased letter spacing on hover */
-    padding: 0.6rem 1.6rem; /* Slightly increase padding on hover */
-
+    padding: 0.85rem 1.6rem; /* Slightly increase padding on hover for consistency */
     background: linear-gradient(135deg, rgba(255, 150, 50, 1) 0%, rgba(255, 100, 50, 1) 100%); /* Warm gradient on hover */
     color: white; /* Keep text white for contrast */
-
     animation: box-shadow-animation 0.5s infinite alternate; /* Animation for shadow effect */
-
-    /* Neon effect */
     box-shadow: 0 0 25px rgba(255,150,50,.7), 0 0 50px rgba(255,100,50,.7); /* Neon glow effect */
 }
 
@@ -135,7 +134,9 @@ h1 {
 #connectWalletBtn::before,
 #networkBtn::before,
 #predictionMarketBtn::before,
-#disperseBtn::before {
+#disperseBtn::before,
+#copyAddressBtn::before,
+.connectwalletbtn::before { /* Added connectwalletbtn before element */
     content: "";
     position: absolute;
     inset: 2px; /* Creates an inset effect */
@@ -151,6 +152,80 @@ h1 {
        box-shadow : rgba(255,150,50,.5) -4px -4px, rgba(255,150,50,.5) -4px -4px inset; 
    }
 }
+
+/* Wallet Dropdown Styles */
+.wallet-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content Styles */
+.wallet-dropdown .dropdown-content {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 100%; /* Position below the connect wallet button */
+    left: 0;
+    background: rgba(39, 39, 44, 0.9); /* Darker background for contrast */
+    color: white; /* White text for contrast */
+    min-width: 160px; /* Set a specific width for the dropdown */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 6px; /* Rounded corners for dropdown */
+}
+
+/* Show dropdown when hovering over wallet-dropdown */
+.wallet-dropdown:hover .dropdown-content {
+    display: block; /* Show the dropdown on hover */
+}
+
+/* Button Styles within Dropdown */
+.wallet-dropdown .dropdown-btn {
+    display: block; /* Make the dropdown buttons stack vertically */
+    background: linear-gradient(135deg, rgba(0, 150, 255, 1) 0%, rgba(0, 100, 200, 1) 100%); /* Blue gradient */
+    color: white; /* White text for contrast */
+    text-decoration: none;
+    text-transform: uppercase;
+    border: none; /* No border */
+    letter-spacing: 0.05rem; /* Reduced letter spacing */
+    font-size: 1rem; /* Match font size with main buttons */
+    padding: 0.75rem 1.5rem; /* Match padding with main buttons */
+    border-radius: 6px; /* Slightly smaller border-radius */
+    cursor: pointer;
+    transition: padding 0.2s, background 0.3s, color 0.3s; /* Smooth transitions */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Darker shadow for depth */
+    margin: 5px auto; /* Centered spacing between dropdown buttons */
+}
+
+/* Neon Effect on Hover for Dropdown Buttons */
+.wallet-dropdown .dropdown-btn:hover {
+    letter-spacing: 0.1rem; /* Increased letter spacing on hover */
+    padding: 0.85rem 1.6rem; /* Slightly increase padding on hover for consistency with main buttons*/
+    background: linear-gradient(135deg, rgba(255,150,50,.7) , rgba(255,.7 ,50,.7)); /* Warm gradient on hover*/
+    animation: box-shadow-animation .5s infinite alternate; 
+}
+
+/* Button Before Element for Depth Effect in Dropdown Buttons */
+.wallet-dropdown .dropdown-btn::before {
+   content:"";
+   position:absolute;
+   inset :2px ;
+   background :rgba(39 ,39 ,44 , .8);
+}
+
+#copyaddressmodal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+
+
 
 /* Network Select Button Styles */
 .network-select {
@@ -317,6 +392,9 @@ input:hover {
     width: calc(100% - 20px); /* Adjust width to fit within padding */
     margin-top: 10px; /* Space above the container */
 }
+
+
+
 
 #maxButton {
     position: absolute; 
@@ -705,8 +783,20 @@ footer {
                 Sepolia
             </button>
         </div>
-        <button id="connectWalletBtn">Connect Wallet</button> <!-- Connect Wallet button -->
-    </div>
+
+
+        <div class="wallet-dropdown">
+            <button id="connectWalletBtn" class="connectwalletbtn">Connect Wallet</button> <!-- Primary Connect Wallet button -->
+            <div class="dropdown-content hidden">
+                <button id="copyAddressBtn">Copy Address</button>
+                <div id="copyaddressmodal" style="display:none;">Wallet address copied to clipboard!</div>
+
+            </div>
+        </div>
+</div>
+
+
+</div>
 
     <div id="app2" style="font-family: Arial, sans-serif; color: #333;">
         <h1 style="text-align: center; font-size: 2.5em;">Vitalik Token IDO</h1>
@@ -1410,6 +1500,13 @@ async function connectWallet() {
         accountDisplay.classList.remove('hidden');
         balanceAmount.innerText = "Fetching..."; // Initial loading message
         document.getElementById('connectWalletBtn').innerText = `${accounts.slice(0, 5)}...${accounts.slice(-3)}`; // Update button text
+
+// Show copy address button and set the full address
+const copyAddressBtn = document.getElementById('copyAddressBtn');
+copyAddressBtn.classList.remove('hidden'); // Remove hidden class to show copy address button
+copyAddressBtn.innerText = accounts; // Set the full address in the copy address button
+
+
         console.log("MetaMask connected with account:", accounts);
 
         // Check current network
@@ -1735,8 +1832,26 @@ async function checkNetworkAndUpdateText() {
 }
 
 
+const copyAddressBtn = document.getElementById('copyAddressBtn');
+const modal = document.getElementById('copyaddressmodal');
 
+// Function to open the modal
+function copyOpenModal() {
+    modal.style.display = 'block'; // Show the modal
+    setTimeout(() => {
+        modal.style.display = 'none'; // Hide the modal after 5 seconds
+    }, 5000);
+}
 
+// Copy address function
+copyAddressBtn.addEventListener('click', () => {
+    const walletAddress = copyAddressBtn.innerText; 
+    navigator.clipboard.writeText(walletAddress).then(() => {
+        copyOpenModal(); // Call the modal function
+    }).catch(err => {
+        console.error("Could not copy text:", err);
+    });
+});
 
 
 

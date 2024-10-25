@@ -788,8 +788,9 @@ footer {
         <div class="wallet-dropdown">
             <button id="connectWalletBtn" class="connectwalletbtn">Connect Wallet</button> <!-- Primary Connect Wallet button -->
             <div class="dropdown-content hidden">
-                <button id="copyAddressBtn">Copy Address</button>
+                <button id="copyAddressBtn" style="font-size: 20px;">Copy Address</button>
                 <div id="copyaddressmodal" style="display:none;">Wallet address copied to clipboard!</div>
+                <button id="viexplorer" style="font-size: 15px;">View in Explorer ↗</button>
         </div>
         </div>
 </div>
@@ -1500,6 +1501,14 @@ async function connectWallet() {
         balanceAmount.innerText = "Fetching..."; // Initial loading message
         document.getElementById('connectWalletBtn').innerText = `${accounts.slice(0, 5)}...${accounts.slice(-3)}`; // Update button text
 
+
+
+         // Add explorer button functionality here
+         document.getElementById('viexplorer').onclick = function() {
+            const url = `https://explorer-testnet.soneium.org/address/${accounts}`;
+            window.open(url, '_blank'); // Opens the URL in a new tab
+        };
+
 // Show copy address button and set the full address
 const copyAddressBtn = document.getElementById('copyAddressBtn');
 copyAddressBtn.classList.remove('hidden'); // Remove hidden class to show copy address button
@@ -1625,6 +1634,9 @@ window.ethereum.on('accountsChanged', async (accounts) => {
        resetUI();  // Reset UI if no accounts are connected
     }
 });
+
+
+
 
 // Function to update target address balance
 async function updateTargetAddressBalance(targetAddress) {
@@ -1853,6 +1865,11 @@ function copyOpenModal() {
         modal.style.display = 'none'; // Hide the modal after 5 seconds
     }, 5000);
 }
+
+
+
+
+
 
 // Copy address function
 copyAddressBtn.addEventListener('click', () => {

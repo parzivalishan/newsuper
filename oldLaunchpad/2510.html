@@ -1,0 +1,2283 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superchain Launchpad</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    
+    <link rel="icon" href="https://raw.githubusercontent.com/parzivalishan/newsuper/main/assets/superchain.png" type="image/png">
+
+    
+    <!-- Ethers.js -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.6.9/dist/ethers.umd.min.js"></script>
+  
+
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+ body {
+            font-family: Arial, sans-serif;
+            background-color: #0B0C0E; /* Dark black color resembling SpaceX */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            height: 100vh; /* Full height */
+            display: flex; /* Use flexbox for alignment */
+            flex-direction: column; /* Column layout */
+            align-items: flex-end; /* Align items to the right */
+            justify-content: flex-start; /* Align items to the top */
+        }
+
+
+        #header {
+            width: 100%; /* Full width */
+            display: flex; /* Flex layout for buttons */
+            justify-content: flex-end; /* Align buttons to the right */
+            padding: 10px; /* Padding for buttons */
+            position: absolute; /* Position absolute for top alignment */
+            top: 0; /* Align to the top */
+        }
+        #app {
+    background: linear-gradient(135deg, rgba(35, 130, 196, 1) 0%, rgba(26, 60, 141, 1) 100%); /* Gradient background */
+    padding: 20px; /* Padding for space inside */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow for depth */
+    max-width: 605px; /* Increased width (corrected from 6050px) */
+    width: calc(100% - 20px); /* Full width for responsiveness minus margins */
+    margin: 40px auto; /* Increased vertical spacing above and below app */
+    text-align: center; /* Center text within the app */
+    
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center children horizontally */
+}
+
+h1 {
+    font-size: 24px;
+}
+
+#app2 {
+    background: linear-gradient(135deg, rgba(255, 94, 77, 1) 0%, rgba(255, 209, 102, 1) 100%);
+    padding: 40px; /* Increased padding for more space inside */
+    border-radius: 15px; /* More rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow */
+    max-width: 1950px; /* Increased max width */
+    width: calc(100% - 20px); /* Set width to full minus margins */
+    margin: 60px auto; /* Centering with vertical spacing from the top */
+    text-align: center; /* Center align text in app2 */
+}
+
+
+
+    
+
+   
+
+    #myPieChart {
+        width: 350px !important; /* Set the width to 150px */
+        height: 350px !important; /* Set the height to 150px */
+    }
+   
+    #legendContainer {
+    display: flex;
+    flex-direction: column; /* Stack legend items vertically */
+    position: absolute; /* Allows for precise positioning */
+    top: 600px; /* Adjust this value to move it up or down */
+    left: 500px; /* Move the legend container 500 pixels from the left */
+}
+
+
+/* Button Styles */
+#connectWalletBtn, 
+#networkBtn, 
+#predictionMarketBtn, 
+#disperseBtn {
+    display: inline-block; /* Allows buttons to sit next to each other */
+    position: relative;
+    background: linear-gradient(135deg, rgba(0, 150, 255, 1) 0%, rgba(0, 100, 200, 1) 100%); /* Blue gradient */
+    color: white; /* White text for contrast */
+    text-decoration: none;
+    text-transform: uppercase;
+    border: none; /* No border */
+    letter-spacing: 0.05rem; /* Reduced letter spacing for smaller buttons */
+    font-size: 0.8rem; /* Smaller font size */
+    padding: 0.5rem 1.5rem; /* Reduced padding for smaller buttons */
+    border-radius: 6px; /* Slightly smaller border-radius */
+    cursor: pointer;
+    transition: padding 0.2s, background 0.3s, color 0.3s; /* Smooth transitions */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Darker shadow for depth */
+    
+    margin: 0 10px; /* Equal spacing between buttons */
+}
+
+/* Neon Effect on Hover */
+#connectWalletBtn:hover, 
+#networkBtn:hover, 
+#predictionMarketBtn:hover, 
+#disperseBtn:hover {
+    letter-spacing: 0.1rem; /* Increased letter spacing on hover */
+    padding: 0.6rem 1.6rem; /* Slightly increase padding on hover */
+
+    background: linear-gradient(135deg, rgba(255, 150, 50, 1) 0%, rgba(255, 100, 50, 1) 100%); /* Warm gradient on hover */
+    color: white; /* Keep text white for contrast */
+
+    animation: box-shadow-animation 0.5s infinite alternate; /* Animation for shadow effect */
+
+    /* Neon effect */
+    box-shadow: 0 0 25px rgba(255,150,50,.7), 0 0 50px rgba(255,100,50,.7); /* Neon glow effect */
+}
+
+/* Button Before Element for Depth Effect */
+#connectWalletBtn::before,
+#networkBtn::before,
+#predictionMarketBtn::before,
+#disperseBtn::before {
+    content: "";
+    position: absolute;
+    inset: 2px; /* Creates an inset effect */
+    background: rgba(39,39,44,0.8); /* Darker background for depth */
+}
+
+/* Keyframes for Animation Effects */
+@keyframes box-shadow-animation {
+   from {
+       box-shadow: rgba(39,39,44,0.5) -4px -4px, rgba(39,39,44,0.5) -4px -4px inset; 
+   }
+   to {
+       box-shadow : rgba(255,150,50,.5) -4px -4px, rgba(255,150,50,.5) -4px -4px inset; 
+   }
+}
+
+/* Network Select Button Styles */
+.network-select {
+    position: relative; /* Adjusted to remove absolute positioning */
+    background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Green gradient for network select */
+    color: white; /* White text for contrast */
+    border: none;
+    border-radius: 6px; /* Consistent border-radius with other buttons */
+    padding: 8px 16px; /* Adjusted padding for smaller size */
+    font-size: 0.9rem; /* Smaller font size for consistency */
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding shadow for depth */
+}
+#dropdownContent {
+    position: absolute; /* Keep it absolute */
+    top: 100%; /* Position it directly below the button */
+    right: 130px; /* Distance from the right side */
+    display: none; /* Hidden by default */
+    background-color: white; /* Background color for dropdown */
+    border: 1px solid #ccc; /* Optional border for better visibility */
+    border-radius: 5px; /* Rounded corners */
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+#dropdownContent button {
+    border: none;
+    padding: 10px 20px; /* Adjust padding for better appearance */
+    text-align: center; /* Center align text */
+    background-color: #0B0C0E; /* Same color as connect button */
+    color: white; /* Text color */
+    cursor: pointer; /* Pointer on hover */
+    margin: 0; /* No margin for dropdown items to stack vertically */
+    width: 100%; /* Make buttons full width for better alignment */
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center items vertically within the button */
+}
+
+#dropdownContent button:hover {
+    background-color: #3B82F6; /* Background color on hover */
+    color: white; /* Text color on hover */
+}
+
+#dropdownContent .logo {
+    width: 24px; /* Set a fixed width for logos */
+    height: 24px; /* Set a fixed height for logos */
+    margin-right: 8px; /* Space between logo and text */
+    vertical-align: middle; /* Align logo vertically in line with text (not strictly necessary with flexbox) */
+}
+
+
+/* Hide the button when it is disabled */
+button:disabled {
+    display: none; /* Completely hide the button */
+}
+
+/* Button Styles */
+button#sendTransactionBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: linear-gradient(135deg, rgba(128, 0, 128, 1) 0%, rgba(75, 0, 130, 1) 100%); /* Purple gradient background */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px; /* Space above the button */
+}
+
+/* Hover Effect */
+button#sendTransactionBtn:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(75, 0, 130, 1) 0%, rgba(148, 0, 211, 1) 100%); /* Darker purple gradient for hover */
+}
+
+/* Disabled Button Styles */
+button#sendTransactionBtn:disabled {
+    background: rgba(128, 0, 128, 0.5); /* Lighter purple to indicate disabled state */
+    color: rgba(255, 255, 255, 0.5); /* Lighter text color */
+    cursor: not-allowed; /* Change cursor to indicate disabled state */
+}
+/* New CSS for the SCE Send Button */
+button#sendSceTokenBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: linear-gradient(135deg, rgba(128, 0, 128, 1) 0%, rgba(75, 0, 130, 1) 100%); /* Purple gradient background */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px; /* Space above the button */
+}
+
+button#sendSceTokenBtn:hover {
+    background: linear-gradient(135deg, rgba(75, 0, 130, 1) 0%, rgba(148, 0, 211,1)100%); /* Darker purple gradient for hover */
+}
+@import url("https://fonts.googleapis.com/css?family=Raleway");
+
+:root {
+  --glow-color: #00CED1; /* Dark Turquoise */
+  --skin-color: #FAD6B8; /* Soft Peach */
+  --text-color: #333; /* Darker text color for visibility */
+}
+
+input[type="number"] {
+    font-family: "Raleway", sans-serif; /* Use Raleway font */
+    padding: 15px; /* Increase padding for a larger feel */
+    border: 0.15em solid var(--glow-color); /* Border with glowing color */
+    border-radius: 0.45em; /* Rounded corners */
+    background-color: var(--skin-color); /* Skin tone background */
+    color: var(--text-color); /* Darker text color for visibility */
+    font-size: 18px; /* Increase font size */
+    text-align: center; /* Center the text inside the input box */
+    box-shadow: inset 0px 0px 0.5em var(--glow-color), 
+                0px 0px 1em var(--glow-color); /* Initial glow effect */
+    transition: all 0.3s ease; /* Smooth transition for effects */
+    outline: none; /* Remove outline on focus */
+    animation: glow-animation 1s infinite alternate; /* Glowing animation */
+    width: calc(100% - 300px); /* Adjusted width to make input larger */
+}
+
+/* Hide the spinner in WebKit browsers (Chrome, Safari) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none; /* Remove default spinner in Chrome/Safari */
+    margin: 0; /* Remove margin */
+}
+
+/* Focus styling */
+input[type="number"]:focus {
+    border-color: rgba(255, 255, 255, 0.8); /* Change border color on focus */
+    box-shadow: 0 0 20px rgba(0, 206, 209, 1), 
+                inset 0px 0px 2em rgba(255, 255, 255, 0.5); /* Enhanced shadow on focus */
+}
+
+/* Placeholder text styling */
+input[type="number"]::placeholder {
+    color: rgba(51, 51, 51, 0.5); /* Light gray for placeholders with better visibility */
+    font-style: italic;
+}
+
+/* General input styles (for all input types) */
+input {
+    margin: 10px 0;
+    transition: all 0.3s ease; /* Smooth transition for effects */
+}
+
+/* Change appearance on hover */
+input:hover {
+    border-color: rgba(255, 255, 255, 1); /* Change to white on hover */
+}
+
+/* Keyframes for stronger glowing animation */
+@keyframes glow-animation {
+    from {
+        box-shadow: inset 0px 0px 0.5em var(--glow-color), 
+                    0px 0px 1em var(--glow-color);
+    }
+    to {
+        box-shadow: inset 0px 0px 1.5em var(--glow-color), 
+                    0px 0px 4em var(--glow-color); /* Increased glow intensity */
+    }
+}
+/* Parent container for positioning */
+.button-container {
+    position: relative; /* Set the parent as relative */
+    width: calc(100% - 20px); /* Adjust width to fit within padding */
+    margin-top: 10px; /* Space above the container */
+}
+
+#maxButton {
+    position: absolute; 
+    background: linear-gradient(135deg, rgba(76, 175, 80, 1) 0%, rgba(56, 142, 60, 1) 100%); /* Gradient background */
+    color: white; 
+    border: none; 
+    padding: 12px 20px; /* Match vertical padding with input field */
+    font-size: 16px; 
+    cursor: pointer; 
+    border-radius: 8px; 
+
+    right: 70px; /* Move it left from the right edge */
+    top: 10px;   
+    
+    height: calc(100% - 20px); /* Adjust height to match input field (considering margins) */
+}
+
+/* Hover and active states for Max button */
+#maxButton:hover {
+    background-color: #45a049; /* Slightly darker green for hover state */
+}
+
+#maxButton:active {
+    transform: scale(0.95); 
+}
+#txStatus {
+    display: none; /* Hide by default */
+    margin-top: 20px;
+    color: #333333; /* Keep original text color */
+    background-color: #ffffff; /* Keep original background color */
+    padding: 10px; /* Add some padding for better spacing */
+    border-radius: 5px; /* Rounded corners for aesthetics */
+    font-weight: bold; /* Make text bold */
+    font-size: 16px; /* Increase font size for readability */
+    overflow-wrap: break-word; /* Break long words to prevent overflow */
+    white-space: normal; /* Allow wrapping of text */
+    overflow: hidden; /* Hide overflow content to avoid scrollbars */
+    max-width: 100%; /* Ensure it doesn't exceed parent width */
+}
+
+#txStatus.show {
+    display: block; /* Show when this class is added */
+}
+
+.hidden {
+    display: none; /* Keep hidden class as is */
+}
+
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker background with opacity */
+    backdrop-filter: blur(5px); /* Blur effect for the background */
+}
+
+.modal-content {
+    background-color: #36454F; /* Charcoal */
+    margin: 10% auto; /* Centered with less margin */
+    padding: 20px; /* Increased padding */
+    border-radius: 15px; /* More rounded corners */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Deeper shadow for depth */
+    width: 90%; /* Responsive width */
+    max-width: 500px; /* Maximum width for larger screens */
+    animation: fadeIn 0.3s; /* Animation for opening */
+    
+    word-wrap: break-word; /* Allow long words to break and wrap onto the next line */
+    overflow-wrap: break-word; /* Breaks long words if necessary */
+    white-space: normal; /* Allows text to wrap normally */
+}
+
+/* Animation for modal appearance */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 24px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #ff0000; /* Change color on hover */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+h2 {
+    margin-top: 0; /* Remove top margin from title */
+}
+
+/* Button styles */
+button {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Loader styles */
+.loader {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Transaction hash link styles */
+.modal-content a {
+    color: #00BFFF; /* Bright Blue for links */
+    text-decoration: underline; /* Underline for better visibility */
+}
+
+.modal-content a:hover {
+    color: #1E90FF; /* Lighter Blue on hover */
+}
+
+/* Center content in processing modal */
+#processingModal .modal-content {
+    text-align: center; /* Center content */
+}
+
+
+
+
+/* Hide original progress elements */
+#progressLabel,
+#progressPercentage,
+.progress-container-original {
+    display: none; /* Hide these elements */
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+.progress-container-2 {
+    display: flex; /* Enable flexbox */
+    justify-content: center; /* Center the content horizontally */
+    width: 95%; /* Adjust width as needed */
+    margin: 0 auto; /* Center horizontally */
+    position: relative; /* Required for absolute positioning of inner elements if needed */
+}
+
+.range {
+    position: relative;
+    background-color: #333;
+    width: 600px; /* Fixed width for consistency */
+    height: 30px; /* Fixed height */
+    transform: skew(30deg);
+    font-family: 'Orbitron', monospace; /* Ensure this is applied correctly */
+    
+    &:before {
+        --width: calc(var(--p) * 1%);
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: var(--width); /* Use the CSS variable here */
+        height: 100%;
+        background-color: #F3E600; /* Progress color */
+        z-index: 0; /* Behind the label */
+        animation: load 10s forwards linear, glitch 20s infinite linear; /* Animation duration adjusted */
+    }
+    
+    .range__label {
+        position: absolute; /* Position absolutely for custom placement */
+        top: 50%; /* Center vertically */
+        left: 5%; /* Move text towards the right side */
+        transform: translateY(-50%) skew(-30deg); /* Center vertically and apply skew effect */
+        color: #000080; /* Text color for percentage display */
+        z-index: 1; /* Ensure text is above the progress bar */
+    }
+}
+
+@keyframes load {
+    to {
+        width: var(--width); /* Animate to full width based on percentage */
+    }
+}
+
+@keyframes glitch {
+    0%, 5% {
+        transform: translate(0, 0);
+    }
+    1% {
+        transform: translate(-5%, -10%);
+    }
+    2% {
+        transform: translate(10%, 30%);
+    }
+    3%{
+        transform: translate(-43%, 10%);
+    }
+    4% {
+        transform: translate(2%, -23%);
+    }
+}
+#disperseBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #0B0C0E; /* Match the button color with connect and network buttons */
+    color: white; /* Text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px; /* Space between buttons */
+    position: relative; /* Relative position for dropdown */
+}
+
+#disperseBtn:hover {
+    background-color: #0056b3; /* Hover color */
+}
+
+#predictionMarketBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #0B0C0E; /* Match the button color with connect and network buttons */
+    color: white; /* Text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px; /* Space between buttons */
+    position: relative; /* Relative position for dropdown */
+}
+
+#predictionMarketBtn:hover {
+    background-color: #0056b3; /* Hover color */
+}
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+
+
+
+
+
+}
+
+.info-container {
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Align items vertically centered */
+}
+
+#raisedAmount, #tokenBalance {
+    margin-right: 10px; /* Optional: add space between the elements */
+}
+footer {
+    background: none; /* Remove any background color */
+    color: white; /* Text color */
+    padding: 20px; /* Padding for spacing */
+    text-align: center; /* Center text */
+    width: calc(100% - 40px); /* Full width minus margins */
+    margin-top: 60px; /* Increased space above the footer */
+    position: relative; /* Positioning for absolute children */
+}
+
+.footer-container {
+    display: flex; /* Flexbox layout */
+    justify-content: space-between; /* Space between items */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.footer-container div {
+    flex: 1; /* Allow each section to grow */
+    margin: 10px; /* Margin around sections */
+}
+
+/* Animation styles for each section - unchanged */
+#one {
+    animation: one 5s ease-in-out infinite alternate;
+}
+
+#two {
+    width: 90%;
+    animation: two 4s ease-in-out infinite alternate;
+}
+
+#three {
+    width: 80%;
+    animation: three 3s ease-in-out infinite alternate;
+}
+
+#four {
+    width: 70%;
+    animation: four 2s ease-in-out infinite alternate;
+}
+
+#five {
+    width: 60%;
+    animation: five 1s ease-in-out infinite alternate;
+}
+
+/* Keyframes for animations - unchanged */
+@keyframes one {
+    from { box-shadow: 0 0 250px 20px #473C78; }
+    to { box-shadow: 0 0 100px 15px #F72A3B; }
+}
+
+@keyframes two {
+    from { box-shadow: 0 0 250px 20px #18C499; }
+    to { box-shadow: 0 0 100px 15px #D8F05E; }
+}
+
+@keyframes three {
+    from { box-shadow: 0 0 250px 20px #FFDD00; }
+    to { box-shadow: 0 0 100px 15px #3E33FF; }
+}
+
+@keyframes four {
+    from { box-shadow: 0 0 250px 20px #781848; }
+    to { box-shadow: 0 0 100px 15px #F2BBE9; }
+}
+
+@keyframes five {
+    from { box-shadow: 0 0 250px 20px #42F2A1; }
+    to { box-shadow: 0 0 100px 15px #F4F6AD; }
+}
+
+/* Optional padding for content above footer (adjust as needed) */
+.content-wrap {
+    padding-bottom: calc(80px + [footer height]); /* Adjust this value based on footer height */
+}
+
+
+
+    </style>
+</head>
+<body>
+    
+    <div id="header">
+
+     
+        
+        <button id="disperseBtn">Disperse Tokens </button> 
+        <button id="predictionMarketBtn">Prediction Market</button> <!-- New Prediction Market button -->
+        <button id="networkBtn">Network</button> <!-- Network button -->
+        <div id="dropdownContent">
+            <button id="minatoNetworkBtn" class="network-button">
+                <img src="https://bridge.soneium.org/icon-soneium.svg" alt="Minato Logo" class="logo" />
+                Minato
+            </button>
+            
+            <button id="sepoliaNetworkBtn" class="network-button">
+                <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none'><path fill='%2325292E' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23a)' fill-opacity='.3' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23b)' d='M8.19 14.77 L14 18.21l5.8-3.44-5.8 8.19-5.81-8.19Z'/><path fill='%23fff' d='m14 16.93-5.81-3.44L14 4.34l5.81 9.15L14 16.93Z'/><defs><linearGradient id='a' x1='0' x2='14' y1='0' y2='28' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='0'/></linearGradient><linearGradient id='b' x1='14' x2='14' y1='14.77' y2='22.96' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='.9'/></linearGradient></defs></svg>" alt="Sepolia Logo" class="logo" />
+                Sepolia
+            </button>
+        </div>
+        <button id="connectWalletBtn">Connect Wallet</button> <!-- Connect Wallet button -->
+    </div>
+
+    <div id="app2" style="font-family: Arial, sans-serif; color: #333;">
+        <h1 style="text-align: center; font-size: 2.5em;">Vitalik Token IDO</h1>
+        
+        <!-- Project Information -->
+        <div style="margin-top: 20px;">
+            <h2>About the Project</h2>
+            <p>
+                Vitalik L1 with a library of 30+ chicks under 25 planning to generate revenue from advertisements and micro transactions that are shared with other simps. Token utility includes L1 gas fees and Ftx Bankruptcy purchase currency for all game related NFTs. Players can play any game, use the same digital assets in multiple games and be rewarded daily for the activities. Web 2.5 infrastructure enables access to 3 billion players.
+            </p>
+        </div>
+    
+        <!-- Team Section -->
+        <div style="margin-top: 20px;">
+            <h2>Meet the Team</h2>
+            <ul>
+                <li><strong>Do Kwon</strong> - CEO & Founder</li>
+                <li><strong>Sam Bankman Fried</strong> - CTO & Co-Founder</li>
+                <li><strong>Su Zhu</strong> - Marketing Director</li>
+            </ul>
+        </div>
+    
+        <!-- Vesting Information -->
+        <div style="margin-top: 20px;">
+            <h2>Vesting Information</h2>
+            <p>
+                15% Tge , 1 month cliff , Monthly unlock for the next 5 months (17% each month)
+
+            </p>
+        </div>
+    
+        <!-- Smaller Pie Chart Canvas -->
+        <div style="margin-top: 20px;">
+            <canvas id="myPieChart" width="2" height="2" style="max-width: 100%;"></canvas>
+            <div id="legendContainer" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div> <!-- Legend Container -->
+        </div>
+    
+        <!-- Social Media Links -->
+        <div style="margin-top: 20px;">
+            <h2>Vitalik L1 Socials</h2>
+            <a href="https://telegram.org/" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" style="width: 30px; margin-right: 10px;">
+            </a>
+            <a href="https://x.com/" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter" style="width: 30px; margin-right: 10px;">
+            </a>
+            <a href="https://www.yourwebsite.com/" target="_blank">
+                <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/website%20logo.jpg" alt="Website" style="width: 30px; margin-right: 10px;">
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize the pie chart with some default data
+        const ctx = document.getElementById('myPieChart').getContext('2d');
+        let myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Private Sale', 'IDO', 'Liquidity', 'Team'],
+                datasets: [{
+                    label: 'Token Distribution',
+                    data: [30, 40, 20, 10],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',  // Red
+                        'rgba(54, 162, 235, 0.8)',   // Blue
+                        'rgba(255, 206, 86, 0.8)',   // Yellow
+                        'rgba(75, 192, 192, 0.8)',   // Teal
+                        'rgba(153, 102, 255, 0.8)',  // Purple
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)', 
+                        'rgba(54, 162, 235, 1)', 
+                        'rgba(255, 206, 86, 1)', 
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false // Disable default legend
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                const total = tooltipItem.chart.data.datasets[0].data.reduce((a, b) => a + b);
+                                const currentValue = tooltipItem.raw;
+                                const percentage = ((currentValue / total) * 100).toFixed(2) + '%';
+                                return `${tooltipItem.label}: ${percentage}`; // Show label and percentage
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateRotate: true,
+                    animateScale: true,
+                },
+                cutoutPercentage: 0
+            }
+        });
+        
+        // Create custom legend below the chart
+        const legendContainer = document.getElementById('legendContainer');
+        myPieChart.data.labels.forEach((label, index) => {
+            const colorBox = document.createElement('span');
+            colorBox.style.display = 'inline-block';
+            colorBox.style.width = '15px';
+            colorBox.style.height = '15px';
+            colorBox.style.backgroundColor = myPieChart.data.datasets[0].backgroundColor[index];
+            colorBox.style.borderRadius = '3px'; // Rounded corners for color boxes
+            colorBox.style.marginRight = '10px';
+        
+            const labelText = document.createElement('span');
+            labelText.textContent = label;
+            labelText.style.marginRight = '20px'; // Space between labels
+            labelText.style.fontWeight = 'bold'; // Bold text for better visibility
+        
+            const legendItem = document.createElement('div');
+            legendItem.style.display = 'flex';
+            legendItem.style.alignItems = 'center';
+            
+            legendItem.appendChild(colorBox);
+            legendItem.appendChild(labelText);
+        
+            legendContainer.appendChild(legendItem);
+        });
+        
+        // Example to update the pie chart dynamically
+        setTimeout(() => {
+            const newData = [20, 30, 25, 25];
+            myPieChart.data.datasets[0].data = newData;
+            myPieChart.update();
+        }, 5000);
+    </script>
+    
+    
+    
+    <div id="app" style="font-family: 'Montserrat', sans-serif; color: #111;">
+        <h1>SuperChain (Minato Network)</h1>
+    
+        <div id="accountDisplay" class="hidden">
+            <p>
+                ETH Balance: <span id="balanceAmount"></span>  |
+                USDS Balance: <span id="tokenBalanceAmount"></span> 
+            </p>
+        </div>
+        
+        <p id="walletStatus" class="hidden">Please switch to Minato network</p>
+    
+        <div id="crypto-info">
+
+
+            <div id="results">
+                <p id="totalEthSent">Total ETH Sent: 0</p>
+                <p id="totalTokensSent">Total Tokens Sent: 0</p>
+                <p id="totalUsdSent">Total USD Sent: $0.00</p> <!-- Make sure it's visible -->
+            </div>
+
+<!-- Modal Structure -->
+<div id="customAlert" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalMessage"></p>
+        <button onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+
+<!-- Processing Modal -->
+<div id="processingModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h2>Processing...</h2>
+        <p>Please confirm the transaction in your metamask</p>
+        <div class="loader"></div> <!-- Optional loading spinner -->
+    </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="errorModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Error</h2>
+        <p id="errorMessage"></p>
+        <button id="okButton">OK</button> <!-- OK Button -->
+    </div>
+</div>
+
+            <h2></h2>
+            <p>Current Price ETH: <span id="ethPrice">Fetching...</span></p>
+            <div class="info-container">
+                <p id="raisedAmount" class="hidden">
+                    Raised Amount: <span id="raisedEthAmount">0.01</span> ETH (~$<span id="raisedUsdAmount">0.00</span>)
+                </p>
+                <p id="tokenBalance">|     Token Balance: 0 Tokens</p>
+            </div>
+    
+            <p><span id="usdAmountRaised">0.00</span></p>
+    
+            <p>Percentage Raised: <span id="percentageRaised">0%</span></p>
+            <div class="progress-container-2">
+                <div class="range" style="--p: 0;">
+                    <div class="range__label">Progress</div>
+                </div>
+            </div>
+            
+            <div id="result"></div>
+            <div id="debug"></div>
+            <div id="loading" class="loader" style="display: none;"></div>
+            
+            <label for="progressScale" id="progressLabel">Sale Progress:</label>
+            <span id="progressPercentage">0%</span>
+            <div class="progress-container-original">
+                <progress id="progressScale" value="0" max="100"></progress>
+            </div>
+    
+            <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
+    
+            <div class="button-container">
+                <input type="number" id="amountToSend" placeholder="Amount to Send ">
+                <button id="maxButton">Max</button>
+            </div>
+            
+
+            <!--          enabled code  <button id="sendTransactionBtn"  >-->
+                  <!--          disbled code  <button id="sendTransactionBtn" disbaled >-->
+
+
+            <button id="sendTransactionBtn"   > 
+                <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/eth%20logo.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+                Send
+            </button>
+
+
+     <!--          enabled code  <button id="sendSceTokenBtn" >               -->
+    <!--          disbled code    <button id="sendSceTokenBtn" disabled>      -->
+
+            <button id="sendSceTokenBtn"   > <!-- button id="sendSceTokenBtn" disabled -->
+                <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/usdt%20logo.png" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+                Send 
+            </button>
+            
+        </div>
+    
+        <div id="txStatus"></div>
+    </div>
+    
+  
+  
+    <!-- Google Fonts Link -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        const MINATO_RPC_URL = 'https://rpc.minato.soneium.org/';
+        const SEPOLIA_RPC_URL = 'https://rpc.ankr.com/eth_sepolia'; // Replace with your Infura project ID
+        const MINATO_CHAIN_ID = 1946;
+        const SEPOLIA_CHAIN_ID = 11155111; // Sepolia Chain ID
+        const MINATO_SYMBOL = 'ETH';
+
+
+
+
+
+        const MAX_SALE_AMOUNT = 0.2; // Set your fixed maximum sale amount here hardcap of the sale
+
+
+// Function to update progress based on raised amount
+function updateProgress() {
+    const raisedAmountText = document.getElementById('raisedAmount').innerText; // Get raised amount text
+    const raisedAmount = parseFloat(raisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; // Parse raised amount
+
+    if (MAX_SALE_AMOUNT > 0) {
+        const percentage = (raisedAmount / MAX_SALE_AMOUNT) * 100; // Calculate percentage based on raised amount
+        progressScale.value = percentage; // Update progress bar
+        progressPercentage.innerText = `${percentage.toFixed(18)}%`; // Update percentage text
+    } else {
+        progressScale.value = 0; // Reset progress if max amount is not set
+        progressPercentage.innerText = `0%`;
+    }
+}
+
+
+
+    
+        let provider, signer;
+        const networkParams = {
+            Minato: {
+                chainId: MINATO_CHAIN_ID,
+                title: 'Minato Blockchain',
+                transactionTitle: 'Send Transaction',
+                symbol: MINATO_SYMBOL
+            },
+            Sepolia: {
+                chainId: SEPOLIA_CHAIN_ID,
+                title: 'Sepolia Testnet',
+                transactionTitle: 'Send Transaction',
+                symbol: MINATO_SYMBOL
+            }
+        };
+        let currentNetwork = 'Minato';
+    
+        // DOM Elements
+const accountDisplay = document.getElementById('accountDisplay');
+const balanceAmount = document.getElementById('balanceAmount');
+const tokenBalanceAmount = document.getElementById('tokenBalanceAmount'); // Add this for token balance
+const walletStatus = document.getElementById('walletStatus');
+const sendTransactionBtn = document.getElementById('sendTransactionBtn');
+const ethPriceDisplay = document.getElementById('ethPrice');
+const recipientAddressInput = document.getElementById('recipientAddress');
+const amountToSendInput = document.getElementById('amountToSend');
+const txStatus = document.getElementById('txStatus');
+const dropdownContent = document.getElementById('dropdownContent');
+const networkBtn = document.getElementById('networkBtn');
+const sendSceTokenBtn = document.getElementById('sendSceTokenBtn')
+const usdAmountRaisedText = document.getElementById("usdAmountRaised");
+
+
+        // Initially hide the recipient address input
+document.getElementById('recipientAddress').classList.add('hidden');
+
+// Function to show the recipient address input if needed
+function showRecipientAddress() {
+    document.getElementById('recipientAddress').classList.remove('hidden');
+}
+
+// Call this function when you want to show the input
+// showRecipientAddress();
+
+
+      // Toggle dropdown visibility
+networkBtn.addEventListener('click', () => {
+    if (dropdownContent.style.display === 'block') {
+        dropdownContent.style.opacity = '0'; // Fade out
+        dropdownContent.style.height = '0'; // Collapse height
+        setTimeout(() => {
+            dropdownContent.style.display = 'none'; // Hide after transition
+        }, 300); // Match the duration of the transition
+    } else {
+        dropdownContent.style.display = 'block'; // Show dropdown
+        const scrollHeight = dropdownContent.scrollHeight; // Get the full height of dropdown
+        dropdownContent.style.height = `${scrollHeight}px`; // Expand to full height
+        dropdownContent.style.opacity = '1'; // Fade in
+    }
+});
+
+    
+    
+     // Fetch ETH Price from Binance
+async function fetchETHPrice() {
+    try {
+        const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT');
+        const data = await response.json();
+        return parseFloat(data.price); // Return the price as a float
+    } catch (error) {
+        console.error('Error fetching ETH price:', error);
+        return null; // Return null if there's an error
+    }
+}
+
+function openModal(title, message) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMessage').innerHTML = message; // Use innerHTML to allow HTML content
+    document.getElementById('customAlert').style.display = 'block';
+}
+
+function closeModal() {
+    const modal = document.getElementById('customAlert');
+    modal.style.opacity = '0'; // Fade out effect
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.style.opacity = '1'; // Reset opacity for next open
+    }, 300); // Match the duration of the fade-in animation
+}
+
+function showProcessingModal() {
+    document.getElementById('processingModal').style.display = 'block';
+}
+
+function hideProcessingModal() {
+    document.getElementById('processingModal').style.display = 'none';
+}
+
+// Function to update the raised amount in USD based on current ETH price
+async function updateRaisedAmountAndProgress() {
+    const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Target address
+    const targetAddressBalance = await fetchTargetAddressBalance(targetAddress); // Fetch current balance
+    const raisedAmountElement = document.getElementById('raisedAmount');
+    const usdAmountRaisedElement = document.getElementById('usdAmountRaised'); // Element for USD amount
+
+    raisedAmountElement.innerText = `Raised Amount: ${targetAddressBalance} ETH`; // Update raised amount display
+
+    // Define the token contract address and wallet address
+    const tokenAddress = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // Token address
+    const walletAddress = targetAddress; // Use target address for wallet
+
+    // Minimum ABI required to get the ERC20 Token balance
+    const minABI = [
+        {
+            constant: true,
+            inputs: [{ name: '_owner', type: 'address' }],
+            name: 'balanceOf',
+            outputs: [{ name: 'balance', type: 'uint256' }],
+            type: 'function',
+        },
+    ];
+
+    async function getTokenBalance() {
+        if (typeof window.ethereum !== 'undefined') {
+            const web3 = new Web3(window.ethereum);
+            
+            // Create contract instance
+            const contract = new web3.eth.Contract(minABI, tokenAddress);
+
+            try {
+                // Request account access if needed
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                // Call the balanceOf function
+                const balance = await contract.methods.balanceOf(walletAddress).call();
+
+                // Convert balance from Wei to a more readable format (if needed)
+                const formattedBalance = web3.utils.fromWei(balance, 'ether'); // Adjust based on token decimals if necessary
+
+                // Display the balance in your app
+                const tokenBalanceElement = document.getElementById('tokenBalance');
+                tokenBalanceElement.innerText = `| USDS Raised: ${formattedBalance} USDS`;
+
+                return parseFloat(formattedBalance) || 0; // Return formatted balance for further calculations
+            } catch (error) {
+                console.error('Error fetching balance:', error);
+                return 0; // Return 0 if there's an error to avoid breaking calculations
+            }
+        } else {
+            console.log('MetaMask is not installed. Please install it to use this feature.');
+            return 0; // Return 0 if MetaMask is not available
+        }
+    }
+
+    // Call getTokenBalance and use its result in calculations
+    const tokenBalance = await getTokenBalance();
+
+    // Ensure it's a number for calculations
+    const raisedAmount = parseFloat(targetAddressBalance) || 0; 
+   
+   // Fetch the current ETH price
+   const ethPrice = await fetchETHPrice();
+   if (ethPrice !== null) {
+       // Calculate and update USD amount raised including USDS amount (considering its price as 1)
+       const usdAmountRaisedFromETH = (raisedAmount * ethPrice).toFixed(2); 
+       const usdAmountRaisedFromUSDS = tokenBalance.toFixed(2); // Since USDS price is considered as 1
+
+       const totalUsdAmountRaised = (parseFloat(usdAmountRaisedFromETH) + parseFloat(usdAmountRaisedFromUSDS)).toFixed(2);
+       
+       usdAmountRaisedElement.innerText = `USD Amount Raised: $${totalUsdAmountRaised}`; // Update USD amount display
+
+       // Calculate percentage raised after determining total USD amount raised
+       const hardCap = 10000; // Set your desired hard cap here hardcap
+       let percentageRaised = (parseFloat(totalUsdAmountRaised) / hardCap) * 100;
+
+       // Ensure percentage is not negative and cap at 100%
+       percentageRaised = Math.max(0, Math.min(percentageRaised, 100));
+
+       // Log percentage raised to console for debugging purposes
+       console.log(`Percentage Raised: ${percentageRaised.toFixed(2)}%`);
+
+       // Update percentage display in UI
+       const percentageRaisedElement = document.getElementById("percentageRaised");
+       percentageRaisedElement.innerText = `${percentageRaised.toFixed(2)}%`; 
+
+       // Update progress bar value for progressBar2 using CSS variable and inline style
+       const rangeBar = document.querySelector('.range');
+       
+       rangeBar.style.setProperty('--p', percentageRaised); // Set CSS variable for progress bar
+
+       // Log the value of --p to the console
+       console.log(`CSS Variable --p set to: ${percentageRaised}`); 
+
+       // Update inner text of range bar to reflect full percentage raised accurately
+       rangeBar.querySelector('.range__label').innerText = `${percentageRaised.toFixed(2)}%`; 
+
+       // Set the inline style directly on the range element to reflect the percentage raised.
+       rangeBar.style.setProperty('--p', percentageRaised); 
+       
+       // Call remaining amount calculation and display
+       remainingAmount(totalUsdAmountRaised, hardCap);
+   } else {
+       console.error("Failed to fetch ETH price.");
+   }
+}
+
+// Function to calculate and display remaining amount to reach hard cap
+function remainingAmount(totalUsdAmountRaised, hardCap) {
+    const remaining = hardCap - totalUsdAmountRaised;
+
+    // Display remaining amount
+    const remainingAmountElement = document.getElementById('remainingAmount'); // Ensure you have an element for this
+    remainingAmountElement.innerText = `Remaining Amount to Fill Hard Cap: $${remaining.toFixed(2)}`;
+}
+
+// Call this function when the page loads or when appropriate in your app
+window.onload = updateRaisedAmountAndProgress;
+
+
+
+
+
+
+
+
+
+
+
+
+// Display initial price as loading
+ethPriceDisplay.innerText = 'Current Price ETH: $0.00'; // Initial state
+
+// Function to update ETH price display
+async function updateETHPriceDisplay() {
+    const ethPrice = await fetchETHPrice();
+    if (ethPrice !== null) {
+        ethPriceDisplay.innerText = `$${ethPrice.toFixed(2)}`; // Update price directly
+    }
+}
+
+// Call functions at regular intervals (every 1 second)
+setInterval(updateETHPriceDisplay, 1000); // Refresh ETH price every 1 second
+setInterval(updateRaisedAmountAndProgress, 1000); // Refresh raised amount and progress every 1 second
+
+// Initial fetch on load
+updateETHPriceDisplay(); 
+updateRaisedAmountAndProgress(); // Initial call to set the values immediately
+// Function to fetch target address balance
+async function fetchTargetAddressBalance(targetAddress) {
+    try {
+        const balance = await provider.getBalance(targetAddress);
+        const balanceInEth = ethers.utils.formatEther(balance);
+        console.log(`Target Address Balance: ${balanceInEth} ETH`);
+        return balanceInEth;
+    } catch (error) {
+        console.error('Error fetching target address balance:', error);
+        return 'Error fetching balance';
+    }
+}
+
+// Start fetching both ETH price and raised amount on load
+function startFetching() {
+    fetchETHPrice(); // Initial fetch for ETH price
+    setInterval(fetchETHPrice, 60000); // Fetch price every minute
+}
+
+// Call this function when the page loads
+startFetching();
+
+const tokenAddress = "0x2Dc1B05463Da50921FEf0F93235F28134ad44e9b"; // Token contract address
+const walletAddress = "0xad3a5DdCe484251f8839f185896b14605b8dd340"; // Wallet address
+
+async function getBalance() {
+    const resultElement = document.getElementById("result");
+
+    if (typeof window.ethereum !== 'undefined') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const contractABI = [
+            "function balanceOf(address owner) view returns (uint256)",
+            "function decimals() view returns (uint8)"
+        ];
+
+        const contract = new ethers.Contract(tokenAddress, contractABI, provider);
+
+        try {
+            const balance = await contract.balanceOf(walletAddress);
+            const decimals = await contract.decimals();
+            const formattedBalance = ethers.utils.formatUnits(balance, decimals); // Adjust based on token's decimals
+
+         
+        } catch (error) {
+            resultElement.innerText = "Error fetching balance: " + error.message; // Error handling
+        }
+    } else {
+        resultElement.innerText = "Please install MetaMask!"; // MetaMask check
+    }
+}
+
+// Call the function on page load
+window.onload = getBalance;
+
+
+    
+// Check if current network matches the selected network
+async function checkNetwork() {
+    if (!provider) return false;
+    try {
+        const network = await provider.getNetwork();
+        if (network.chainId !== networkParams[currentNetwork].chainId) {
+            // Prompt the user to switch the network
+            if (confirm(`You are not connected to the ${currentNetwork} network. Would you like to switch?`)) {
+                await switchNetwork(currentNetwork);
+            }
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error("Error checking network:", error);
+        return false;
+    }
+}
+
+    
+        // Request to switch network
+        async function switchNetwork(network) {
+            const params = networkParams[network];
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [{
+                        chainId: `0x${params.chainId.toString(16)}`,
+                        chainName: params.title,
+                        nativeCurrency: {
+                            name: params.title,
+                            symbol: params.symbol,
+                            decimals: 18
+                        },
+                        rpcUrls: [params.chainId === MINATO_CHAIN_ID ? MINATO_RPC_URL : SEPOLIA_RPC_URL],
+                    }]
+                });
+            } catch (error) {
+                console.error(`Failed to switch to ${network}:`, error);
+            }
+        }
+    
+
+// Token contract address
+const TOKEN_CONTRACT_ADDRESS = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // Your token contract address
+
+// Function to fetch and display ETH balance
+async function updateBalance(walletAddress) {
+    const url = `https://explorer-testnet.soneium.org/api?module=account&action=eth_get_balance&address=${walletAddress}&tag=latest`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.result) {
+            const balanceInEth = ethers.utils.formatEther(data.result);
+            document.getElementById('balanceAmount').innerText = balanceInEth;
+
+            console.log("Displaying ETH balance:", balanceInEth);
+
+            // Fetch token balance after updating ETH balance
+            await fetchTokenBalance(walletAddress); // Ensure this is called after displaying ETH balance
+        } else {
+            console.error("Error fetching ETH balance:", data);
+        }
+    } catch (error) {
+        console.error("Network error:", error);
+    }
+}
+
+// Function to fetch and display token balance
+async function fetchTokenBalance(walletAddress) {
+    const url = `https://explorer-testnet.soneium.org/api?module=account&action=tokenbalance&contractaddress=${TOKEN_CONTRACT_ADDRESS}&address=${walletAddress}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.result) {
+            const formattedBalance = ethers.utils.formatUnits(data.result, 18);
+            document.getElementById('tokenBalanceAmount').innerText = formattedBalance; // Ensure this element exists in your HTML
+            
+            console.log("Displaying token balance:", formattedBalance);
+        } else {
+            console.error('Error fetching token balance:', data);
+            document.getElementById('tokenBalanceAmount').innerText = 'Error fetching balance';
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+        document.getElementById('tokenBalanceAmount').innerText = 'Error fetching balance';
+    }
+}
+
+
+
+
+
+
+
+
+// Keep your existing connectWallet function
+async function connectWallet() {
+    try {
+        console.log("Requesting MetaMask connection...");
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+        // Fetch the signer and account address after requesting connection
+        signer = provider.getSigner();
+        const accounts = await signer.getAddress();
+
+        accountDisplay.classList.remove('hidden');
+        balanceAmount.innerText = "Fetching..."; // Initial loading message
+        document.getElementById('connectWalletBtn').innerText = `${accounts.slice(0, 5)}...${accounts.slice(-3)}`; // Update button text
+        console.log("MetaMask connected with account:", accounts);
+
+        // Check current network
+        const currentChainId = await provider.getNetwork().then(network => network.chainId);
+        
+        // If not on Minato, switch network
+        if (currentChainId !== MINATO_CHAIN_ID) {
+            await switchNetwork(MINATO_CHAIN_ID);
+            location.reload(); // Refresh the page after switching network
+            return; // Exit early to prevent further execution until reload
+        }
+
+        // Fetch and display balance
+        await checkNetworkAndUpdateText(); // Update network button text
+        await updateBalance(accounts); // Pass the current account to update balance
+
+        // Start real-time updates for balances every second
+        startRealTimeBalanceUpdates(accounts); // Start fetching updates every second
+
+        // Listen for account changes
+        window.ethereum.on('accountsChanged', async (accounts) => {
+            if (accounts.length > 0) {
+                const walletAddress = accounts[0];
+
+                // Format the wallet address to show first 3 and last 5 characters
+                const formattedAddress = `${walletAddress.slice(0, 3)}...${walletAddress.slice(-5)}`;
+
+                // Update the button text to show the formatted address
+                document.getElementById('connectWalletBtn').innerText = formattedAddress;
+
+                // Update the displayed wallet address
+                walletAddressDiv.textContent = `Wallet Address: ${walletAddress}`;
+                
+                // Fetch and display the balance for the new account
+                await updateBalance(walletAddress);
+            } else {
+                // Reset the UI if no accounts are connected
+                resetUI();
+            }
+        });
+
+        // Step 3: Fetch and display target address balance
+        const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Replace with the actual target address
+        const targetAddressBalance = await fetchTargetAddressBalance(targetAddress);
+        console.log("Target Address Balance Fetched:", targetAddressBalance);
+
+        const raisedAmountElement = document.getElementById('raisedAmount');
+        raisedAmountElement.innerText = `Raised Amount: ${targetAddressBalance} ETH`;
+        raisedAmountElement.classList.remove('hidden'); // Make it visible
+
+        sendTransactionBtn.classList.remove('hidden');
+        walletStatus.classList.add('hidden');
+
+        // Fetch and display target address balance
+        await updateTargetAddressBalance(targetAddress); // Fetch and display the target address balance
+
+        // Fetch incoming transactions for ETH and tokens sent to predefined address
+        await updateIncomingTransactions(accounts); // Pass the connected wallet address
+
+        // Store connection state in localStorage
+        localStorage.setItem('walletConnected', 'true');
+
+        // Start real-time updates for incoming transactions
+        startRealTimeIncomingUpdates(accounts); // Start fetching updates every second
+
+    } catch (error) {
+        console.error("Connection Error:", error);
+        
+        document.getElementById("errorMessage").innerText = 'Failed to connect wallet. Please try unlocking your metamask wallet and clicking the connect button at the top right.';
+        
+        const modal = document.getElementById("errorModal");
+        modal.style.display = "block"; // Open modal
+        
+    }
+}
+
+// Close modal when user clicks on <span> (x)
+document.querySelector(".close-button").onclick = function() {
+    const modal = document.getElementById("errorModal");
+    modal.style.display = "none"; 
+}
+
+// Handle OK button click to close modal
+document.getElementById("okButton").onclick = function() {
+    const modal = document.getElementById("errorModal");
+    modal.style.display = "none"; 
+};
+
+// Automatically check for account changes when connected
+window.ethereum.on('accountsChanged', async (accounts) => {
+    if (accounts.length > 0) {
+        const walletAddress = accounts[0];
+
+        // Refresh the page when the account is switched
+        location.reload(); // This will refresh the page
+
+        // Update UI with new wallet address automatically (if you want to keep this)
+        document.getElementById('connectWalletBtn').innerText = `${walletAddress.slice(0, 5)}...${walletAddress.slice(-3)}`;
+        
+        walletAddressDiv.textContent = `Wallet Address: ${walletAddress}`;
+        
+        await updateBalance(walletAddress);  // Update balance for new account
+        
+    } else {
+       resetUI();  // Reset UI if no accounts are connected
+    }
+});
+
+// Function to update target address balance
+async function updateTargetAddressBalance(targetAddress) {
+    const targetAddressBalance = await fetchTargetAddressBalance(targetAddress);
+    console.log("Target Address Balance Fetched:", targetAddressBalance);
+
+    const raisedAmountElement = document.getElementById('raisedAmount');
+    raisedAmountElement.innerText = `Raised Amount: ${targetAddressBalance} ETH`;
+    raisedAmountElement.classList.remove('hidden'); // Make it visible
+}
+
+// Function to update incoming transactions
+async function updateIncomingTransactions(userAddress) {
+    const incomingData = await fetchIncomingTransactions(userAddress); // Pass the connected wallet address
+
+    console.log(`Connected Wallet: ${userAddress}`);
+    console.log(`Total Incoming ETH Transferred: ${incomingData.totalIncomingEth}`);
+    console.log(`Total Incoming Tokens Transferred: ${incomingData.totalIncomingTokens}`);
+
+    // Update displayed values for total ETH and tokens sent
+    document.getElementById('totalEthSent').innerText = `Total ETH Sent: ${incomingData.totalIncomingEth}`;
+    document.getElementById('totalTokensSent').innerText = `Total Tokens Sent: ${incomingData.totalIncomingTokens}`;
+
+    // Calculate and display total USD sent after fetching incoming transactions
+    await calculateAndDisplayTotalUsdSent(incomingData);
+}
+
+// Function to repeatedly fetch and update incoming transactions every second
+function startRealTimeIncomingUpdates(userAddress) {
+    setInterval(async () => {
+        await updateIncomingTransactions(userAddress); // Fetch new incoming transactions
+    }, 1000); // 1000 milliseconds = 1 second
+}
+
+// Function to repeatedly fetch and update balances every second
+function startRealTimeBalanceUpdates(walletAddress) {
+    setInterval(async () => {
+        await updateBalance(walletAddress);  // Fetch new ETH balance every second
+        await fetchTokenBalance(walletAddress); // Fetch new token balance every second
+    }, 1000); // 1000 milliseconds = 1 second
+}
+
+// Function to fetch current ETH price in USD from Binance API
+async function fetchEthPrice() {
+    try {
+        const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT');
+        
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        
+        return parseFloat(data.price); // Return the ETH price as a float
+    } catch (error) {
+        console.error("Error fetching ETH price:", error);
+        return 0; // Return 0 if there's an error
+    }
+}
+
+// Calculate and display total USD sent based on incoming data
+// Calculate and return total USD sent based on incoming data
+async function calculateAndDisplayTotalUsdSent(incomingData) {
+    const ethPrice = await fetchEthPrice(); // Fetch current ETH price in USD
+
+    if (ethPrice === 0) {
+        console.warn("ETH price could not be fetched.");
+        return null; // Return null if the ETH price cannot be fetched
+    }
+
+    // Calculate total USD sent using incoming data
+    const totalUsdSent = (incomingData.totalIncomingEth * ethPrice) + incomingData.totalIncomingTokens;
+
+    // Display total USD sent in your UI element with ID 'totalUsdSent'
+    document.getElementById('totalUsdSent').innerText = `Total USD Sent: $${totalUsdSent.toFixed(2)}`;
+
+    return totalUsdSent; // Return the calculated total USD sent
+}
+
+// Function to fetch incoming transactions (ETH and tokens)
+async function fetchIncomingTransactions(userAddress) {
+    const predefinedAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Predefined address
+    const tokenContractAddress = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // Specific token contract address
+
+    let totalIncomingEth = 0; // Total incoming ETH transferred
+    let totalIncomingTokens = 0; // Total incoming tokens transferred
+
+    try {
+        // Fetch ETH transactions
+        const ethResponse = await fetch(`https://explorer-testnet.soneium.org/api?module=account&action=txlist&address=${userAddress}&page=1&offset=10000&sort=asc`);
+        const ethData = await ethResponse.json();
+
+        console.log("ETH Data Fetched:", ethData); 
+
+        // Fetch token transactions for the specific contract
+        const tokenResponse = await fetch(`https://explorer-testnet.soneium.org/api?module=account&action=tokentx&address=${userAddress}&contractaddress=${tokenContractAddress}&page=1&offset=10000&sort=asc`);
+        const tokenData = await tokenResponse.json();
+
+        console.log("Token Data Fetched:", tokenData); 
+
+        // Calculate total incoming ETH transferred to the predefined address
+        ethData.result.forEach(tx => {
+            if (tx.to.toLowerCase() === predefinedAddress.toLowerCase()) { 
+                totalIncomingEth += parseFloat(tx.value) / (10 ** 18); 
+            }
+        });
+
+        // Calculate total incoming tokens transferred for the specific contract to the predefined address
+        tokenData.result.forEach(tx => {
+            if (tx.to.toLowerCase() === predefinedAddress.toLowerCase()) { 
+                totalIncomingTokens += parseFloat(tx.value) / (10 ** tx.tokenDecimal); 
+            }
+        });
+
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
+    }
+
+    return { totalIncomingEth, totalIncomingTokens };  
+}
+
+
+
+
+// Connect button event listener (if needed)
+document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+
+// Check if wallet was previously connected on page load
+window.onload = async () => {
+    const isConnected = localStorage.getItem('walletConnected');
+    if (isConnected === 'true') {
+        await connectWallet();
+    }
+};
+
+// Request to switch network function
+async function switchNetwork(chainId) {
+    try {
+        await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+                chainId: `0x${chainId.toString(16)}`,
+                chainName: "Minato",
+                nativeCurrency: {
+                    name: "Minato",
+                    symbol: "ETH",
+                    decimals: 18
+                },
+                rpcUrls: [MINATO_RPC_URL],
+            }]
+        });
+    } catch (error) {
+        console.error(`Failed to switch to network ${chainId}:`, error);
+    }
+}
+
+// Reset UI function
+function resetUI() {
+    document.getElementById('connectWalletBtn').innerText = 'Connect Wallet';
+    walletAddressDiv.textContent = '';
+    userBalanceDiv.textContent = '';
+}
+
+// Connect button event listener
+document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+
+
+
+// Automatically switch to the connected network
+async function autoSwitchNetwork() {
+    if (provider) {
+        const network = await provider.getNetwork();
+        if (network.chainId === MINATO_CHAIN_ID) {
+            currentNetwork = 'Minato';
+        } else if (network.chainId === SEPOLIA_CHAIN_ID) {
+            currentNetwork = 'Sepolia';
+        }
+        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
+    }
+}
+
+// Call autoSwitchNetwork after wallet connection
+document.getElementById('connectWalletBtn').addEventListener('click', async () => {
+    // ... existing connection code ...
+    await autoSwitchNetwork(); // Automatically update network text
+});
+
+// Change network to Minato
+document.getElementById('minatoNetworkBtn').addEventListener('click', async () => {
+    if (currentNetwork !== 'Minato') {
+        currentNetwork = 'Minato';
+        await switchNetwork(currentNetwork);
+        walletStatus.classList.add('hidden'); // Hide status message
+        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
+    }
+    dropdownContent.style.display = 'none'; // Close dropdown
+});
+
+// Change network to Sepolia
+document.getElementById('sepoliaNetworkBtn').addEventListener('click', async () => {
+    if (currentNetwork !== 'Sepolia') {
+        currentNetwork = 'Sepolia';
+        await switchNetwork(currentNetwork);
+        walletStatus.classList.add('hidden'); // Hide status message
+        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
+    }
+    dropdownContent.style.display = 'none'; // Close dropdown
+});
+
+// When connecting wallet, set the network button text based on the current network
+async function checkNetworkAndUpdateText() {
+    const networkMatches = await checkNetwork();
+    if (networkMatches) {
+        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update on initial connection
+    }
+}
+
+
+
+
+
+
+
+let cachedWhitelist = [];
+
+// Function to fetch whitelist and check conditions
+async function fetchWhitelist() {
+    try {
+        const response = await fetch(`https://raw.githubusercontent.com/parzivalishan/newsuper/main/whitelist.json?timestamp=${new Date().getTime()}`, { cache: "no-store" });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Normalize addresses to lowercase and log the fetched whitelist
+        cachedWhitelist = data.whitelistedAddresses.map(addr => addr.toLowerCase());
+        console.log("Fetched Whitelist:", cachedWhitelist); // Log fetched whitelist
+
+    } catch (error) {
+        console.error("Failed to fetch whitelist:", error);
+    }
+}
+
+// Call this function initially to load the whitelist
+fetchWhitelist();
+
+// Polling for updates every 10 seconds (10000 milliseconds)
+setInterval(fetchWhitelist, 10000);
+
+// Function to check if a wallet address is whitelisted
+async function isWhitelisted(walletAddress) {
+    const normalizedWalletAddress = walletAddress.toLowerCase();
+
+    // Check if dead address is in the cached whitelist
+    const deadAddress = '0x000000000000000000000000000000000000dead';
+    const deadAddressPresent = cachedWhitelist.includes(deadAddress.toLowerCase());
+
+    console.log("Dead Address Present:", deadAddressPresent); // Log result of dead address check
+
+    if (deadAddressPresent) {
+        console.log("Dead address is present in whitelist.");
+        return true; // Allow all addresses if dead address is present
+    }
+
+    // Check if user's wallet address is in cached whitelist (case-insensitive)
+    const isWhitelisted = cachedWhitelist.includes(normalizedWalletAddress);
+    
+    console.log("Is User Whitelisted:", isWhitelisted); // Log result of whitelisting check
+    return isWhitelisted;
+}
+
+
+
+// Max buy limit
+let cachedMaxBuyLimits = {};
+let universalMaxBuyLimit = 0; // Variable for universal max buy limit
+
+// Function to fetch max buy limits
+async function fetchMaxBuyLimits() {
+    try {
+        const response = await fetch(`https://raw.githubusercontent.com/parzivalishan/newsuper/main/maxBuyLimits.json?timestamp=${new Date().getTime()}`, { cache: "no-store" });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Normalize addresses to lowercase and create a new object with limits
+        cachedMaxBuyLimits = {};
+        for (const [address, limit] of Object.entries(data.maxBuyLimits)) {
+            cachedMaxBuyLimits[address.toLowerCase()] = limit;
+        }
+
+        // Check if dead address has a limit and set universal limit
+        const deadAddress = '0x000000000000000000000000000000000000dead';
+        if (cachedMaxBuyLimits[deadAddress.toLowerCase()] !== undefined) {
+            universalMaxBuyLimit = cachedMaxBuyLimits[deadAddress.toLowerCase()];
+            console.log("Universal Max Buy Limit set to:", universalMaxBuyLimit);
+        } else {
+            universalMaxBuyLimit = 0; // Reset if dead address doesn't have a limit
+        }
+
+        console.log("Fetched Max Buy Limits:", cachedMaxBuyLimits);
+
+    } catch (error) {
+        console.error("Failed to fetch max buy limits:", error);
+    }
+}
+
+// Call this function initially to load the max buy limits
+fetchMaxBuyLimits();
+
+// Polling for updates every 10 seconds (10000 milliseconds)
+setInterval(fetchMaxBuyLimits, 10000);
+
+async function setMaxAmount() {
+    const userWalletAddress = await signer.getAddress(); // Get user's wallet address
+    const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+
+    // Check max buy limit
+    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
+
+    // Fetch total USD sent from your existing logic
+    const incomingData = await fetchIncomingTransactions(userWalletAddress); // Fetch incoming data for the user
+    const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); // Get total USD sent
+
+    // Allow for an additional $0.02 over the max buy limit
+    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.0 - (totalUsdSent || 0); // Subtract totalUsdSent
+
+    // Check if adjustedEffectiveMaxBuyLimit is negative
+    if (adjustedEffectiveMaxBuyLimit < 0) {
+        alert("You have maxed out your allocation."); // Show alert message
+        adjustedEffectiveMaxBuyLimit = 0; // Optionally set it to zero or any other logic you prefer
+    }
+
+    // Fetch total USD amount raised from your existing logic (ensure this is defined and accessible)
+    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+
+    // Calculate remaining amount based on hard cap (assuming hard cap is defined)
+    const hardCap = 10000; // Set your desired hard cap here
+    const remainingAmountValue = hardCap - totalUsdAmountRaised;
+
+    // If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
+    if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
+        adjustedEffectiveMaxBuyLimit = remainingAmountValue; // Set it to remaining amount
+    }
+
+    // Set the amount to send input field
+    document.getElementById('amountToSend').value = adjustedEffectiveMaxBuyLimit.toFixed(2); // Adjust precision as needed
+}
+
+// Add event listener for the Max button
+document.getElementById('maxButton').addEventListener('click', async function() {
+    await setMaxAmount();
+});
+
+
+
+
+
+
+
+// Send Transaction on Minato blockchain
+sendTransactionBtn.addEventListener('click', async () => {
+    const sendButton = sendTransactionBtn; // Reference to the button
+    const recipientAddress = recipientAddressInput.value; // Get the recipient address
+    const amountToSend = parseFloat(amountToSendInput.value); // Get the amount to send
+
+    // Show processing modal
+    showProcessingModal(); // Added line
+
+    // Disable button to prevent multiple clicks
+    sendButton.disabled = true;
+
+    if (!amountToSend || !recipientAddress) {
+        openModal('Error', 'Please enter the amount to send.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return;
+    }
+
+    if (!ethers.utils.isAddress(recipientAddress)) {
+        openModal('Error', 'Invalid recipient address.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return;
+    }
+
+    // Initialize provider and request account access
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []); 
+    const signer = provider.getSigner();
+
+    // Check network before sending
+    const networkMatches = await checkNetwork(); 
+    if (!networkMatches) {
+        showSwitchNetworkPrompt();
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return; // Exit early
+    }
+
+    // Get user's wallet address
+    const userWalletAddress = await signer.getAddress();
+    const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+
+    // Check if user is whitelisted
+    const whitelisted = await isWhitelisted(userWalletAddress);
+    if (!whitelisted) {
+        openModal('Error', 'Your wallet address is not whitelisted.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return;
+    }
+
+    // Check max buy limit
+    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); 
+
+    // Fetch total USD sent from your existing logic
+    const incomingData = await fetchIncomingTransactions(userWalletAddress); 
+    const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); 
+
+    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.178 - (totalUsdSent || 0);
+
+    if (adjustedEffectiveMaxBuyLimit < 0) {
+        openModal("Error", "You have maxed out your allocation.");
+        adjustedEffectiveMaxBuyLimit = 0; 
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return; 
+    }
+
+    const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
+    const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
+
+    const hardCap = 10000; 
+    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+
+    const remainingAmountValue = hardCap - totalUsdAmountRaised;
+
+    console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
+
+    if (parseFloat(amountToSend) > remainingAmountValue) { 
+        openModal(`Error`, `You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; 
+        return; 
+    }
+
+    if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
+        adjustedEffectiveMaxBuyLimit = remainingAmountValue; 
+    }
+
+    const newRaisedAmount = currentRaisedAmount + parseFloat(amountToSend);
+    
+    if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
+        openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.178).toFixed(2)} ETH.`);
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; 
+        return; 
+    }
+
+   try {
+       console.log('Initiating transfer...');
+       const tx = await signer.sendTransaction({
+           to: recipientAddress,
+           value: ethers.utils.parseEther(amountToSend.toString())
+       });
+
+       // Hide processing modal after transaction initiation
+       hideProcessingModal(); // Added line
+
+       // Create a link to the transaction based on the current network
+       const txHashLink = currentNetwork === 'Sepolia'
+           ? `https://sepolia.etherscan.io/tx/${tx.hash}`
+           : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
+
+       // Show transaction status in modal for token transfer
+       openModal('Transaction Sent', `
+    Waiting for confirmation... <span class="loading">⏳</span><br>
+    Hash: <a href="${txHashLink}" target="_blank" style="color: #00BFFF; text-decoration: underline;">${tx.hash}</a>
+`);
+// Start polling for confirmation
+const interval = setInterval(async () => {
+    const receipt = await provider.getTransactionReceipt(tx.hash);
+
+    if (receipt && receipt.status !== null) {
+        clearInterval(interval); 
+
+        openModal('Transaction Confirmed', `
+            Hash: <a href="${txHashLink}" target="_blank" style="color: #00BFFF; text-decoration: underline;">${tx.hash}</a>.
+        `);
+        sendButton.disabled = false; // Re-enable button after confirmation
+
+        // Update raised amount and call updateProgress
+        document.getElementById('raisedAmount').innerText = `Raised Amount: ${newRaisedAmount.toFixed(18)} ETH`;
+        updateProgress();
+    }
+}, 100);
+
+   } catch (error) {
+       console.error('Transaction failed:', error);
+       openModal('Error', `Error: ${error.message}`);
+       hideProcessingModal(); // Added line on error
+       sendButton.disabled = false; // Re-enable button on error
+   }
+});
+
+// Functions for showing and hiding the processing modal
+
+function showProcessingModal() {
+   document.getElementById('processingModal').style.display = 'block';
+}
+
+function hideProcessingModal() {
+   document.getElementById('processingModal').style.display = 'none';
+}
+
+
+
+
+
+
+
+//send scetokenbtn 
+
+document.getElementById('sendSceTokenBtn').addEventListener('click', async () => {
+    const sendButton = document.getElementById('sendSceTokenBtn');
+    
+    // Show processing modal
+    showProcessingModal(); // Added line
+
+    // Disable button to prevent multiple clicks
+    sendButton.disabled = true;
+
+    const recipientAddress = recipientAddressInput.value;
+    const amountToSend = amountToSendInput.value;
+
+    if (!amountToSend || !recipientAddress) {
+        openModal('Error', 'Please enter the amount to send.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return;
+    }
+
+    if (!ethers.utils.isAddress(recipientAddress)) {
+        openModal('Error', 'Invalid recipient address.');
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return;
+    }
+
+    // Initialize provider and request account access
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    
+    await provider.send("eth_requestAccounts", []); 
+    const signer = provider.getSigner();
+
+   // Check network before sending
+   const networkMatches = await checkNetwork(); 
+   if (!networkMatches) {
+       showSwitchNetworkPrompt();
+       hideProcessingModal(); // Added line
+       sendButton.disabled = false; // Re-enable button
+       return; // Exit early
+   }
+
+   const userWalletAddress = await signer.getAddress();
+   const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+
+   const whitelistedForTokenTransfer = await isWhitelisted(userWalletAddress);
+   if (!whitelistedForTokenTransfer) {
+       openModal('Error', 'Your wallet address is not whitelisted.');
+       hideProcessingModal(); // Added line
+       sendButton.disabled = false; // Re-enable button
+       return;
+   }
+
+   const specificMaxBuyLimitForTokenTransfer = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+   console.log(`Fetched max buy limit for token transfer for address ${normalizedUserWalletAddress}: ${specificMaxBuyLimitForTokenTransfer} ETH`);
+
+   const effectiveMaxBuyLimitForTokenTransfer = Math.max(specificMaxBuyLimitForTokenTransfer, universalMaxBuyLimit); 
+
+   const incomingData = await fetchIncomingTransactions(userWalletAddress);
+   const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData);
+
+   let adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.178 - (totalUsdSent || 0);
+
+   if (adjustedEffectiveMaxBuyLimitForTokenTransfer < 0) {
+       openModal("Error", "You have maxed out your allocation.");
+       adjustedEffectiveMaxBuyLimitForTokenTransfer = 0; 
+       hideProcessingModal(); // Added line
+       sendButton.disabled = false; // Re-enable button
+       return; 
+   }
+
+   const currentRaisedAmountTextForTokenTransfer = document.getElementById('raisedAmount').innerText; 
+   const currentRaisedAmountForTokenTransfer = parseFloat(currentRaisedAmountTextForTokenTransfer.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
+
+   const amountInUnitsForTokenTransfer = ethers.utils.parseUnits(amountToSend, 18);
+
+   const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+   const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+
+   const hardCap = 10000; 
+   const remainingAmountValue = hardCap - totalUsdAmountRaised;
+
+   console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
+
+   if (parseFloat(amountToSend) >= remainingAmountValue) { 
+    openModal(`Error`, `You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+    hideProcessingModal(); // Added line
+    sendButton.disabled = false; 
+    return; 
+}
+
+if (remainingAmountValue <= adjustedEffectiveMaxBuyLimitForTokenTransfer) {
+    adjustedEffectiveMaxBuyLimitForTokenTransfer = remainingAmountValue; 
+}
+
+const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
+if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
+    openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.178).toFixed(2)} USD.`);
+    hideProcessingModal(); // Added line
+    sendButton.disabled = false; 
+    return; 
+}
+
+   const tokenAddress = "0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9"; 
+   const tokenContract = new ethers.Contract(tokenAddress, [
+       "function transfer(address to, uint256 value) returns (bool)",
+       "function balanceOf(address owner) view returns (uint256)"
+   ], signer);
+
+   try {
+       console.log('Initiating transfer...');
+       
+       const balanceForTokenTransfer = await tokenContract.balanceOf(userWalletAddress);
+
+       if (amountInUnitsForTokenTransfer.gt(balanceForTokenTransfer)) {
+           openModal('Error', 'Insufficient balance.');
+           hideProcessingModal(); // Added line
+           sendButton.disabled = false; // Re-enable button
+           return;
+       }
+
+       const txForTokenTransfer = await tokenContract.transfer(recipientAddress, amountInUnitsForTokenTransfer);
+       
+       console.log('Transaction hash:', txForTokenTransfer.hash);
+
+       const txHashLinkForTokenTransfer = currentNetwork === 'Sepolia'
+           ? `https://sepolia.etherscan.io/tx/${txForTokenTransfer.hash}`
+           : `https://explorer-testnet.soneium.org/tx/${txForTokenTransfer.hash}`;
+
+  // Show transaction status in modal for token transfer
+  openModal('Transaction Sent', `
+    Waiting for confirmation... <span class="loading">⏳</span><br>
+    Hash: <a href="${txHashLinkForTokenTransfer}" target="_blank" style="color: #00BFFF; text-decoration: underline;">${txForTokenTransfer.hash}</a>
+`);
+
+// Start polling for confirmation for token transfer
+const intervalForTokenTransfer = setInterval(async () => {
+    const receiptForTokenTransfer = await provider.getTransactionReceipt(txForTokenTransfer.hash);
+
+    if (receiptForTokenTransfer && receiptForTokenTransfer.status !== null) {
+        clearInterval(intervalForTokenTransfer);
+        
+        // Update modal with confirmation message
+        openModal('Transaction Confirmed', `
+            Hash: <a href="${txHashLinkForTokenTransfer}" target="_blank">${txForTokenTransfer.hash}</a>.
+        `);
+        sendButton.disabled = false; // Re-enable button after confirmation
+    }
+}, 100);
+      
+      hideProcessingModal(); // Added line after starting polling
+
+   } catch (error) {
+       console.error('Token transfer failed:', error);
+       openModal('Error', `Error: ${error.message}`);
+       hideProcessingModal(); // Added line on error
+       sendButton.disabled = false; // Re-enable button on error
+   }
+});
+
+    
+        // Fetch price on load
+        fetchETHPrice();
+
+
+     
+     document.getElementById("disperseBtn").addEventListener("click", function() {
+        window.location.href = "disperse.html"; // Change this to your actual disperse page file name
+    });
+
+    document.getElementById("predictionMarketBtn").addEventListener("click", function() {
+        window.location.href = "predictionmarket.html"; // Change this to your actual prediction market page file name
+
+
+        
+    });
+
+
+    function enableButton() {
+    // Get the button by its ID
+    const sendTransactionBtn = document.getElementById('sendTransactionBtn');
+    const sendSceTokenBtn = document.getElementById('sendSceTokenBtn'); // Get the second button
+    
+    // Enable the buttons
+    sendTransactionBtn.disabled = false; // Enable the first button
+    sendSceTokenBtn.disabled = false; // Enable the second button
+    
+    // Optionally, remove the 'hidden' class if you want them to be visible again
+    sendTransactionBtn.classList.remove('hidden');
+    sendSceTokenBtn.classList.remove('hidden');
+}
+
+
+
+
+</script>
+
+    </script>
+
+
+
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="contact-info" id="one">
+                <h3>Contact  </h3>
+                
+                <p>Telegram: @crypticishan </p>
+
+            </div>
+         
+            <div class="social-media" id="three">
+                <h3>Follow Us</h3>
+                <a href="https://x.com/superchainexch" target="_blank">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter" width="40" height="40">
+                </a>
+                <a href="https://t.me/superchainexchange" target="_blank">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" width="40" height="40">
+                </a>
+            </div>
+            
+
+
+
+
+        </div>
+       
+
+
+    </footer>
+</body>
+</html>

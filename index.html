@@ -1502,8 +1502,11 @@ document.getElementById("okButton").onclick = function() {
 window.ethereum.on('accountsChanged', async (accounts) => {
     if (accounts.length > 0) {
         const walletAddress = accounts[0];
-        
-        // Update UI with new wallet address automatically
+
+        // Refresh the page when the account is switched
+        location.reload(); // This will refresh the page
+
+        // Update UI with new wallet address automatically (if you want to keep this)
         document.getElementById('connectWalletBtn').innerText = `${walletAddress.slice(0, 5)}...${walletAddress.slice(-3)}`;
         
         walletAddressDiv.textContent = `Wallet Address: ${walletAddress}`;

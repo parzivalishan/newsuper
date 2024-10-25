@@ -790,8 +790,7 @@ footer {
             <div class="dropdown-content hidden">
                 <button id="copyAddressBtn">Copy Address</button>
                 <div id="copyaddressmodal" style="display:none;">Wallet address copied to clipboard!</div>
-
-            </div>
+        </div>
         </div>
 </div>
 
@@ -1504,7 +1503,19 @@ async function connectWallet() {
 // Show copy address button and set the full address
 const copyAddressBtn = document.getElementById('copyAddressBtn');
 copyAddressBtn.classList.remove('hidden'); // Remove hidden class to show copy address button
-copyAddressBtn.innerText = accounts; // Set the full address in the copy address button
+// Set the copy emoji and keep the functionality to copy the accounts data
+copyAddressBtn.innerText = '📋'; // Set the button text to a copy emoji
+
+// Add an event listener to handle the copy action
+copyAddressBtn.addEventListener('click', function() {
+    navigator.clipboard.writeText(accounts) // Copy accounts data to clipboard
+        .then(() => {
+            console.log('Account address copied to clipboard');
+        })
+        .catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+});
 
 
         console.log("MetaMask connected with account:", accounts);
@@ -1575,7 +1586,7 @@ copyAddressBtn.innerText = accounts; // Set the full address in the copy address
     } catch (error) {
         console.error("Connection Error:", error);
         
-        document.getElementById("errorMessage").innerText = 'Failed to connect wallet. Please try unlocking your metamask wallet and clicking the connect button at the top right.';
+        document.getElementById("errorMessage").innerText = 'Failed to connect wallet. Please try unlocking your metamask wallet .';
         
         const modal = document.getElementById("errorModal");
         modal.style.display = "block"; // Open modal

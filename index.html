@@ -1945,7 +1945,7 @@ sendTransactionBtn.addEventListener('click', async () => {
     const incomingData = await fetchIncomingTransactions(userWalletAddress); 
     const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); 
 
-    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.02 - (totalUsdSent || 0);
+    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.178 - (totalUsdSent || 0);
 
     if (adjustedEffectiveMaxBuyLimit < 0) {
         openModal("Error", "You have maxed out your allocation.");
@@ -1980,7 +1980,7 @@ sendTransactionBtn.addEventListener('click', async () => {
     const newRaisedAmount = currentRaisedAmount + parseFloat(amountToSend);
     
     if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
-        openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.02).toFixed(2)} ETH.`);
+        openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.178).toFixed(2)} ETH.`);
         hideProcessingModal(); // Added line
         sendButton.disabled = false; 
         return; 
@@ -2110,7 +2110,7 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
    const incomingData = await fetchIncomingTransactions(userWalletAddress);
    const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData);
 
-   let adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.02 - (totalUsdSent || 0);
+   let adjustedEffectiveMaxBuyLimitForTokenTransfer = effectiveMaxBuyLimitForTokenTransfer + 0.178 - (totalUsdSent || 0);
 
    if (adjustedEffectiveMaxBuyLimitForTokenTransfer < 0) {
        openModal("Error", "You have maxed out your allocation.");
@@ -2133,24 +2133,24 @@ document.getElementById('sendSceTokenBtn').addEventListener('click', async () =>
 
    console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
 
-   if (parseFloat(amountToSend) > remainingAmountValue) { 
-       openModal(`Error`, `You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
-       hideProcessingModal(); // Added line
-       sendButton.disabled = false; 
-       return; 
-   }
+   if (parseFloat(amountToSend) >= remainingAmountValue) { 
+    openModal(`Error`, `You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+    hideProcessingModal(); // Added line
+    sendButton.disabled = false; 
+    return; 
+}
 
-   if (remainingAmountValue < adjustedEffectiveMaxBuyLimitForTokenTransfer) {
-       adjustedEffectiveMaxBuyLimitForTokenTransfer = remainingAmountValue; 
-   }
+if (remainingAmountValue <= adjustedEffectiveMaxBuyLimitForTokenTransfer) {
+    adjustedEffectiveMaxBuyLimitForTokenTransfer = remainingAmountValue; 
+}
 
-   const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
-   if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
-       openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.02).toFixed(2)} USD.`);
-       hideProcessingModal(); // Added line
-       sendButton.disabled = false; 
-       return; 
-   }
+const newRaisedAmountForTokenTransfer = currentRaisedAmountForTokenTransfer + parseFloat(amountToSend);
+if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransfer) { 
+    openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimitForTokenTransfer - 0.178).toFixed(2)} USD.`);
+    hideProcessingModal(); // Added line
+    sendButton.disabled = false; 
+    return; 
+}
 
    const tokenAddress = "0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9"; 
    const tokenContract = new ethers.Contract(tokenAddress, [

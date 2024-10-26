@@ -631,7 +631,9 @@ button:hover {
     text-align: center; /* Center content */
 }
 
-
+#ethPriceContainer {
+    display: none; /* Hides the entire paragraph */
+}
 
 
 /* Hide original progress elements */
@@ -1067,11 +1069,13 @@ footer {
 
 
             <div id="results">
-                <p id="totalEthSent">Total ETH Sent: 0</p>
-                <p id="totalTokensSent">Total Tokens Sent: 0</p>
-                <p id="totalUsdSent">Total USD Sent: $0.00</p> <!-- Make sure it's visible -->
+                <p>
+                  <span id="totalUsdSent">$0.00</span> 
+                    (<span id="totalEthSent">0</span> ETH and 
+                    <span id="totalTokensSent">0</span> USDS)
+                </p>
             </div>
-
+            
 <!-- Modal Structure -->
 <div id="customAlert" class="modal" style="display:none;">
     <div class="modal-content">
@@ -1103,7 +1107,11 @@ footer {
 </div>
 
             <h2></h2>
-            <p>Current Price ETH: <span id="ethPrice">Fetching...</span></p>
+            <p id="ethPriceContainer">Current Price ETH: <span id="ethPrice">Fetching...</span></p>
+
+
+
+
             <div class="info-container">
                 <p id="raisedAmount" class="hidden">
                     Raised Amount: <span id="raisedEthAmount">0.01</span> ETH (~$<span id="raisedUsdAmount">0.00</span>)
@@ -1112,6 +1120,9 @@ footer {
             </div>
     
             <p><span id="usdAmountRaised">0.00</span></p>
+
+
+            
     
             <p>Percentage Raised: <span id="percentageRaised">0%</span></p>
             <div class="progress-container-2">
@@ -1771,8 +1782,8 @@ async function updateIncomingTransactions(userAddress) {
     console.log(`Total Incoming Tokens Transferred: ${incomingData.totalIncomingTokens}`);
 
     // Update displayed values for total ETH and tokens sent
-    document.getElementById('totalEthSent').innerText = `Total ETH Sent: ${incomingData.totalIncomingEth}`;
-    document.getElementById('totalTokensSent').innerText = `Total Tokens Sent: ${incomingData.totalIncomingTokens}`;
+    document.getElementById('totalEthSent').innerText = ` ${incomingData.totalIncomingEth}`;
+    document.getElementById('totalTokensSent').innerText = ` ${incomingData.totalIncomingTokens}`;
 
     // Calculate and display total USD sent after fetching incoming transactions
     await calculateAndDisplayTotalUsdSent(incomingData);
@@ -1825,7 +1836,7 @@ async function calculateAndDisplayTotalUsdSent(incomingData) {
     const totalUsdSent = (incomingData.totalIncomingEth * ethPrice) + incomingData.totalIncomingTokens;
 
     // Display total USD sent in your UI element with ID 'totalUsdSent'
-    document.getElementById('totalUsdSent').innerText = `Total USD Sent: $${totalUsdSent.toFixed(2)}`;
+    document.getElementById('totalUsdSent').innerText = `Purchased Amount: $${totalUsdSent.toFixed(2)}`;
 
     return totalUsdSent; // Return the calculated total USD sent
 }

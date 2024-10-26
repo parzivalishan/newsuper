@@ -989,30 +989,39 @@ footer {
         <button type="button" id="audit-listing-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="audit-listing-panel" class="chakra-tabs__tab" data-index="3" onclick="showInfo(4)">Audit & Listing Plan</button>
     </div>
 
-
     <script>
-          function showInfo(index) {
-    const tabs = document.querySelectorAll('[role="tab"]');
-
-    tabs.forEach((tab, i) => {
-        if (i === index - 1) {
-            // Set active state attributes
-            tab.setAttribute('aria-selected', 'true');
-            tab.setAttribute('tabindex', '0'); // Make active tab focusable
-            tab.classList.add('active'); // Add class for active tab
-            tab.classList.remove('inactive'); // Ensure inactive class is removed
-            tab.focus(); // Optionally focus on the active tab
-        } else {
-            // Set inactive state attributes
-            tab.setAttribute('aria-selected', 'false');
-            tab.setAttribute('tabindex', '-1'); // Make inactive tabs not focusable
-            tab.classList.remove('active'); // Remove class for active tab
-            tab.classList.add('inactive'); // Add class for inactive tab
+        function showInfo(index) {
+            const tabs = document.querySelectorAll('[role="tab"]');
+            const infoSections = [document.getElementById('info1'), document.getElementById('info2'), document.getElementById('info3'), document.getElementById('info4')];
+    
+            tabs.forEach((tab, i) => {
+                if (i === index - 1) {
+                    // Set active state attributes
+                    tab.setAttribute('aria-selected', 'true');
+                    tab.setAttribute('tabindex', '0'); // Make active tab focusable
+                    tab.classList.add('active'); // Add class for active tab
+                    tab.classList.remove('inactive'); // Ensure inactive class is removed
+                    tab.focus(); // Optionally focus on the active tab
+                    
+                    // Show the corresponding info section
+                    infoSections[i].style.display = 'block'; // Show the selected info section
+                    console.log(`Switched to tab: ${tab.innerText} (Index: ${i}, aria-selected: true)`);
+                } else {
+                    // Set inactive state attributes
+                    tab.setAttribute('aria-selected', 'false');
+                    tab.setAttribute('tabindex', '-1'); // Make inactive tabs not focusable
+                    tab.classList.remove('active'); // Remove class for active tab
+                    tab.classList.add('inactive'); // Add class for inactive tab
+                    infoSections[i].style.display = 'none'; // Hide other info sections
+                    
+                    // Log the inactive tab information
+                    console.log(`Tab deactivated: ${tab.innerText} (Index: ${i}, aria-selected: false)`);
+                }
+            });
         }
-    });
-}
-
     </script>
+    
+        
     
     
 

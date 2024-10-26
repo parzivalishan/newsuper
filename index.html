@@ -644,6 +644,45 @@ button:hover {
 }
 
 
+
+
+/* Custom styles for .chakra-tabs__tab class */
+.chakra-tabs__tab {
+    background-color: transparent;         /* No background for a tab style */
+    color: rgb(255, 0, 0);                /* Default text color (bright red) */
+    font-size: 16px;                       /* Consistent font size */
+    padding: 12px 24px;                   /* Padding for spacing */
+    border: none;                          /* No border for a clean look */
+    border-bottom: 2px solid transparent;  /* Underline effect */
+    border-radius: 0;                      /* No rounding for tab look */
+    cursor: pointer;                       /* Pointer on hover */
+    transition: color 0.3s, border-color 0.3s; /* Smooth transitions */
+    margin-right: 10px;                   /* Spacing between tabs */
+}
+
+/* Hover effect for .chakra-tabs__tab */
+.chakra-tabs__tab:hover {
+    color: rgb(200, 0, 0);                 /* Darker red on hover */
+}
+
+/* Active state for the selected tab */
+.chakra-tabs__tab[aria-selected="true"] {
+    color: rgb(150, 0, 0);                 /* Darker red for the active tab */
+    border-bottom: 2px solid rgb(150, 0, 0); /* Underline effect for active tab */
+}
+
+/* Inactive tabs */
+.chakra-tabs__tab[aria-selected="false"] {
+    color: rgb(255, 0, 0);                 /* Keep the inactive tab color consistent */
+    border-bottom: 2px solid transparent;   /* Remove underline for inactive tabs */
+}
+
+
+
+
+
+    
+
 @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
 
@@ -917,13 +956,32 @@ footer {
 <div id="app2" style="font-family: Arial, sans-serif; color: #333;">
     <h1 style="text-align: center; font-size: 2.5em;">Vitalik Token IDO</h1>
     
-    <!-- Buttons to show more information -->
-    <div style="margin-top: 20px; position: absolute; top: 20px; left: 20px;">
-        <button onclick="showInfo(1)">Info </button>
-        <button onclick="showInfo(2)">Tokenomics and Unlocks</button>
-        <button onclick="showInfo(3)">Vesting schedule</button>
-        <button onclick="showInfo(4)">Audit and Listing Plan</button>
+    <div role="tablist" aria-orientation="horizontal" style="margin-top: 20px; position: absolute; top: 50px; left: 20px;">
+        <button type="button" id="project-info-tab" role="tab" tabindex="0" aria-selected="true" aria-controls="project-info-panel" class="chakra-tabs__tab" data-index="0" onclick="showInfo(1)">Project Info</button>
+        <button type="button" id="tokenomics-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="tokenomics-panel" class="chakra-tabs__tab" data-index="1" onclick="showInfo(2)">Tokenomics & Unlocks</button>
+        <button type="button" id="vesting-schedule-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="vesting-schedule-panel" class="chakra-tabs__tab" data-index="2" onclick="showInfo(3)">Vesting Schedule</button>
+        <button type="button" id="audit-listing-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="audit-listing-panel" class="chakra-tabs__tab" data-index="3" onclick="showInfo(4)">Audit & Listing Plan</button>
     </div>
+    
+    
+    <script>
+        function showInfo(index) {
+            const tabs = document.querySelectorAll('[role="tab"]');
+            tabs.forEach((tab, i) => {
+                if (i === index - 1) {
+                    tab.setAttribute('aria-selected', 'true');
+                    tab.setAttribute('tabindex', '0'); // Set tabindex for active tab
+                } else {
+                    tab.setAttribute('aria-selected', 'false');
+                    tab.setAttribute('tabindex', '-1'); // Remove focus from inactive tabs
+                }
+            });
+        }
+    </script>
+    
+
+
+
 
     <!-- Project Information -->
     <div id="infoContainer" style="margin-top: 80px;">

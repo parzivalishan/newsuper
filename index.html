@@ -1032,187 +1032,270 @@ footer {
 
 
 
-    <!-- Project Information -->
-    <div id="infoContainer" style="margin-top: 80px;">
-        <!-- Content for Button 1 -->
-        <div id="info1" style="display: block;">
-            <h2>About the Project</h2>
-            <p>
-                Vitalik L1 with a library of 30+ chicks under 25 planning to generate revenue from advertisements and micro transactions that are shared with other simps. Token utility includes L1 gas fees and Ftx Bankruptcy purchase currency for all game related NFTs. Players can play any game, use the same digital assets in multiple games and be rewarded daily for the activities. Web 2.5 infrastructure enables access to 3 billion players.
-            </p>
-            <h2>Meet the Team</h2>
-            <ul>
-                <li><strong>Do Kwon</strong> - CEO & Founder</li>
-                <li><strong>Sam Bankman Fried</strong> - CTO & Co-Founder</li>
-                <li><strong>Su Zhu</strong> - Marketing Director</li>
-            </ul>
-        
+<!-- Project Information -->
+<div id="infoContainer" style="margin-top: 80px;">
+    <!-- Content for Button 1 -->
+    <div id="info1" style="display: block;">
+        <h2>About the Project</h2>
+        <p>
+            Vitalik L1 with a library of 30+ chicks under 25 planning to generate revenue from advertisements and micro transactions that are shared with other simps. Token utility includes L1 gas fees and Ftx Bankruptcy purchase currency for all game related NFTs. Players can play any game, use the same digital assets in multiple games and be rewarded daily for the activities. Web 2.5 infrastructure enables access to 3 billion players.
+        </p>
+        <h2>Meet the Team</h2>
+        <ul>
+            <li><strong>Do Kwon</strong> - CEO & Founder</li>
+            <li><strong>Sam Bankman Fried</strong> - CTO & Co-Founder</li>
+            <li><strong>Su Zhu</strong> - Marketing Director</li>
+        </ul>
 
-
-<!-- Social Media Links (Only visible when Button 1 is clicked) -->
-<div id="socialMediaLinks" style="margin-top: 20px; display: block;">
-    <h2>Vitalik L1 Socials</h2>
-
-    <a href="https://www.yourwebsite.com/" target="_blank">
-        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/website%20logo.jpg" alt="Website" style="width: 30px; margin-right: 10px;">
-    </a>
-
-    <a href="https://x.com/" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter" style="width: 30px; margin-right: 10px;">
-    </a>
-
-    <a href="https://telegram.org/" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" style="width: 30px; margin-right: 10px;">
-    </a>
-</div>
-
-
-
-
-
-
+        <!-- Image Slider -->
+        <div class="slider-container">
+            <div class="slider">
+                <div class="slide">
+                    <img src="https://metlabs.io/wp-content/uploads/2023/12/vitalik-buterin-quien-es-ethereum-fundador.jpeg" alt="Vitalik">
+                </div>
+                <div class="slide">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSySPhCqn9lhBSmsjXmmLi2svy5ag43r-TSjg&s" alt="Project Image 2">
+                </div>
+                <div class="slide">
+                    <img src="https://raw.githubusercontent.com/yourusername/yourrepo/main/path/to/image3.jpg" alt="Project Image 3">
+                </div>
+                <div class="slide">
+                    <img src="https://raw.githubusercontent.com/yourusername/yourrepo/main/path/to/image4.jpg" alt="Project Image 4">
+                </div>
+                <div class="slide">
+                    <img src="https://raw.githubusercontent.com/yourusername/yourrepo/main/path/to/image5.jpg" alt="Project Image 5">
+                </div>
+            </div>
+            <!-- Navigation Buttons -->
+            <button class="prev slide-button" onclick="moveSlide(-1)">&#10094;</button>
+            <button class="next slide-button" onclick="moveSlide(1)">&#10095;</button>
         </div>
 
-      <!-- Content for Button 2 (Empty) -->
-<div id="info2" style="display: none;">
-    <h>Still fixing this shit </h>
-    
-    <!-- Smaller Pie Chart Canvas (Only visible when Button 1 is clicked) -->
-    <div id="pieChartContainer" style="margin-top: 20px; display: block;">
-        <canvas id="myPieChart" width="2" height="2" style="max-width: 100%;"></canvas>
-        <div id="legendContainer" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div> <!-- Legend Container -->
+        <!-- Social Media Links -->
+        <div id="socialMediaLinks" style="margin-top: 20px; display: block;">
+            <h2>Vitalik L1 Socials</h2>
+            <a href="https://www.yourwebsite.com/" target="_blank">
+                <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/website%20logo.jpg" alt="Website" style="width: 30px; margin-right: 10px;">
+            </a>
+            <a href="https://x.com/" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter" style="width: 30px; margin-right: 10px;">
+            </a>
+            <a href="https://telegram.org/" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" style="width: 30px; margin-right: 10px;">
+            </a>
+        </div>
     </div>
-</div>
 
-<!-- Content for Button 3 (Empty) -->
-<div id="info3" style="display: none;">
-    <h2>Vesting Information</h2>
-    <p>
-        15% TGE, 1 month cliff, Monthly unlock for the next 5 months (17% each month)
-    </p>
-</div>
+    <!-- Content for Button 2 (Empty) -->
+    <div id="info2" style="display: none;">
+        <h2>Still fixing this shit</h2>
 
-<!-- Content for Button 4 (Empty) -->
-<div id="info4" style="display: none;">
-    <h1> page 4 baby</h1>
-</div>
-</div>
+        <!-- Smaller Pie Chart Canvas -->
+        <div id="pieChartContainer" style="margin-top: 20px; display: block;">
+            <canvas id="myPieChart" width="2" height="2" style="max-width: 100%;"></canvas>
+            <div id="legendContainer" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div> <!-- Legend Container -->
+        </div>
+    </div>
 
+    <!-- Content for Button 3 (Empty) -->
+    <div id="info3" style="display: none;">
+        <h2>Vesting Information</h2>
+        <p>15% TGE, 1 month cliff, Monthly unlock for the next 5 months (17% each month)</p>
+    </div>
+
+    <!-- Content for Button 4 (Empty) -->
+    <div id="info4" style="display: none;">
+        <h1>Page 4 baby</h1>
+    </div>
 
 </div>
 
 <script>
-  // Function to show additional information based on button clicks
-  function showDetailedInfo(buttonNumber) {
-        // Hide all info sections
-        document.getElementById('info1').style.display = 'none';
-        document.getElementById('info2').style.display = 'none';
-        document.getElementById('info3').style.display = 'none';
-        document.getElementById('info4').style.display = 'none';
 
-        // Hide pie chart and social links by default
-        document.getElementById('pieChartContainer').style.display = 'none';
-        document.getElementById('socialMediaLinks').style.display = 'none';
+    let currentSlide = 0;
 
-        // Show the selected info section
-        if (buttonNumber === 1) {
-            document.getElementById('info1').style.display = 'block';
-            document.getElementById('pieChartContainer').style.display = 'block';
-            document.getElementById('socialMediaLinks').style.display = 'block';
-        } else if (buttonNumber === 2) {
-            document.getElementById('info2').style.display = 'block';
-        } else if (buttonNumber === 3) {
-            document.getElementById('info3').style.display = 'block';
-        } else if (buttonNumber === 4) {
-            document.getElementById('info4').style.display = 'block';
+    function showSlide(index) {
+        const slides = document.querySelectorAll(".slide");
+        // Ensures the index is within bounds
+        if (index >= slides.length) {
+            currentSlide = 0; // Go to the first slide
+        } else if (index < 0) {
+            currentSlide = slides.length - 1; // Go to the last slide
+        } else {
+            currentSlide = index;
         }
+
+        // Move the slider by setting the transform property
+        const slider = document.querySelector(".slider");
+        slider.style.transform = `translateX(${-currentSlide * 100}%)`;
     }
 
-    // Initialize the pie chart with some default data
-    const ctx = document.getElementById('myPieChart').getContext('2d');
-    let myPieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Private Sale', 'IDO', 'Liquidity', 'Team'],
-            datasets: [{
-                label: 'Token Distribution',
-                data: [30, 40, 20, 10],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(54, 162, 235, 0.8)',
-                    'rgba(255, 206, 86, 0.8)',
-                    'rgba(75, 192, 192, 0.8)',
-                    'rgba(153, 102, 255, 0.8)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            const total = tooltipItem.chart.data.datasets[0].data.reduce((a, b) => a + b);
-                            const currentValue = tooltipItem.raw;
-                            const percentage = ((currentValue / total) * 100).toFixed(2) + '%';
-                            return `${tooltipItem.label}: ${percentage}`;
-                        }
+    function moveSlide(step) {
+        showSlide(currentSlide + step);
+    }
+
+    // Initialize the slider to show the first slide
+    showSlide(currentSlide);
+
+
+
+
+
+
+
+
+
+// Function to show additional information based on button clicks
+function showDetailedInfo(buttonNumber) {
+    // Hide all info sections
+    document.getElementById('info1').style.display = 'none';
+    document.getElementById('info2').style.display = 'none';
+    document.getElementById('info3').style.display = 'none';
+    document.getElementById('info4').style.display = 'none';
+
+    // Hide pie chart and social links by default
+    document.getElementById('pieChartContainer').style.display = 'none';
+    document.getElementById('socialMediaLinks').style.display = 'none';
+
+    // Show the selected info section
+    if (buttonNumber === 1) {
+        document.getElementById('info1').style.display = 'block';
+        document.getElementById('pieChartContainer').style.display = 'block';
+        document.getElementById('socialMediaLinks').style.display = 'block';
+    } else if (buttonNumber === 2) {
+        document.getElementById('info2').style.display = 'block';
+    } else if (buttonNumber === 3) {
+        document.getElementById('info3').style.display = 'block';
+    } else if (buttonNumber === 4) {
+        document.getElementById('info4').style.display = 'block';
+    }
+}
+
+// Initialize the pie chart with some default data
+const ctx = document.getElementById('myPieChart').getContext('2d');
+let myPieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['Private Sale', 'IDO', 'Liquidity', 'Team'],
+        datasets: [{
+            label: 'Token Distribution',
+            data: [30, 40, 20, 10],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        const total = tooltipItem.chart.data.datasets[0].data.reduce((a,b) => a + b);
+                        const currentValue = tooltipItem.raw;
+                        const percentage = ((currentValue / total) *100).toFixed(2) + '%';
+                        return `${tooltipItem.label}: ${percentage}`;
                     }
                 }
-            },
-            animation: {
-                animateRotate: true,
-                animateScale: true,
-            },
-            cutoutPercentage: 0
-        }
-    });
+            }
+        },
+        animation: {
+            animateRotate: true,
+            animateScale: true,
+        },
+        cutoutPercentage:0
+    }
+});
 
-    // Create custom legend below the chart
-    const legendContainer = document.getElementById('legendContainer');
-    myPieChart.data.labels.forEach((label, index) => {
-        const colorBox = document.createElement('span');
-        colorBox.style.display = 'inline-block';
-        colorBox.style.width = '15px';
-        colorBox.style.height = '15px';
-        colorBox.style.backgroundColor = myPieChart.data.datasets[0].backgroundColor[index];
-        colorBox.style.borderRadius = '3px';
-        colorBox.style.marginRight = '10px';
+// Create custom legend below the chart
+const legendContainer = document.getElementById('legendContainer');
+myPieChart.data.labels.forEach((label,index) => {
+    const colorBox = document.createElement('span');
+    colorBox.style.display='inline-block';
+    colorBox.style.width='15px';
+    colorBox.style.height='15px';
+    colorBox.style.backgroundColor=myPieChart.data.datasets[0].backgroundColor[index];
+    colorBox.style.borderRadius='3px';
+    colorBox.style.marginRight='10px';
 
-        const labelText = document.createElement('span');
-        labelText.textContent = label;
-        labelText.style.marginRight = '20px';
-        labelText.style.fontWeight = 'bold';
+    const labelText=document.createElement('span');
+    labelText.textContent=label;
+    labelText.style.marginRight='20px';
+    labelText.style.fontWeight='bold';
 
-        const legendItem = document.createElement('div');
-        legendItem.style.display = 'flex';
-        legendItem.style.alignItems = 'center';
+    const legendItem=document.createElement('div');
+    legendItem.style.display='flex';
+    legendItem.style.alignItems='center';
 
-        legendItem.appendChild(colorBox);
-        legendItem.appendChild(labelText);
+    legendItem.appendChild(colorBox);
+    legendItem.appendChild(labelText);
 
-        legendContainer.appendChild(legendItem);
-    });
+    legendContainer.appendChild(legendItem);
+});
 
-    // Example to update the pie chart dynamically
-    setTimeout(() => {
-        const newData = [20, 30, 25, 25];
-        myPieChart.data.datasets[0].data = newData;
-        myPieChart.update();
-    }, 5000);
+// Example to update the pie chart dynamically
+setTimeout(() => {
+   const newData=[20,30,25,25];
+   myPieChart.data.datasets[0].data=newData;
+   myPieChart.update();
+},5000);
 </script>
 
+<!-- Styles for Slider -->
+<style>
+    .slider-container {
+       position: relative;
+       width:100%;
+       max-width:600px;
+       margin:auto;
+       overflow:hidden;
+    }
+    .slider {
+       display:flex;
+       transition:.5s ease;
+    }
+    .slide {
+       min-width:100%;
+       box-sizing:border-box;
+    }
+    .slide img {
+       width:100%;
+       display:block;
+    }
+    .prev,.next {
+       cursor:pointer;
+       position:absolute;
+       top:50%;
+       padding:16px;
+       color:white;
+       font-weight:bold;
+       font-size:18px;
+       transition:.3s ease;
+    }
+    .prev { left:10px; }
+    .next { right:10px; }
+    .slide-button:hover {
+       background-color:rgba(0,0,0,.5);
+       transform:scale(1.1);
+    }
+    </style>
+    
+</div>
     
     
     <div id="app" style="font-family: 'Montserrat', sans-serif; color: #111;">

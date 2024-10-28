@@ -874,6 +874,26 @@ button:hover {
     margin-right: 10px; /* Space between logo and text */
 }
 
+#swp-maxButton {
+    background-color: #6200ea; /* Deep purple */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 12px 24px; /* Padding */
+    margin-top: 10px; /* Space above */
+    margin-bottom: 20px; /* Extra space below the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 4px; /* Slightly rounded corners */
+    font-size: 16px; /* Font size */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for elevation */
+    transition: all 0.3s ease; /* Smooth transition */
+}
+
+#swp-maxButton:hover {
+    background-color: #3700b3; /* Darker purple on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+}
+
+
 .swp-output-container {
     flex-direction: row; /* Row layout for output and logo */
     align-items: center; /* Center items vertically */
@@ -915,6 +935,9 @@ button:hover {
     background-color: #21a1f1; /* Darker blue on hover */
     transform: scale(1.05); /* Slightly enlarge on hover */
 }
+
+
+
 
     
 
@@ -1616,6 +1639,7 @@ setTimeout(() => {
             </div>
     
             <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
+    
             <div class="button-container">
                 <input type="number" id="amountToSend" placeholder="Amount to Send ">
                 <button id="maxButton">Max</button>
@@ -1623,7 +1647,6 @@ setTimeout(() => {
             <div class="max-buy-limit-container">
                 <p>Your Max Buy Limit: <span id="maxBuyLimit">0.00</span></p>
             </div>
-            
             
 
             <!--          enabled code  <button id="sendTransactionBtn"  >-->
@@ -1654,12 +1677,11 @@ setTimeout(() => {
             <h1>Swap Ido</h1>
             
             <div class="swp-ratio">1 USD = 5 VL1 Ratio</div>
-            <br>
-
-            <h2>Enter amount:</h2>
+            
             <div class="swp-input-container">
-                <label for="swp-inputAmount"></label>
+                <label for="swp-inputAmount">Enter amount:</label>
                 
+                     
                 <div class="swp-input-wrapper">
                     <input type="text" id="swp-inputAmount" placeholder="0.00" 
                            autocomplete="off" 
@@ -1686,11 +1708,21 @@ setTimeout(() => {
                 </div>
             </div>
         
+
+            <div>
+            <!-- New Max Button -->
+            <button id="swp-maxButton" onclick="maxButton()">Max</button>
+        </div>
+
+<!-- Hidden field to hold the calculated maximum amount -->
+<input type="hidden" id="amountToSend" />
+
+
             <div class="swp-output-container">
                 <div class="swp-output" id="swp-outputAmount">$0.00</div>
                 <img id="swp-outputLogo" src="https://coin-images.coingecko.com/coins/images/24383/large/apecoin.jpg?1696523566" alt="Output Coin Logo" style="width: 40px; height: 40px;" />
             </div>
-        
+      
             <button id="swp-sendSceTokenBtn" class="swp-swap-btn">Send USDT</button>
         </div>
         
@@ -1702,6 +1734,59 @@ setTimeout(() => {
                 const dropdownMenu = document.getElementById('swp-dropdownMenu');
                 const selectedOption = document.getElementById('swp-selectedOption');
                 const selectedLogo = document.getElementById('swp-selectedLogo');
+                const inputAmount = document.getElementById('swp-inputAmount');
+                const outputAmount = document.getElementById('swp-outputAmount');
+                
+                // Dropdown menu item click event
+                dropdownMenu.addEventListener('click', (event) => {
+                    const target = event.target.closest('.swp-dropdown-item');
+                    if (target) {
+                        const logoSrc = target.querySelector('img') ? target.querySelector('img').src : '';
+                        const selectedToken = target.textContent.trim(); // Get the selected token text
+                        selectedOption.textContent = selectedToken; // Update displayed selected option
+                        selectedLogo.src = logoSrc; // Update selected logo
+                        dropdownMenu.classList.remove('visible'); // Hide dropdown after selection
+                        
+                        // Update the Swap button text based on selected token
+                        swpSendSceTokenBtn.textContent = selectedToken === 'USDT' ? 'Send USDT' : 'Send ETH'; // Change button text
+                    }
+                });
+                
+                // Add click event to swap button to call appropriate function based on text
+                swpSendSceTokenBtn.addEventListener('click', function() {
+                    const currentText = swpSendSceTokenBtn.textContent.trim();
+                    if (currentText === 'Send USDT') {
+                        sendSceTokenBtn.click(); // Call sendSceTokenBtn
+                    } else if (currentText === 'Send ETH') {
+                        sendTransactionBtn.click(); // Call sendTransactionBtn
+                    }
+                });
+        
+                // Define the conversion ratios
+                const ratios = {
+                    USDT: 5, // USDT to VL1 ratio
+                    ETH: 2000 // ETH to VL1 ratio
+                };
+        
+                // Update output amount based on input
+                inputAmount.addEventListener('input', () => {
+                    const inputValue = parseFloat(inputAmount.value); // Convert to float
+                
+                    // Check if inputValue is a valid number
+                    if (!isNaN(inputValue) && inputValue >= 0) {
+                        const selectedToken = selectedOption.textContent.trim(); // Get the currently selected token
+                        const outputValue = inputValue * ratios[selectedToken]; // Ratio calculation based on selected token
+                        outputAmount.textContent = `$${outputValue.toFixed(2)}`; // Format output
+                    } else {
+                        outputAmount.textContent = '$0.00'; // Reset if invalid input
+                    }
+                });
+        
+                // Dropdown button click to toggle visibility
+                const dropdownBtn = document.getElementById('swp-dropdownBtn');
+                dropdownBtn.addEventListener('click', () => {
+                    dropdownMenu.classList.toggle('visible'); // Toggle dropdown visibility
+                });
         
                 // Dropdown menu item click event
                 dropdownMenu.addEventListener('click', (event) => {
@@ -1714,100 +1799,79 @@ setTimeout(() => {
                         dropdownMenu.classList.remove('visible'); // Hide dropdown after selection
                         
                         // Update the Swap button text based on selected token
-                        if (selectedToken === 'USDT') {
-                            swpSendSceTokenBtn.textContent = 'Send USDT'; // Change to 'Send USDT'
-                        } else if (selectedToken === 'ETH') {
-                            swpSendSceTokenBtn.textContent = 'Send ETH'; // Change to 'Send ETH'
-                        }
+                        swpSendSceTokenBtn.textContent = selectedToken === 'USDT' ? 'Send USDT' : 'Send ETH'; // Change button text
+                    }
+                
+                    // Trigger input change to recalculate output based on new selection
+                    inputAmount.dispatchEvent(new Event('input'));
+                });
+        
+                // Close dropdown if clicked outside
+                document.addEventListener('click', (event) => {
+                    if (!dropdownBtn.contains(event.target)) {
+                        dropdownMenu.classList.remove('visible');
                     }
                 });
         
-                // Add click event to swap button to call appropriate function based on text
-                swpSendSceTokenBtn.addEventListener('click', function() {
-                    const currentText = swpSendSceTokenBtn.textContent.trim();
-                    if (currentText === 'Send USDT') {
-                        sendSceTokenBtn.click(); // Call sendSceTokenBtn
-                    } else if (currentText === 'Send ETH') {
-                        sendTransactionBtn.click(); // Call sendTransactionBtn
+                // Async function to fetch and set max amount on the input field
+                async function setSwpMaxAmount() {
+                    // Get the user's wallet address
+                    const userWalletAddress = await signer.getAddress();
+                    const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+        
+                    // Get the specific and effective max buy limits
+                    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+                    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit);
+        
+                    // Fetch incoming transactions and calculate total USD sent
+                    const incomingData = await fetchIncomingTransactions(userWalletAddress);
+                    const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData);
+        
+                    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit - (totalUsdSent || 0);
+        
+                    if (adjustedEffectiveMaxBuyLimit < 0) {
+                        alert("You have maxed out your allocation.");
+                        adjustedEffectiveMaxBuyLimit = 0;
                     }
-                });
+        
+                    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+                    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+                    const hardCap = 10000;
+        
+                    const remainingAmountValue = hardCap - totalUsdAmountRaised;
+                    if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
+                        adjustedEffectiveMaxBuyLimit = remainingAmountValue;
+                    }
+        
+                    // Set the calculated max amount in the input field
+                    document.getElementById('swp-inputAmount').value = adjustedEffectiveMaxBuyLimit.toFixed(2);
+        
+                    // Optionally update the display if needed
+                    await updateMaxBuyLimitDisplay();
+        
+                    // Trigger input change to recalculate output based on new max value
+                    inputAmount.dispatchEvent(new Event('input'));
+                }
+        
+                // Ensure you have an event listener for the button as follows (if not using onclick in HTML)
+                document.getElementById('swp-maxButton').addEventListener('click', setSwpMaxAmount);
             });
-        </script>
-
-
-    </div>
-    
-  
-  
-    <!-- Google Fonts Link -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-
-
-
-
-    <script>
-const inputAmount = document.getElementById('swp-inputAmount');
-const outputAmount = document.getElementById('swp-outputAmount');
-const dropdownBtn = document.getElementById('swp-dropdownBtn');
-const dropdownMenu = document.getElementById('swp-dropdownMenu');
-const selectedOption = document.getElementById('swp-selectedOption');
-const selectedLogo = document.getElementById('swp-selectedLogo');
-const swapButton = document.getElementById('swp-sendSceTokenBtn'); // Updated button reference
-
-// Define the conversion ratios
-const ratios = {
-    USDT: 5, // USDT to VL1 ratio
-    ETH: 2000 // ETH to VL1 ratio
-};
-
-inputAmount.addEventListener('input', () => {
-    const inputValue = parseFloat(inputAmount.value); // Convert to float
-
-    // Check if inputValue is a valid number
-    if (!isNaN(inputValue) && inputValue >= 0) {
-        const selectedToken = selectedOption.textContent.trim(); // Get the currently selected token
-        const outputValue = inputValue * ratios[selectedToken]; // Ratio calculation based on selected token
-        outputAmount.textContent = `$${outputValue.toFixed(2)}`; // Format output
-    } else {
-        outputAmount.textContent = '$0.00'; // Reset if invalid input
-    }
-});
-
-dropdownBtn.addEventListener('click', () => {
-    dropdownMenu.classList.toggle('visible'); // Toggle dropdown visibility
-});
-
-// Dropdown menu item click event
-dropdownMenu.addEventListener('click', (event) => {
-    const target = event.target.closest('.swp-dropdown-item');
-    if (target) {
-        const logoSrc = target.querySelector('img') ? target.querySelector('img').src : '';
-        const selectedToken = target.textContent.trim(); // Get the selected token text
-        selectedOption.textContent = selectedToken; // Update displayed selected option
-        selectedLogo.src = logoSrc; // Update selected logo
-        dropdownMenu.classList.remove('visible'); // Hide dropdown after selection
+      
         
-        // Update the Swap button text based on selected token
-        swapButton.textContent = selectedToken === 'USDT' ? 'Send USDT' : 'Send ETH'; // Simplified swap button text
-    }
 
-    // Trigger input change to recalculate output based on new selection
-    inputAmount.dispatchEvent(new Event('input'));
-});
 
-// Close dropdown if clicked outside
-document.addEventListener('click', (event) => {
-    if (!dropdownBtn.contains(event.target)) {
-        dropdownMenu.classList.remove('visible');
-    }
-});
+</script>
+
+</div>
 
 
 
+<!-- Google Fonts Link -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
 
 
-
+<script>
 
         const MINATO_RPC_URL = 'https://rpc.minato.soneium.org/';
         const SEPOLIA_RPC_URL = 'https://rpc.ankr.com/eth_sepolia'; // Replace with your Infura project ID

@@ -1743,7 +1743,6 @@ setTimeout(() => {
 
 
     <script>
-
 const inputAmount = document.getElementById('swp-inputAmount');
 const outputAmount = document.getElementById('swp-outputAmount');
 const dropdownBtn = document.getElementById('swp-dropdownBtn');
@@ -1752,12 +1751,19 @@ const selectedOption = document.getElementById('swp-selectedOption');
 const selectedLogo = document.getElementById('swp-selectedLogo');
 const swapButton = document.getElementById('swp-sendSceTokenBtn'); // Updated button reference
 
+// Define the conversion ratios
+const ratios = {
+    USDT: 5, // USDT to VL1 ratio
+    ETH: 2000 // ETH to VL1 ratio
+};
+
 inputAmount.addEventListener('input', () => {
     const inputValue = parseFloat(inputAmount.value); // Convert to float
 
     // Check if inputValue is a valid number
     if (!isNaN(inputValue) && inputValue >= 0) {
-        const outputValue = inputValue * (5 / 1); // Ratio calculation
+        const selectedToken = selectedOption.textContent.trim(); // Get the currently selected token
+        const outputValue = inputValue * ratios[selectedToken]; // Ratio calculation based on selected token
         outputAmount.textContent = `$${outputValue.toFixed(2)}`; // Format output
     } else {
         outputAmount.textContent = '$0.00'; // Reset if invalid input
@@ -1779,14 +1785,11 @@ dropdownMenu.addEventListener('click', (event) => {
         dropdownMenu.classList.remove('visible'); // Hide dropdown after selection
         
         // Update the Swap button text based on selected token
-        if (selectedToken === 'USDT') {
-            swapButton.textContent = 'Send USDT'; // Change to 'Send USDT'
-        } else if (selectedToken === 'ETH') {
-            swapButton.textContent = 'Send ETH'; // Change to 'Send ETH'
-        } else {
-            swapButton.textContent = 'Swap'; // Default if no match
-        }
+        swapButton.textContent = selectedToken === 'USDT' ? 'Send USDT' : 'Send ETH'; // Simplified swap button text
     }
+
+    // Trigger input change to recalculate output based on new selection
+    inputAmount.dispatchEvent(new Event('input'));
 });
 
 // Close dropdown if clicked outside
@@ -1796,23 +1799,6 @@ document.addEventListener('click', (event) => {
     }
 });
 
-// Dropdown menu item click event (duplicate, can be removed)
-dropdownMenu.addEventListener('click', (event) => {
-    const target = event.target.closest('.swp-dropdown-item');
-    if (target) {
-        const logoSrc = target.querySelector('img') ? target.querySelector('img').src : '';
-        selectedOption.textContent = target.textContent.trim(); // Update selected option text
-        selectedLogo.src = logoSrc; // Update selected logo
-        dropdownMenu.classList.remove('visible'); // Hide dropdown after selection
-    }
-});
-
-// Close dropdown if clicked outside (duplicate, can be removed)
-document.addEventListener('click', (event) => {
-    if (!dropdownBtn.contains(event.target)) {
-        dropdownMenu.classList.remove('visible');
-    }
-});
 
 
 

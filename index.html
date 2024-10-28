@@ -1616,11 +1616,14 @@ setTimeout(() => {
             </div>
     
             <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
-    
             <div class="button-container">
                 <input type="number" id="amountToSend" placeholder="Amount to Send ">
                 <button id="maxButton">Max</button>
             </div>
+            <div class="max-buy-limit-container">
+                <p>Your Max Buy Limit: <span id="maxBuyLimit">0.00</span></p>
+            </div>
+            
             
 
             <!--          enabled code  <button id="sendTransactionBtn"  >-->
@@ -2688,8 +2691,6 @@ async function isWhitelisted(walletAddress) {
 }
 
 
-
-// Max buy limit
 let cachedMaxBuyLimits = {};
 let universalMaxBuyLimit = 0; // Variable for universal max buy limit
 
@@ -2697,10 +2698,7 @@ let universalMaxBuyLimit = 0; // Variable for universal max buy limit
 async function fetchMaxBuyLimits() {
     try {
         const response = await fetch(`https://raw.githubusercontent.com/parzivalishan/newsuper/main/maxBuyLimits.json?timestamp=${new Date().getTime()}`, { cache: "no-store" });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const data = await response.json();
 
@@ -2716,7 +2714,7 @@ async function fetchMaxBuyLimits() {
             universalMaxBuyLimit = cachedMaxBuyLimits[deadAddress.toLowerCase()];
             console.log("Universal Max Buy Limit set to:", universalMaxBuyLimit);
         } else {
-            universalMaxBuyLimit = 0; // Reset if dead address doesn't have a limit
+            universalMaxBuyLimit = 0;
         }
 
         console.log("Fetched Max Buy Limits:", cachedMaxBuyLimits);
@@ -2726,56 +2724,76 @@ async function fetchMaxBuyLimits() {
     }
 }
 
-// Call this function initially to load the max buy limits
-fetchMaxBuyLimits();
+// Function to update the displayed max buy limit
+async function updateMaxBuyLimitDisplay() {
+    try {
+        const userWalletAddress = await signer.getAddress();
+        const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+        
+        console.log("User Wallet Address:", normalizedUserWalletAddress);
 
-// Polling for updates every 10 seconds (10000 milliseconds)
-setInterval(fetchMaxBuyLimits, 10000);
+        const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+        const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit);
 
-async function setMaxAmount() {
-    const userWalletAddress = await signer.getAddress(); // Get user's wallet address
-    const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+        console.log("Specific Max Buy Limit:", specificMaxBuyLimit);
+        console.log("Effective Max Buy Limit:", effectiveMaxBuyLimit);
 
-    // Check max buy limit
-    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
-    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); // Use the higher of the two limits
-
-    // Fetch total USD sent from your existing logic
-    const incomingData = await fetchIncomingTransactions(userWalletAddress); // Fetch incoming data for the user
-    const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); // Get total USD sent
-
-    // Allow for an additional $0.02 over the max buy limit
-    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.0 - (totalUsdSent || 0); // Subtract totalUsdSent
-
-    // Check if adjustedEffectiveMaxBuyLimit is negative
-    if (adjustedEffectiveMaxBuyLimit < 0) {
-        alert("You have maxed out your allocation."); // Show alert message
-        adjustedEffectiveMaxBuyLimit = 0; // Optionally set it to zero or any other logic you prefer
+        document.getElementById('maxBuyLimit').innerText = effectiveMaxBuyLimit.toFixed(2); // Update the UI
+    } catch (error) {
+        console.error("Failed to update max buy limit display:", error);
     }
-
-    // Fetch total USD amount raised from your existing logic (ensure this is defined and accessible)
-    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
-    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
-
-    // Calculate remaining amount based on hard cap (assuming hard cap is defined)
-    const hardCap = 10000; // Set your desired hard cap here
-    const remainingAmountValue = hardCap - totalUsdAmountRaised;
-
-    // If remaining amount is less than adjusted effective max buy limit, set it to remaining amount
-    if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
-        adjustedEffectiveMaxBuyLimit = remainingAmountValue; // Set it to remaining amount
-    }
-
-    // Set the amount to send input field
-    document.getElementById('amountToSend').value = adjustedEffectiveMaxBuyLimit.toFixed(2); // Adjust precision as needed
 }
 
-// Add event listener for the Max button
+// Initial fetch and UI update on page load
+fetchMaxBuyLimits().then(updateMaxBuyLimitDisplay);
+
+// Fetch limits every 5 seconds for more frequent updates
+setInterval(fetchMaxBuyLimits, 5000);
+
+// Continuously update UI as data is available, improving responsiveness
+function continuouslyUpdateDisplay() {
+    updateMaxBuyLimitDisplay();
+    requestAnimationFrame(continuouslyUpdateDisplay); // Schedule the next update
+}
+
+// Start the continuous UI update
+continuouslyUpdateDisplay();
+
+async function setMaxAmount() {
+    const userWalletAddress = await signer.getAddress();
+    const normalizedUserWalletAddress = userWalletAddress.toLowerCase();
+
+    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit);
+
+    const incomingData = await fetchIncomingTransactions(userWalletAddress);
+    const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData);
+
+    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit - (totalUsdSent || 0);
+
+    if (adjustedEffectiveMaxBuyLimit < 0) {
+        alert("You have maxed out your allocation.");
+        adjustedEffectiveMaxBuyLimit = 0;
+    }
+
+    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+    const hardCap = 10000;
+
+    const remainingAmountValue = hardCap - totalUsdAmountRaised;
+    if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
+        adjustedEffectiveMaxBuyLimit = remainingAmountValue;
+    }
+
+    document.getElementById('amountToSend').value = adjustedEffectiveMaxBuyLimit.toFixed(2);
+
+    await updateMaxBuyLimitDisplay();
+}
+
+// Event listener for Max button
 document.getElementById('maxButton').addEventListener('click', async function() {
     await setMaxAmount();
 });
-
-
 
 
 

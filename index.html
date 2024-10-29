@@ -155,7 +155,6 @@ h1 {
        box-shadow : rgba(255,150,50,.5) -4px -4px, rgba(255,150,50,.5) -4px -4px inset; 
    }
 }
-
 /* Wallet Dropdown Styles */
 .wallet-dropdown {
     position: relative;
@@ -163,35 +162,7 @@ h1 {
     font-family: Arial, sans-serif;
 }
 
-/* Dropdown Content Styles */
-.wallet-dropdown .dropdown-content {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: rgba(39, 39, 44, 0.95);
-    color: #ffffff;
-    min-width: 200px;
-    max-width: 240px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    padding: 10px;
-    transition: opacity 0.3s ease;
-    opacity: 0;
-    display: flex;
-    flex-direction: column; /* Stack elements vertically */
-    align-items: center; /* Center align items */
-    gap: 10px; /* Space between items */
-    z-index: 10;
-}
-
-/* Show dropdown on hover */
-.wallet-dropdown:hover .dropdown-content {
-    display: flex;
-    opacity: 1;
-}
-
-/* Connect Wallet Button Styles */
+/* Dropdown Button Styles */
 .connectwalletbtn {
     background: linear-gradient(135deg, rgba(0, 150, 255, 1), rgba(0, 100, 200, 1));
     color: white;
@@ -213,7 +184,7 @@ h1 {
     text-align: center;
 }
 
-/* Hover Effect with Same Gradient */
+/* Hover Effect for Connect Wallet Button */
 .connectwalletbtn:hover {
     letter-spacing: 0.1rem;
     padding: 0.75rem 1.3rem;
@@ -222,6 +193,42 @@ h1 {
     transform: translateY(-3px);
     box-shadow: 0 0 15px rgba(255, 150, 50, 0.7), 0 0 30px rgba(255, 70, 50, 0.4);
     animation: box-shadow-animation 0.5s infinite alternate;
+}
+
+/* Dropdown Content Styles */
+.wallet-dropdown .dropdown-content {
+    display: none; /* Initially hidden */
+    position: absolute; /* Absolute positioning for dropdown */
+    top: 100%; /* Position below the dropdown button */
+    right: 0; /* Align to the right */
+    background: rgba(39, 39, 44, 0.95); /* Dropdown background */
+    color: #ffffff; /* White text */
+    min-width: 200px; /* Minimum width for dropdown */
+    max-width: 240px; /* Maximum width for dropdown */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3); /* Shadow for dropdown */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px; /* Padding inside dropdown */
+    transition: opacity 0.3s ease; /* Transition for smooth appearance */
+    opacity: 0; /* Hidden state */
+    display: flex; /* Stack elements vertically */
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center align items */
+    gap: 10px; /* Space between items */
+    z-index: 10; /* Ensure it's above other elements */
+}
+
+/* Show dropdown when active */
+.wallet-dropdown .dropdown-content.visible {
+    display: flex; /* Show dropdown when active */
+    opacity: 1; /* Set opacity to fully visible */
+}
+
+/* Account Display Styles */
+#accountDisplay {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ffffff;
 }
 
 /* Dropdown Button Styles */
@@ -235,15 +242,22 @@ h1 {
     padding: 5px 10px;
     cursor: pointer;
     text-align: center;
-    width: 100%;
 }
 
-/* Account Display Styles */
-#accountDisplay {
-    margin-top: 10px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #ffffff;
+/* Copy Address Button */
+#copyAddressBtn {
+    font-size: 20px; /* Adjust as necessary */
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: rgba(0, 150, 255, 1);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#copyAddressBtn:hover {
+    background: rgba(0, 100, 200, 1);
 }
 
 /* Smooth Neon Animation */
@@ -251,7 +265,6 @@ h1 {
     0% { box-shadow: 0 0 10px rgba(255, 150, 50, 0.6); }
     100% { box-shadow: 0 0 25px rgba(255, 70, 50, 0.8); }
 }
-
 
 /* Modal for Copy Address */
 #copyaddressmodal {
@@ -319,27 +332,31 @@ h1 {
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding shadow for depth */
 }
+
+/* Dropdown Container */
 .dropdown {
     position: relative; /* Container for positioning dropdown */
     display: inline-block; /* Inline block for proper alignment */
 }
 
+/* Dropdown Content */
 #dropdownContent {
     position: absolute; /* Keep it absolute */
     top: 100%; /* Position it directly below the button */
     right: 130px; /* Distance from the right side */
     display: none; /* Hidden by default */
-    background-color: white; /* Background color for dropdown */
+    background-color:transparent; /* Background color for dropdown */
     border: 1px solid #ccc; /* Optional border for better visibility */
     border-radius: 5px; /* Rounded corners */
     z-index: 1000; /* Ensure it appears above other elements */
 }
 
-/* Show dropdown content on hover of the parent .dropdown */
-.dropdown:hover #dropdownContent {
-    display: block; /* Show dropdown on hover */
+/* Show dropdown when active */
+#dropdownContent.visible {
+    display: block; /* Show dropdown when active */
 }
 
+/* Dropdown Button Styles */
 #dropdownContent button {
     border: none;
     padding: 10px 20px; /* Adjust padding for better appearance */
@@ -353,15 +370,21 @@ h1 {
     align-items: center; /* Center items vertically within the button */
 }
 
+/* Button Hover Effect */
 #dropdownContent button:hover {
     background-color: #3B82F6; /* Background color on hover */
 }
 
+/* Logo Styles */
 #dropdownContent .logo {
     width: 24px; /* Set a fixed width for logos */
     height: 24px; /* Set a fixed height for logos */
     margin-right: 8px; /* Space between logo and text */
 }
+
+
+
+
 
 /* Hide the button when it is disabled */
 button:disabled {
@@ -1175,7 +1198,10 @@ footer {
         
         <button id="disperseBtn">Disperse Tokens </button> 
         <button id="predictionMarketBtn">Prediction Market</button> <!-- New Prediction Market button -->
+
         <button id="networkBtn">Network</button> <!-- Network button -->
+
+        
         <div id="dropdownContent">
             <button id="minatoNetworkBtn" class="network-button">
                 <img src="https://bridge.soneium.org/icon-soneium.svg" alt="Minato Logo" class="logo" />
@@ -1700,6 +1726,8 @@ setTimeout(() => {
                            autocomplete="off" 
                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1'); 
                                      document.getElementById('amountToSend').value = this.value;" />
+
+                                     
        
        <div class="swp-custom-dropdown">
         <div class="swp-dropdown-btn" id="swp-dropdownBtn">
@@ -1905,6 +1933,31 @@ setTimeout(() => {
 
 
 <script>
+
+
+// JavaScript for Dropdown Functionality
+document.addEventListener('DOMContentLoaded', function () {
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const dropdownContent = document.querySelector('.wallet-dropdown .dropdown-content');
+
+    connectWalletBtn.addEventListener('click', function () {
+        // Toggle the 'visible' class on dropdown content
+        dropdownContent.classList.toggle('visible');
+    });
+
+    // Optional: Close dropdown when clicking outside of it
+    window.addEventListener('click', function (event) {
+        if (!connectWalletBtn.contains(event.target) && !dropdownContent.contains(event.target)) {
+            dropdownContent.classList.remove('visible');
+        }
+    });
+});
+
+
+
+
+
+
 
         const MINATO_RPC_URL = 'https://rpc.minato.soneium.org/';
         const SEPOLIA_RPC_URL = 'https://rpc.ankr.com/eth_sepolia'; // Replace with your Infura project ID

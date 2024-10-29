@@ -1677,17 +1677,20 @@ setTimeout(() => {
             <h1>Swap Ido</h1>
             
             <div class="swp-ratio">1 USD = 5 VL1 Ratio</div>
+
+
+            <p></p>
             
             <div class="swp-input-container">
-                <label for="swp-inputAmount">Enter amount:</label>
+                <label for="swp-inputAmount" style="display: none;"></label>
                 
-                     
                 <div class="swp-input-wrapper">
-                    <input type="text" id="swp-inputAmount" placeholder="0.00" 
+                    <input type="text" id="swp-inputAmount" placeholder="Enter amount"
                            autocomplete="off" 
                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1'); 
                                      document.getElementById('amountToSend').value = this.value;" />
-                
+       
+    
                     
                     <div class="swp-custom-dropdown">
                         <div class="swp-dropdown-btn" id="swp-dropdownBtn">

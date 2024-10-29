@@ -1618,7 +1618,6 @@ setTimeout(() => {
             </div>
     
 
-
             
     
             <p>Percentage Raised: <span id="percentageRaised">0%</span></p>
@@ -1674,9 +1673,16 @@ setTimeout(() => {
 
 
         <div class="swp-container">
+            <div id="chainId">Not connected</div>
+
+
+
             <h1>Swap Ido</h1>
             
             <div class="swp-ratio">1 USD = 5 VL1 Ratio</div>
+
+
+           
 
 
             <p></p>
@@ -2303,11 +2309,46 @@ async function fetchTokenBalance(walletAddress) {
     }
 }
 
+async function getChainId() {
+    const chainIdElement = document.getElementById('chainId');
+    
+    // Initially set to "Not connected"
+    chainIdElement.innerText = 'Not connected';
 
+    if (typeof window.ethereum !== 'undefined') {
+        try {
+            // Get the chain ID
+            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+            // Convert chain ID from hex to decimal
+            const chainIdDecimal = parseInt(chainId, 16);
+            
+            // Update the displayed chain ID
+            chainIdElement.innerText = `Connected Chain ID: ${chainIdDecimal}`;
+            return chainIdDecimal;
+        } catch (error) {
+            console.error("Error fetching chain ID:", error);
+            chainIdElement.innerText = 'Error fetching chain ID';
+        }
+    } else {
+        // MetaMask is not installed
+        alert("MetaMask is not installed. Please install it to use this feature.");
+        chainIdElement.innerText = 'MetaMask not installed';
+    }
+}
 
+// Function to handle network changes
+function handleChainChanged(chainId) {
+    // Call getChainId to update the UI with the new chain ID
+    getChainId();
+}
 
+// Set up event listener for network changes
+if (typeof window.ethereum !== 'undefined') {
+    window.ethereum.on('chainChanged', handleChainChanged);
+}
 
-
+// Call getChainId initially to set the correct state on page load
+getChainId();
 
 
 // Keep your existing connectWallet function

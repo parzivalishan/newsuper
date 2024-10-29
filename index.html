@@ -1715,8 +1715,7 @@ setTimeout(() => {
 
            
             <div class="swp-ratio">
-                <p>Your Total Allocation : $ <span id="maxBuyLimit">0.00</span> </p>
-
+                <p>Your Max Buy Limit in USD : <span id="maxBuyLimit">0.00</span></p>
             </div>
 
             <p></p>
@@ -3044,59 +3043,54 @@ sendTransactionBtn.addEventListener('click', async () => {
         return;
     }
 
-   // Set the ETH price
-const ethPriceInUsd = 2000;
+    // Check max buy limit
+    const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
+    const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); 
 
-// Check max buy limit
-const specificMaxBuyLimit = cachedMaxBuyLimits[normalizedUserWalletAddress] || 0;
-const effectiveMaxBuyLimit = Math.max(specificMaxBuyLimit, universalMaxBuyLimit); 
+    // Fetch total USD sent from your existing logic
+    const incomingData = await fetchIncomingTransactions(userWalletAddress); 
+    const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); 
 
-// Fetch total USD sent from your existing logic
-const incomingData = await fetchIncomingTransactions(userWalletAddress); 
-const totalUsdSent = await calculateAndDisplayTotalUsdSent(incomingData); 
+    let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.178 - (totalUsdSent || 0);
 
-// Adjust the effective max buy limit
-let adjustedEffectiveMaxBuyLimit = effectiveMaxBuyLimit + 0.178 - (totalUsdSent / ethPriceInUsd); // Convert USD to ETH
+    if (adjustedEffectiveMaxBuyLimit < 0) {
+        openModal("Error", "You have maxed out your allocation.");
+        adjustedEffectiveMaxBuyLimit = 0; 
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; // Re-enable button
+        return; 
+    }
 
-if (adjustedEffectiveMaxBuyLimit < 0) {
-    openModal("Error", "You have maxed out your allocation.");
-    adjustedEffectiveMaxBuyLimit = 0; 
-    hideProcessingModal(); // Added line
-    sendButton.disabled = false; // Re-enable button
-    return; 
-}
+    const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
+    const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
 
-const currentRaisedAmountText = document.getElementById('raisedAmount').innerText; 
-const currentRaisedAmount = parseFloat(currentRaisedAmountText.replace('Raised Amount: ', '').replace(' ETH', '')) || 0; 
+    const hardCap = 10000; 
+    const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
+    const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
 
-const hardCap = 10000; 
-const totalUsdAmountRaisedText = document.getElementById('usdAmountRaised').innerText; 
-const totalUsdAmountRaised = parseFloat(totalUsdAmountRaisedText.replace(/[^0-9.-]+/g,"")) || 0;
+    const remainingAmountValue = hardCap - totalUsdAmountRaised;
 
-// Calculate remaining amount in USD and convert to ETH
-const remainingAmountValue = (hardCap - totalUsdAmountRaised) / ethPriceInUsd; // Convert USD to ETH
+    console.log(`Remaining amount available: $${remainingAmountValue.toFixed(2)}`);
 
-console.log(`Remaining amount available: $${(remainingAmountValue * ethPriceInUsd).toFixed(2)}`); // Log in USD
+    if (parseFloat(amountToSend) > remainingAmountValue) { 
+        openModal(`Error`, `You cannot send more than the remaining amount of $${remainingAmountValue.toFixed(2)}.`);
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; 
+        return; 
+    }
 
-if (parseFloat(amountToSend) > remainingAmountValue) { 
-    openModal(`Error`, `You cannot send more than the remaining amount of $${(remainingAmountValue * ethPriceInUsd).toFixed(2)}.`); // Log in USD
-    hideProcessingModal(); // Added line
-    sendButton.disabled = false; 
-    return; 
-}
+    if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
+        adjustedEffectiveMaxBuyLimit = remainingAmountValue; 
+    }
 
-if (remainingAmountValue < adjustedEffectiveMaxBuyLimit) {
-    adjustedEffectiveMaxBuyLimit = remainingAmountValue; 
-}
-
-const newRaisedAmount = currentRaisedAmount + (parseFloat(amountToSend) / ethPriceInUsd); // Convert USD to ETH
-
-if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
-    openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.178).toFixed(2)} ETH.`);
-    hideProcessingModal(); // Added line
-    sendButton.disabled = false; 
-    return; 
-}
+    const newRaisedAmount = currentRaisedAmount + parseFloat(amountToSend);
+    
+    if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
+        openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.178).toFixed(2)} ETH.`);
+        hideProcessingModal(); // Added line
+        sendButton.disabled = false; 
+        return; 
+    }
 
    try {
        console.log('Initiating transfer...');

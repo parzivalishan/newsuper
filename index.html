@@ -1064,6 +1064,13 @@ button:hover {
 
 }
 
+
+.disabled {
+    color: gray; /* Change text color to gray */
+    pointer-events: none; /* Prevent clicks on this item */
+    opacity: 0.5; /* Make it look faded */
+}
+
 .info-container {
     display: flex; /* Use flexbox for alignment */
     justify-content: center; /* Center items horizontally */
@@ -1694,22 +1701,25 @@ setTimeout(() => {
                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1'); 
                                      document.getElementById('amountToSend').value = this.value;" />
        
-    
-                    
-                    <div class="swp-custom-dropdown">
-                        <div class="swp-dropdown-btn" id="swp-dropdownBtn">
-                            <img id="swp-selectedLogo" src="https://tether.to/images/logoMarkGreen.svg" alt="Token Logo" />
-                            <span id="swp-selectedOption">USDT</span>
-                        </div>
-                        <div class="swp-dropdown-menu" id="swp-dropdownMenu">
-                            <div class="swp-dropdown-item" data-value="option1">
-                                <img src="https://tether.to/images/logoMarkGreen.svg" alt="USDT Logo" />
-                                USDT
-                            </div>
-                            <div class="swp-dropdown-item" data-value="option2">
-                                <img src="https://token-icons.s3.amazonaws.com/eth.png" alt="ETH Logo" />
-                                ETH
-                            </div>
+       <div class="swp-custom-dropdown">
+        <div class="swp-dropdown-btn" id="swp-dropdownBtn">
+            <img id="swp-selectedLogo" src="https://tether.to/images/logoMarkGreen.svg" alt="Token Logo" />
+            <span id="swp-selectedOption">USDT</span>
+        </div>
+        <div class="swp-dropdown-menu" id="swp-dropdownMenu">
+            <div class="swp-dropdown-item" data-value="option1">
+                <img src="https://tether.to/images/logoMarkGreen.svg" alt="USDT Logo" />
+                USDT
+            </div>
+
+            <!--  <div class="swp-dropdown-item disabled" data-value="option2 > -->
+
+
+            <div class="swp-dropdown-item "  data-value="option2">
+                <img src="https://token-icons.s3.amazonaws.com/eth.png" alt="ETH Logo" />
+                ETH 
+            </div>
+
 
                             
                         </div>
@@ -1739,7 +1749,7 @@ setTimeout(() => {
 
             
             <div class="max-buy-limit-container">
-                <p>Your Max Buy Limit: <span id="maxBuyLimit">0.00</span></p>
+                <p>Your Max Buy Limit in USD : <span id="maxBuyLimit">0.00</span></p>
             </div>
       
             <button id="swp-sendSceTokenBtn" class="swp-swap-btn">Send USDT</button>

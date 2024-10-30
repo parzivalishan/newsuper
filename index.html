@@ -94,8 +94,6 @@ h1 {
 /* Button Styles */
 #connectWalletBtn, 
 #networkBtn, 
-#predictionMarketBtn, 
-#disperseBtn,
 #copyAddressBtn,
 #viexplorer,
 .connectwalletbtn { /* Added connectwalletbtn */
@@ -119,8 +117,6 @@ h1 {
 /* Neon Effect on Hover */
 #connectWalletBtn:hover, 
 #networkBtn:hover, 
-#predictionMarketBtn:hover, 
-#disperseBtn:hover,
 #viexplorer:hover,
 #copyAddressBtn:hover,
 .connectwalletbtn:hover { /* Added connectwalletbtn hover effect */
@@ -135,8 +131,6 @@ h1 {
 /* Button Before Element for Depth Effect */
 #connectWalletBtn::before,
 #networkBtn::before,
-#predictionMarketBtn::before,
-#disperseBtn::before,
 #viexplorer::before,
 #copyAddressBtn::before,
 .connectwalletbtn::before { /* Added connectwalletbtn before element */
@@ -1045,37 +1039,34 @@ button:hover {
         transform: translate(2%, -23%);
     }
 }
-#disperseBtn {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #0B0C0E; /* Match the button color with connect and network buttons */
-    color: white; /* Text color */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px; /* Space between buttons */
-    position: relative; /* Relative position for dropdown */
+
+
+
+#raisedAmount, #tokenBalance {
+    margin-right: 10px; /* Optional: add space between the elements */
 }
 
-#disperseBtn:hover {
-    background-color: #0056b3; /* Hover color */
+
+
+.button-link {
+    display: block; /* Stacks links vertically */
+    margin: 10px 0; /* Space between links */
+    color: #FF6F61; /* Unique link color */
+    text-decoration: none; /* Remove underline */
+    font-size: 16px; /* Adjust font size */
+    transition: color 0.3s ease; /* Smooth color transition */
+    cursor: default; /* Change cursor to default to indicate it's not a link */
 }
 
-#predictionMarketBtn {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #0B0C0E; /* Match the button color with connect and network buttons */
-    color: white; /* Text color */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px; /* Space between buttons */
-    position: relative; /* Relative position for dropdown */
+.button-link:hover {
+    text-decoration: none; /* No underline on hover */
+    color: #D76D6D; /* Darker, complementary color on hover */
+    cursor: default; /* Keep cursor default on hover */
 }
 
-#predictionMarketBtn:hover {
-    background-color: #0056b3; /* Hover color */
-}
+
+
+/* Loader Animation */
 .loader {
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #3498db; /* Blue */
@@ -1092,39 +1083,27 @@ button:hover {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-
-
-
-
-
 }
-
 
 .disabled {
     color: gray; /* Change text color to gray */
-    pointer-events: none; /* Prevent clicks on this item */
-    opacity: 0.5; /* Make it look faded */
+    pointer-events: none; /* Prevent clicks */
+    opacity: 0.5; /* Faded appearance */
 }
 
 .info-container {
     display: flex; /* Use flexbox for alignment */
     justify-content: center; /* Center items horizontally */
-    align-items: center; /* Align items vertically centered */
+    align-items: center; /* Align items vertically */
 }
-
-#raisedAmount, #tokenBalance {
-    margin-right: 10px; /* Optional: add space between the elements */
-}
-
-
 
 footer {
-    background: none; /* Remove any background color */
+    background: none; /* Remove background color */
     color: white; /* Text color */
-    padding: 20px; /* Padding for spacing */
+    padding: 20px; /* Footer padding */
     text-align: center; /* Center text */
     width: calc(100% - 40px); /* Full width minus margins */
-    margin-top: 60px; /* Increased space above the footer */
+    margin-top: 60px; /* Space above footer */
     position: relative; /* Positioning for absolute children */
 }
 
@@ -1132,17 +1111,23 @@ footer {
     display: flex; /* Flexbox layout */
     justify-content: space-between; /* Space between items */
     flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    background: transparent; /* Ensure no background color */
+    background: transparent; /* Transparent background */
 }
 
 .footer-container div {
     flex: 1; /* Allow each section to grow */
     margin: 10px; /* Margin around sections */
-    background: transparent; /* Ensure no background color on individual divs */
+    background: transparent; /* No background color on divs */
 }
 
 
-/* Animation styles for each section - unchanged */
+
+
+
+
+
+
+/* Animation styles for each section */
 #one {
     animation: one 5s ease-in-out infinite alternate;
 }
@@ -1206,10 +1191,7 @@ footer {
     
     <div id="header">
 
-     
-        
-        <button id="disperseBtn">Disperse Tokens </button> 
-        <button id="predictionMarketBtn">Prediction Market</button> <!-- New Prediction Market button -->
+
 
         <button id="networkBtn">Network</button> <!-- Network button -->
 
@@ -3397,27 +3379,29 @@ const intervalForTokenTransfer = setInterval(async () => {
 
     </script>
 
-
-
-
     <footer class="footer">
         <div class="footer-container">
-            <div class="contact-info" id="one">
-                <h3>Contact  </h3>
-                
-                <p>Telegram: @crypticishan </p>
-
+    
+            <div class="Products" id="two">
+                <h3>Products</h3>
+                <p></p>
+                <a href="predictionMarket.html" class="button-link">Prediction Market</a>
+                <a href="disperse.html" class="button-link">Disperse / Multisender </a>
             </div>
+            
+            <div class="contact-info" id="one">
+                <h3>Contact</h3>
+                <p>Telegram: @crypticishan</p>
+            </div>
+            
             <div class="social-media" id="three">
                 <h3>Follow Us</h3>
-                
                 <!-- Twitter Icon -->
                 <a href="https://x.com/superchainexch" target="_blank" style="margin-right: 10px;">
                     <svg width="40px" height="40px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none">
                         <path fill="#1D9BF0" d="M13.567 5.144c.008.123.008.247.008.371 0 3.796-2.889 8.173-8.172 8.173v-.002A8.131 8.131 0 011 12.398a5.768 5.768 0 004.25-1.19 2.876 2.876 0 01-2.683-1.995c.431.083.875.066 1.297-.05A2.873 2.873 0 011.56 6.348v-.036c.4.222.847.345 1.304.36a2.876 2.876 0 01-.89-3.836 8.152 8.152 0 005.92 3 2.874 2.874 0 014.895-2.619 5.763 5.763 0 001.824-.697 2.883 2.883 0 01-1.262 1.588A5.712 5.712 0 0015 3.656a5.834 5.834 0 01-1.433 1.488z"/>
                     </svg>
                 </a>
-                
                 <!-- Telegram Icon -->
                 <a href="https://t.me/superchainexchange" target="_blank">
                     <svg width="40px" height="40px" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -3432,16 +3416,24 @@ const intervalForTokenTransfer = setInterval(async () => {
                     </svg>
                 </a>
             </div>
-            
-            
-
-
-
-
+    
         </div>
-       
-
-
     </footer>
+    
+    <script>
+        document.getElementById("disperseBtn").addEventListener("click", function() {
+            window.location.href = "disperse.html"; // Update with actual URL if needed
+        });
+    
+        document.getElementById("predictionMarketBtn").addEventListener("click", function() {
+            window.location.href = "predictionmarket.html"; // Update with actual URL if needed
+        });
+    </script>
+            
+
+
+
+
+       
 </body>
 </html>

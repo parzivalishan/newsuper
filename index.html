@@ -1544,44 +1544,54 @@ setTimeout(() => {
 },5000);
 </script>
 
-<!-- Styles for Slider -->
 <style>
     .slider-container {
        position: relative;
-       width:100%;
-       max-width:600px;
-       margin:auto;
-       overflow:hidden;
+       width: 100%;
+       max-width: 600px; /* Maximum width of the slider */
+       margin: auto;
+       overflow: hidden; /* Hide overflow to prevent scrollbars */
     }
+    
     .slider {
-       display:flex;
-       transition:.5s ease;
+       display: flex;
+       transition: .5s ease; /* Smooth transition for sliding effect */
     }
+    
     .slide {
-       min-width:100%;
-       box-sizing:border-box;
+       min-width: 100%; /* Each slide takes full width of the container */
+       height: 400px; /* Fixed height for all slides */
+       box-sizing: border-box;
+       overflow: hidden; /* Hide overflow for images */
     }
+    
     .slide img {
-       width:100%;
-       display:block;
+       width: 100%; /* Make image fill the slide width */
+       height: 100%; /* Make image fill the slide height */
+       object-fit: cover; /* Cover to maintain aspect ratio and fill the box */
+       display: block; /* Remove any bottom space in images */
     }
-    .prev,.next {
-       cursor:pointer;
-       position:absolute;
-       top:50%;
-       padding:16px;
-       color:white;
-       font-weight:bold;
-       font-size:18px;
-       transition:.3s ease;
+    
+    .prev, .next {
+       cursor: pointer;
+       position: absolute;
+       top: 50%;
+       padding: 16px;
+       color: white;
+       font-weight: bold;
+       font-size: 18px;
+       transition: .3s ease;
+       z-index: 1; /* Ensure buttons are above the slider */
     }
-    .prev { left:10px; }
-    .next { right:10px; }
+    
+    .prev { left: 10px; }
+    .next { right: 10px; }
+    
     .slide-button:hover {
-       background-color:rgba(0,0,0,.5);
-       transform:scale(1.1);
+       background-color: rgba(0, 0, 0, .5);
+       transform: scale(1.1);
     }
-    </style>
+</style>
     
 </div>
     
@@ -1712,7 +1722,7 @@ setTimeout(() => {
 
 
 
-            <h1>Swap Ido</h1>
+            <h1>Purchase Your VL1</h1>
             
             <div class="swp-ratio">1 USD = 5 VL1 Ratio</div>
 
@@ -2787,7 +2797,7 @@ async function autoSwitchNetwork() {
         } else if (network.chainId === SEPOLIA_CHAIN_ID) {
             currentNetwork = 'Sepolia';
         }
-        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
+        networkBtn.innerText = ` ${currentNetwork}`; // Update button text
     }
 }
 
@@ -2803,7 +2813,7 @@ document.getElementById('minatoNetworkBtn').addEventListener('click', async () =
         currentNetwork = 'Minato';
         await switchNetwork(currentNetwork);
         walletStatus.classList.add('hidden'); // Hide status message
-        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
+        networkBtn.innerText = `${currentNetwork}`; // Update button text
     }
     dropdownContent.style.display = 'none'; // Close dropdown
 });
@@ -2814,7 +2824,7 @@ document.getElementById('sepoliaNetworkBtn').addEventListener('click', async () 
         currentNetwork = 'Sepolia';
         await switchNetwork(currentNetwork);
         walletStatus.classList.add('hidden'); // Hide status message
-        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update button text
+        networkBtn.innerText = ` ${currentNetwork}`; // Update button text
     }
     dropdownContent.style.display = 'none'; // Close dropdown
 });
@@ -2823,7 +2833,7 @@ document.getElementById('sepoliaNetworkBtn').addEventListener('click', async () 
 async function checkNetworkAndUpdateText() {
     const networkMatches = await checkNetwork();
     if (networkMatches) {
-        networkBtn.innerText = `Connected: ${currentNetwork}`; // Update on initial connection
+        networkBtn.innerText = ` ${currentNetwork}`; // Update on initial connection
     }
 }
 

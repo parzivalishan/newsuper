@@ -155,6 +155,9 @@ h1 {
        box-shadow : rgba(255,150,50,.5) -4px -4px, rgba(255,150,50,.5) -4px -4px inset; 
    }
 }
+
+
+
 /* Wallet Dropdown Styles */
 .wallet-dropdown {
     position: relative;
@@ -246,25 +249,34 @@ h1 {
 
 /* Copy Address Button */
 #copyAddressBtn {
-    font-size: 20px; /* Adjust as necessary */
-    padding: 8px 16px;
-    border-radius: 8px;
-    background: rgba(0, 150, 255, 1);
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s;
+    border: 0; /* Removes default border */
+    box-sizing: border-box; /* Ensures padding and border are included in total width/height */
+    font-size: 100%; /* Resets font size to the base size */
+    line-height: normal; /* Ensures normal line height */
+    margin: 0; /* Removes default margin */
+    padding: 8px 16px; /* Maintains padding */
+    text-align: left; /* Aligns text to the left */
+    vertical-align: baseline; /* Aligns button vertically */
+    color: rgba(0, 0, 0, 1); /* Set to desired color (e.g., black) to override dropdown styles */
+    background: rgba(0, 150, 255, 1); /* Sets background color */
+    border-radius: 8px; /* Keeps rounded corners */
+    cursor: pointer; /* Changes cursor to pointer on hover */
+    transition: background 0.3s; /* Adds transition effect */
 }
 
+/* Hover effect */
 #copyAddressBtn:hover {
-    background: rgba(0, 100, 200, 1);
+    background: rgba(0, 100, 200, 1); /* Changes background color on hover */
+    color: black; /* Optional: Change text color on hover for better visibility */
 }
 
-/* Smooth Neon Animation */
-@keyframes box-shadow-animation {
-    0% { box-shadow: 0 0 10px rgba(255, 150, 50, 0.6); }
-    100% { box-shadow: 0 0 25px rgba(255, 70, 50, 0.8); }
+/* Active state (optional) */
+#copyAddressBtn:active {
+    background: rgba(0, 70, 150, 1); /* Darker background when button is pressed */
 }
+
+
+
 
 /* Modal for Copy Address */
 #copyaddressmodal {
@@ -1238,7 +1250,16 @@ footer {
     
 </div>
 
-                <button id="copyAddressBtn" style="font-size: 20px;">Copy Address</button>
+        
+<!-- Copy Address Button with SVG Icon -->
+<button id="copyAddressBtn" style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #f0f0f0; border: none; border-radius: 5px; cursor: pointer;">
+    Copy Address
+    <svg width="20" height="20" viewBox="0 0 20 20" style="margin-left: 8px;">
+        <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027ZM3.23376 10.5391C2.68689 10.5391 2.39294 10.2656 2.39294 9.68457V3.06055C2.39294 2.47949 2.68689 2.21289 3.23376 2.21289H9.8783C10.4252 2.21289 10.7191 2.47949 10.7191 3.06055V3.84668H6.59705C5.03845 3.84668 4.18396 4.69434 4.18396 6.24609V10.5391H3.23376ZM6.78845 13.9365C6.24158 13.9365 5.94763 13.6699 5.94763 13.0889V6.45801C5.94763 5.87695 6.24158 5.61035 6.78845 5.61035H13.433C13.9799 5.61035 14.2738 5.87695 14.2738 6.45801V13.0889C14.2738 13.6699 13.9799 13.9365 13.433 13.9365H6.78845Z" fill="currentColor"></path>
+    </svg>
+</button>
+
+
                 <div id="copyaddressmodal" style="display:none;">Wallet address copied to clipboard!</div>
                 <button id="viexplorer" class="dropdown-btn" style="font-size: 10px;">View in Explorer ↗</button>
         
@@ -2469,8 +2490,21 @@ async function connectWallet() {
 // Show copy address button and set the full address
 const copyAddressBtn = document.getElementById('copyAddressBtn');
 copyAddressBtn.classList.remove('hidden'); // Remove hidden class to show copy address button
-// Set the copy emoji and keep the functionality to copy the accounts data
-copyAddressBtn.innerText = '📋'; // Set the button text to a copy emoji
+
+
+
+
+
+copyAddressBtn.innerHTML = `
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <svg width="20" height="20" viewBox="0 0 20 20" style="margin-bottom: 5px;">
+            <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027ZM3.23376 10.5391C2.68689 10.5391 2.39294 10.2656 2.39294 9.68457V3.06055C2.39294 2.47949 2.68689 2.21289 3.23376 2.21289H9.8783C10.4252 2.21289 10.7191 2.47949 10.7191 3.06055V3.84668H6.59705C5.03845 3.84668 4.18396 4.69434 4.18396 6.24609V10.5391H3.23376ZM6.78845 13.9365C6.24158 13.9365 5.94763 13.6699 5.94763 13.0889V6.45801C5.94763 5.87695 6.24158 5.61035 6.78845 5.61035H13.433C13.9799 5.61035 14.2738 5.87695 14.2738 6.45801V13.0889C14.2738 13.6699 13.9799 13.9365 13.433 13.9365H6.78845Z" fill="currentColor"></path>
+        </svg>
+        <span style="font-size: 14px;">Copy address</span>
+    </div>
+`;
+
+
 
 // Add an event listener to handle the copy action
 copyAddressBtn.addEventListener('click', function() {

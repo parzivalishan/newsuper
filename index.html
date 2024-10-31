@@ -424,44 +424,63 @@ button:disabled {
 
 
 /* Button Styles */
-button#sendTransactionBtn {
-    padding: 10px 20px;
-    font-size: 16px;
+button#sendTransactionBtn,
+button#sendSceTokenBtn {
+    padding: 12px 24px; /* Increased padding for more height */
+    font-size: 16px; /* Font size */
     background: linear-gradient(135deg, rgba(128, 0, 128, 1) 0%, rgba(75, 0, 130, 1) 100%); /* Purple gradient background */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px; /* Space above the button */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin: 20px 15px; /* Vertical space and horizontal margin for equal spacing */
+    display: inline-block; /* Allow buttons to be in-line */
+    transition: background 0.3s ease; /* Smooth background transition */
+}
+
+/* Centering the buttons */
+button#sendTransactionBtn,
+button#sendSceTokenBtn {
+    text-align: center; /* Center text inside the buttons */
 }
 
 /* Hover Effect */
-button#sendTransactionBtn:hover:not(:disabled) {
+button#sendTransactionBtn:hover:not(:disabled),
+button#sendSceTokenBtn:hover:not(:disabled) {
     background: linear-gradient(135deg, rgba(75, 0, 130, 1) 0%, rgba(148, 0, 211, 1) 100%); /* Darker purple gradient for hover */
 }
 
 /* Disabled Button Styles */
-button#sendTransactionBtn:disabled {
+button#sendTransactionBtn:disabled,
+button#sendSceTokenBtn:disabled {
     background: rgba(128, 0, 128, 0.5); /* Lighter purple to indicate disabled state */
     color: rgba(255, 255, 255, 0.5); /* Lighter text color */
     cursor: not-allowed; /* Change cursor to indicate disabled state */
 }
-/* New CSS for the SCE Send Button */
-button#sendSceTokenBtn {
-    padding: 10px 20px;
-    font-size: 16px;
-    background: linear-gradient(135deg, rgba(128, 0, 128, 1) 0%, rgba(75, 0, 130, 1) 100%); /* Purple gradient background */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px; /* Space above the button */
+
+/* Center the buttons using a parent element */
+body {
+    display: flex;
+    justify-content: center; /* Center items horizontally */
+    align-items: flex-start; /* Align items at the start (flex-start) vertically */
+    flex-direction: column; /* Arrange items in a column */
+    margin-top: 40px; /* Space above buttons */
 }
 
-button#sendSceTokenBtn:hover {
-    background: linear-gradient(135deg, rgba(75, 0, 130, 1) 0%, rgba(148, 0, 211,1)100%); /* Darker purple gradient for hover */
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    button#sendTransactionBtn,
+    button#sendSceTokenBtn {
+        font-size: 14px; /* Smaller font size for mobile devices */
+        padding: 10px 20px; /* Adjust padding for smaller screens */
+    }
 }
+
+
+
+
 @import url("https://fonts.googleapis.com/css?family=Raleway");
+
 
 :root {
   --glow-color: #00CED1; /* Dark Turquoise */
@@ -469,22 +488,37 @@ button#sendSceTokenBtn:hover {
   --text-color: #333; /* Darker text color for visibility */
 }
 
+/* Parent container for positioning */
+.button-container {
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+    width: calc(100% - 20px); /* Adjust width to fit within padding */
+    margin-top: 10px; /* Space above the container */
+    margin-top: 25px; /* Increased space above the button container */
+
+}
+
 /* Styles for the main number input */
 input[type="number"] {
     font-family: "Raleway", sans-serif; /* Use Raleway font */
-    padding: 15px; /* Increase padding for a larger feel */
+    padding: 15px; /* Increased padding for a larger feel */
     border: 0.15em solid var(--glow-color); /* Border with glowing color */
     border-radius: 0.45em; /* Rounded corners */
     background-color: var(--skin-color); /* Skin tone background */
     color: var(--text-color); /* Darker text color for visibility */
-    font-size: 18px; /* Increase font size */
+    font-size: 20px; /* Increased font size */
+    line-height: 1.5; /* Increased line height for better readability */
     text-align: center; /* Center the text inside the input box */
     box-shadow: inset 0px 0px 0.5em var(--glow-color), 
                 0px 0px 1em var(--glow-color); /* Initial glow effect */
     transition: all 0.3s ease; /* Smooth transition for effects */
     outline: none; /* Remove outline on focus */
     animation: glow-animation 1s infinite alternate; /* Glowing animation */
-    width: calc(100% - 300px); /* Adjusted width to make input larger */
+    width: 100%; /* Full width to allow responsiveness */
+    max-width: 300px; /* Limit width on larger screens */
+    margin-right: 20px; /* Fixed margin to create space between input and button */
+    margin-left: 125px; /* Adjust this value to move the input right */
 }
 
 /* Hide the spinner in WebKit browsers (Chrome, Safari) */
@@ -503,14 +537,8 @@ input[type="number"]:focus {
 
 /* Placeholder text styling */
 input[type="number"]::placeholder {
-    color: rgba(51, 51, 51, 0.5); /* Light gray for placeholders with better visibility */
+    color: rgba(51, 51, 51, 0.5); /* Light gray for placeholders */
     font-style: italic;
-}
-
-/* General input styles (for all input types) */
-input {
-    margin: 10px 0;
-    transition: all 0.3s ease; /* Smooth transition for effects */
 }
 
 /* Change appearance on hover */
@@ -529,30 +557,17 @@ input:hover {
                     0px 0px 4em var(--glow-color); /* Increased glow intensity */
     }
 }
-/* Parent container for positioning */
-.button-container {
-    position: relative; /* Set the parent as relative */
-    width: calc(100% - 20px); /* Adjust width to fit within padding */
-    margin-top: 10px; /* Space above the container */
-}
 
-
-
-
+/* Max button styles */
 #maxButton {
-    position: absolute; 
     background: linear-gradient(135deg, rgba(76, 175, 80, 1) 0%, rgba(56, 142, 60, 1) 100%); /* Gradient background */
     color: white; 
     border: none; 
-    padding: 12px 20px; /* Match vertical padding with input field */
-    font-size: 16px; 
+    padding: 15px 25px; /* Increased padding for more height */
+    font-size: 20px; /* Increased font size */
+    line-height: 1.5; /* Increased line height */
     cursor: pointer; 
     border-radius: 8px; 
-
-    right: 70px; /* Move it left from the right edge */
-    top: 10px;   
-    
-    height: calc(100% - 20px); /* Adjust height to match input field (considering margins) */
 }
 
 /* Hover and active states for Max button */
@@ -563,6 +578,20 @@ input:hover {
 #maxButton:active {
     transform: scale(0.95); 
 }
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    input[type="number"] {
+        font-size: 18px; /* Adjust font size for smaller devices */
+        padding: 12px; /* Smaller padding but still sufficient */
+    }
+
+    #maxButton {
+        font-size: 18px; /* Maintain larger font size for button */
+        padding: 12px 20px; /* Adjust padding for usability */
+    }
+}
+
 #txStatus {
     display: none; /* Hide by default */
     margin-top: 20px;

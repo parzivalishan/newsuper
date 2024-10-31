@@ -32,7 +32,6 @@
             justify-content: flex-start; /* Align items to the top */
         }
 
-
         #header {
             width: 100%; /* Full width */
             display: flex; /* Flex layout for buttons */
@@ -41,109 +40,135 @@
             position: absolute; /* Position absolute for top alignment */
             top: 0; /* Align to the top */
         }
-        #app {
-    background: linear-gradient(135deg, rgba(35, 130, 196, 1) 0%, rgba(26, 60, 141, 1) 100%); /* Gradient background */
-    padding: 20px; /* Padding for space inside */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow for depth */
-    max-width: 605px; /* Increased width (corrected from 6050px) */
-    width: calc(100% - 20px); /* Full width for responsiveness minus margins */
-    margin: 40px auto; /* Increased vertical spacing above and below app */
-    text-align: center; /* Center text within the app */
+
+#app {
+    background: linear-gradient(135deg, rgba(35, 130, 196, 1) 0%, rgba(26, 60, 141, 1) 100%);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 100%; /* Allows full width with a max constraint */
+    margin: 40px auto;
+    text-align: center;
     
-    display: flex; /* Use flexbox for layout */
-    flex-direction: column; /* Stack children vertically */
-    align-items: center; /* Center children horizontally */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-h1 {
-    font-size: 24px;
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    #app {
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px auto;
+    }
+    
+    h1 {
+        font-size: 20px; /* Slightly smaller on small screens */
+    }
 }
-
 #app2 {
     background: linear-gradient(135deg, rgba(255, 94, 77, 1) 0%, rgba(255, 209, 102, 1) 100%);
-    padding: 40px; /* Increased padding for more space inside */
-    border-radius: 15px; /* More rounded corners */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow */
-    max-width: 1950px; /* Increased max width */
-    width: calc(100% - 20px); /* Set width to full minus margins */
-    margin: 60px auto; /* Centering with vertical spacing from the top */
-    text-align: center; /* Center align text in app2 */
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    max-width: 1200px; /* A reasonable max-width for most screens */
+    width: 100%;
+    margin: 3rem auto;
+    text-align: center;
 }
 
-
-
-    
-
-   
-
-    #myPieChart {
-        width: 350px !important; /* Set the width to 150px */
-        height: 350px !important; /* Set the height to 150px */
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    #app2 {
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin: 2rem auto;
+        max-width: 90%; /* Scale down width for small screens */
     }
-   
-    #legendContainer {
-    display: flex;
-    flex-direction: column; /* Stack legend items vertically */
-    position: absolute; /* Allows for precise positioning */
-    top: 600px; /* Adjust this value to move it up or down */
-    left: 500px; /* Move the legend container 500 pixels from the left */
 }
+
+#myPieChart {
+    width: 80vw; /* Set width relative to viewport width */
+    height: 80vw; /* Maintain aspect ratio */
+    max-width: 350px; /* Limit maximum size */
+    max-height: 350px;
+}
+
+/* Responsive size adjustment for the chart on smaller screens */
+@media (max-width: 768px) {
+    #myPieChart {
+        width: 70vw; /* Slightly smaller on small screens */
+        height: 70vw;
+    }
+}
+
+#legendContainer {
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Relative to the parent, for better responsiveness */
+    margin-top: 1rem; /* Space above */
+    align-items: center; /* Center on the screen */
+}
+
+/* Adjust layout and positioning of legend for smaller screens */
+@media (max-width: 768px) {
+    #legendContainer {
+        left: 0; /* Align legend to the center */
+        top: auto; /* Remove top positioning */
+        width: 100%;
+    }
+}
+
+
+
+
+
 
 
 /* Button Styles */
 #connectWalletBtn, 
 #networkBtn, 
-.connectwalletbtn { /* Added connectwalletbtn */
-    display: inline-block; /* Allows buttons to sit next to each other */
+.connectwalletbtn {
+    display: inline-block;
     position: relative;
-    background: linear-gradient(135deg, rgba(0, 150, 255, 1) 0%, rgba(0, 100, 200, 1) 100%); /* Blue gradient */
-    color: white; /* White text for contrast */
+    background-color: #333; /* Simple dark background color */
+    color: #fff; /* White text for contrast */
     text-decoration: none;
     text-transform: uppercase;
-    border: none; /* No border */
-    letter-spacing: 0.05rem; /* Reduced letter spacing for smaller buttons */
-    font-size: 1rem; /* Adjusted font size for consistency */
-    padding: 0.75rem 1.5rem; /* Adjusted padding for consistency */
-    border-radius: 6px; /* Slightly smaller border-radius */
+    border: none;
+    letter-spacing: 0.05rem;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
     cursor: pointer;
-    transition: padding 0.2s, background 0.3s, color 0.3s; /* Smooth transitions */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Darker shadow for depth */
-    margin: 0 10px; /* Equal spacing between buttons */
+    box-shadow: none; /* No shadow */
+    margin: 0 10px;
 }
 
-/* Neon Effect on Hover */
-#connectWalletBtn:hover, 
-#networkBtn:hover, 
-.connectwalletbtn:hover { /* Added connectwalletbtn hover effect */
-    letter-spacing: 0.1rem; /* Increased letter spacing on hover */
-    padding: 0.85rem 1.6rem; /* Slightly increase padding on hover for consistency */
-    background: linear-gradient(135deg, rgba(255, 150, 50, 1) 0%, rgba(255, 100, 50, 1) 100%); /* Warm gradient on hover */
-    color: white; /* Keep text white for contrast */
-    animation: box-shadow-animation 0.5s infinite alternate; /* Animation for shadow effect */
-    box-shadow: 0 0 25px rgba(255,150,50,.7), 0 0 50px rgba(255,100,50,.7); /* Neon glow effect */
+/* Responsive Styles */
+@media (max-width: 768px) {
+    #connectWalletBtn, 
+    #networkBtn, 
+    .connectwalletbtn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+        margin: 0 5px;
+    }
 }
 
-/* Button Before Element for Depth Effect */
-#connectWalletBtn::before,
-#networkBtn::before,
-.connectwalletbtn::before { /* Added connectwalletbtn before element */
-    content: "";
-    position: absolute;
-    inset: 2px; /* Creates an inset effect */
-    background: rgba(39,39,44,0.8); /* Darker background for depth */
+@media (max-width: 480px) {
+    #connectWalletBtn, 
+    #networkBtn, 
+    .connectwalletbtn {
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
+        margin: 5px 0;
+        width: 100%; /* Full width on small screens */
+        text-align: center;
+    }
 }
-
-/* Keyframes for Animation Effects */
-@keyframes box-shadow-animation {
-   from {
-       box-shadow: rgba(39,39,44,0.5) -4px -4px, rgba(39,39,44,0.5) -4px -4px inset; 
-   }
-   to {
-       box-shadow : rgba(255,150,50,.5) -4px -4px, rgba(255,150,50,.5) -4px -4px inset; 
-   }
-}
-
 
 
 /* Wallet Dropdown Styles */
@@ -155,8 +180,8 @@ h1 {
 
 /* Dropdown Button Styles */
 .connectwalletbtn {
-    background: linear-gradient(135deg, rgba(0, 150, 255, 1), rgba(0, 100, 200, 1));
-    color: white;
+    background-color: #333; /* Solid color background */
+    color: #fff; /* White text */
     text-decoration: none;
     text-transform: uppercase;
     border: none;
@@ -165,9 +190,6 @@ h1 {
     padding: 0.65rem 1.2rem;
     border-radius: 8px;
     cursor: pointer;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    transition: padding 0.3s, background 0.4s, color 0.4s, transform 0.2s;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -175,43 +197,31 @@ h1 {
     text-align: center;
 }
 
-/* Hover Effect for Connect Wallet Button */
-.connectwalletbtn:hover {
-    letter-spacing: 0.1rem;
-    padding: 0.75rem 1.3rem;
-    background: linear-gradient(135deg, rgba(0, 150, 255, 1), rgba(0, 100, 200, 1));
-    color: #ffffff;
-    transform: translateY(-3px);
-    box-shadow: 0 0 15px rgba(255, 150, 50, 0.7), 0 0 30px rgba(255, 70, 50, 0.4);
-    animation: box-shadow-animation 0.5s infinite alternate;
-}
-
 /* Dropdown Content Styles */
 .wallet-dropdown .dropdown-content {
     display: none; /* Initially hidden */
-    position: absolute; /* Absolute positioning for dropdown */
-    top: 100%; /* Position below the dropdown button */
-    right: 0; /* Align to the right */
-    background: rgba(39, 39, 44, 0.95); /* Dropdown background */
-    color: #ffffff; /* White text */
-    min-width: 200px; /* Minimum width for dropdown */
-    max-width: 240px; /* Maximum width for dropdown */
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3); /* Shadow for dropdown */
-    border-radius: 8px; /* Rounded corners */
-    padding: 10px; /* Padding inside dropdown */
-    transition: opacity 0.3s ease; /* Transition for smooth appearance */
+    position: absolute; /* Position below the dropdown button */
+    top: 100%;
+    right: 0;
+    background-color: #27272C; /* Solid background */
+    color: #ffffff;
+    min-width: 200px;
+    max-width: 240px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 10px;
     opacity: 0; /* Hidden state */
-    display: flex; /* Stack elements vertically */
-    flex-direction: column; /* Stack elements vertically */
-    align-items: center; /* Center align items */
-    gap: 10px; /* Space between items */
-    z-index: 10; /* Ensure it's above other elements */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
 }
 
 /* Show dropdown when active */
 .wallet-dropdown .dropdown-content.visible {
-    display: flex; /* Show dropdown when active */
-    opacity: 1; /* Set opacity to fully visible */
+    display: flex;
+    opacity: 1;
 }
 
 /* Account Display Styles */
@@ -224,10 +234,9 @@ h1 {
 
 /* Dropdown Button Styles */
 .dropdown-btn {
-    background: linear-gradient(135deg, rgba(0, 150, 255, 1), rgba(0, 100, 200, 1));
-    color: white;
-    font-size: 10px;
-    text-decoration: none;
+    background-color: #333;
+    color: #fff;
+    font-size: 0.8rem;
     border: none;
     border-radius: 8px;
     padding: 5px 10px;
@@ -237,143 +246,76 @@ h1 {
 
 /* Copy Address Button */
 #copyAddressBtn {
-    border: 0; /* Removes default border */
-    box-sizing: border-box; /* Ensures padding and border are included in total width/height */
-    font-size: 100%; /* Resets font size to the base size */
-    line-height: normal; /* Ensures normal line height */
-    margin: 0; /* Removes default margin */
-    padding: 8px 16px; /* Maintains padding */
-    text-align: left; /* Aligns text to the left */
-    vertical-align: baseline; /* Aligns button vertically */
-    color: rgba(0, 0, 0, 1); /* Set to desired color (e.g., black) to override dropdown styles */
-    background: rgba(0, 150, 255, 1); /* Sets background color */
-    border-radius: 8px; /* Keeps rounded corners */
-    cursor: pointer; /* Changes cursor to pointer on hover */
-    transition: background 0.3s; /* Adds transition effect */
+    border: 0;
+    font-size: 0.9rem;
+    margin: 0;
+    padding: 8px 16px;
+    text-align: left;
+    color: #000;
+    background-color: #3399ff; /* Solid color background */
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-/* Hover effect */
-#copyAddressBtn:hover {
-    background: rgba(0, 100, 200, 1); /* Changes background color on hover */
-    color: black; /* Optional: Change text color on hover for better visibility */
-}
-
-/* Active state (optional) */
-#copyAddressBtn:active {
-    background: rgba(0, 70, 150, 1); /* Darker background when button is pressed */
-}
-
+/* Wallet Modal Styles */
 .walletmini {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #1E1E2F; /* Background color */
-    border: 1px solid #ddd; /* Border */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow */
-    padding: 20px; /* Inner spacing */
-    width: 300px; /* Width */
-    z-index: 1000; /* Stack order */
-    display: none; /* Start hidden */
+    background-color: #1E1E2F;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    z-index: 1000;
+    display: none;
 }
 
 .walletmini .close-btn {
-    position: absolute; /* Position relative to parent */
-    top: 10px; /* Space from top */
-    right: 10px; /* Space from right */
-    background: none; /* No background */
-    border: none; /* No border */
-    cursor: pointer; /* Pointer cursor */
-    padding: 0; /* No padding */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 .walletmini p {
-    margin: 0; /* Remove margin */
-    padding: 5px 0; /* Vertical spacing */
-    font-size: 14px; /* Font size */
-    color: #fff; /* Text color */
+    margin: 0;
+    padding: 5px 0;
+    font-size: 14px;
+    color: #fff;
 }
 
 .walletmini button {
-    margin-top: 10px; /* Spacing above buttons */
-    cursor: pointer; /* Pointer cursor */
-    background-color: #007bff; /* Button color */
-    color: white; /* Text color */
-    border: none; /* No border */
-    border-radius: 5px; /* Rounded corners */
-    padding: 10px; /* Inner padding */
-    width: 100%; /* Full width */
-    transition: background-color 0.3s; /* Smooth transition */
-}
-
-.walletmini button:hover {
-    background-color: #1E1E2F; /* Darker color on hover */
-}
-
-#copyaddressmodal {
-    color: green; /* Text color */
-    margin-top: 10px; /* Spacing above modal */
-    font-size: 12px; /* Font size */
-}
-
-#copyAddressBtn,
-#viexplorer {
-    display: flex;
-    align-items: center; /* Align items vertically */
-    padding: 10px; /* Inner spacing */
-    background-color: #1E1E2F; /* Background color */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor */
-    transition: background-color 0.3s; /* Smooth transition */
-}
-
-#copyAddressBtn:hover,
-#viexplorer:hover {
-    background-color: #1E1E2F; /* Slightly darker background on hover */
-}
-
-#copyaddressmodal {
-    color: green; /* Text color for modal */
-    margin-top: 10px; /* Spacing above modal */
-    font-size: 12px; /* Font size for modal */
-}
-
-
-
-/* Modal for Copy Address */
-#copyaddressmodal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.85);
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #007bff;
     color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    text-align: center;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
     .wallet-dropdown .dropdown-content {
-        min-width: 160px; /* Smaller width on medium screens */
+        min-width: 160px;
         max-width: 200px;
-        right: -10px; /* Slight offset to keep within viewport */
+        right: -10px;
     }
     .wallet-dropdown .dropdown-btn{
-        font-size: 0.85rem; /* Adjusted font size */
+        font-size: 0.85rem;
         padding: 0.6rem 1rem;
     }
 }
 
 @media (max-width: 768px) {
     .wallet-dropdown .dropdown-content {
-        min-width: 140px; /* Smaller dropdown for tablet */
+        min-width: 140px;
         max-width: 180px;
-        right: -15px; /* Further offset for alignment */
+        right: -15px;
     }
     .wallet-dropdown .dropdown-btn {
         font-size: 0.8rem;
@@ -383,22 +325,20 @@ h1 {
 
 @media (max-width: 480px) {
     .wallet-dropdown .dropdown-content {
-        min-width: 120px; /* Smaller dropdown for mobile */
+        min-width: 120px;
         max-width: 150px;
-        right: -20px; /* Adjusted alignment */
+        right: -20px;
     }
-    .wallet-dropdown .dropdown-btn  {
+    .wallet-dropdown .dropdown-btn {
         font-size: 0.75rem;
         padding: 0.5rem 0.8rem;
     }
 }
 
-
-
 /* Network Select Button Styles */
 .network-select {
     position: relative; /* Adjusted to remove absolute positioning */
-    background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Green gradient for network select */
+    background-color: #4CAF50; /* Solid green color for network select */
     color: white; /* White text for contrast */
     border: none;
     border-radius: 6px; /* Consistent border-radius with other buttons */
@@ -406,24 +346,30 @@ h1 {
     font-size: 0.9rem; /* Smaller font size for consistency */
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding shadow for depth */
+    width: 100%; /* Full width to ensure responsiveness */
+    max-width: 250px; /* Max width to prevent excessive stretching on large screens */
+    margin: 10px auto; /* Center the button with margin */
 }
 
 /* Dropdown Container */
 .dropdown {
     position: relative; /* Container for positioning dropdown */
     display: inline-block; /* Inline block for proper alignment */
+    width: 100%; /* Make dropdown container full width */
 }
 
 /* Dropdown Content */
 #dropdownContent {
     position: absolute; /* Keep it absolute */
     top: 100%; /* Position it directly below the button */
-    right: 130px; /* Distance from the right side */
+    left: 0; /* Align it to the left */
     display: none; /* Hidden by default */
-    background-color:transparent; /* Background color for dropdown */
+    background-color: #1E1E2F; /* Solid background for dropdown */
     border: 1px solid #ccc; /* Optional border for better visibility */
     border-radius: 5px; /* Rounded corners */
     z-index: 1000; /* Ensure it appears above other elements */
+    width: 100%; /* Full width for dropdown */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Shadow for depth */
 }
 
 /* Show dropdown when active */
@@ -434,8 +380,8 @@ h1 {
 /* Dropdown Button Styles */
 #dropdownContent button {
     border: none;
-    padding: 10px 20px; /* Adjust padding for better appearance */
-    text-align: center; /* Center align text */
+    padding: 10px; /* Adjust padding for better appearance */
+    text-align: left; /* Align text to the left */
     background-color: #0B0C0E; /* Same color as connect button */
     color: white; /* Text color */
     cursor: pointer; /* Pointer on hover */
@@ -457,17 +403,23 @@ h1 {
     margin-right: 8px; /* Space between logo and text */
 }
 
-
-
-
-
 /* Hide the button when it is disabled */
 button:disabled {
     display: none; /* Completely hide the button */
 }
 
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .network-select {
+        font-size: 0.8rem; /* Smaller font size for mobile */
+        padding: 6px 12px; /* Adjust padding for mobile */
+    }
 
-
+    #dropdownContent button {
+        padding: 8px; /* Adjust padding for dropdown buttons */
+        font-size: 0.8rem; /* Adjust font size for dropdown buttons */
+    }
+}
 
 
 
@@ -742,7 +694,6 @@ button:hover {
     display: none; /* Hide these elements */
 }
 
-
 /* Custom styles for .chakra-tabs__tab class */
 #app2 .chakra-tabs__tab {
     background-color: transparent;         /* Transparent background for tabs */
@@ -803,6 +754,29 @@ button:hover {
     gap: 10px;                             /* Consistent spacing between tabs */
 }
 
+/* Responsive styles */
+@media (max-width: 600px) {
+    #app2 {
+        padding: 20px;                     /* Reduced padding on small screens */
+        margin: 30px auto;                 /* Adjusted margin */
+    }
+
+    #app2 h1 {
+        font-size: 2em;                     /* Smaller font size for the header */
+    }
+
+    #app2 .chakra-tabs__tab {
+        font-size: 14px;                    /* Reduced font size for tabs */
+        padding: 10px 20px;                 /* Adjusted padding for tabs */
+        margin-right: 5px;                  /* Less space between tabs */
+    }
+
+    #app2 .tab-list {
+        flex-direction: column;             /* Stack tabs vertically on small screens */
+        align-items: center;                /* Center align the stacked tabs */
+    }
+}
+
 
 .swp-container {
     background-color: #1e1e1e; /* Darker container */
@@ -812,7 +786,7 @@ button:hover {
     width: 90%; /* Responsive width */
     max-width: 400px; /* Max width for larger screens */
     text-align: center; /* Center text alignment */
-      margin-top: 30px; /* Add space above the container */
+    margin-top: 30px; /* Add space above the container */
 }
 
 .swp-h1 {
@@ -862,7 +836,6 @@ button:hover {
 /* Focus styling for swp-input */
 .swp-input:focus {
     border-color: #21a1f1; /* Brighter blue on focus */
-  
 }
 
 /* Hover effect for swp-input */
@@ -910,9 +883,6 @@ button:hover {
 #swp-inputAmount::placeholder {
     color: #999999; /* Gray placeholder color for better visibility */
 }
-
-
-
 
 .swp-custom-dropdown {
     position: relative; /* To position the dropdown inside */
@@ -991,7 +961,6 @@ button:hover {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
 }
 
-
 .swp-output-container {
     flex-direction: row; /* Row layout for output and logo */
     align-items: center; /* Center items vertically */
@@ -1034,6 +1003,62 @@ button:hover {
     transform: scale(1.05); /* Slightly enlarge on hover */
 }
 
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .swp-container {
+        padding: 20px; /* Reduce padding on smaller screens */
+        margin-top: 20px; /* Reduce margin on smaller screens */
+    }
+
+    .swp-h1 {
+        font-size: 24px; /* Smaller title size */
+        margin-bottom: 15px; /* Adjust space below title */
+    }
+
+    .swp-input, #swp-inputAmount, .swp-dropdown-btn, .swp-swap-btn {
+        font-size: 18px; /* Smaller font size for inputs and buttons */
+        padding: 12px; /* Reduce padding */
+    }
+
+    .swp-label {
+        font-size: 16px; /* Smaller label font size */
+    }
+
+    .swp-output {
+        font-size: 20px; /* Adjust output font size */
+    }
+}
+
+@media (max-width: 480px) {
+    .swp-container {
+        width: 95%; /* Wider on very small screens */
+    }
+
+    .swp-input-wrapper {
+        flex-direction: column; /* Stack inputs vertically */
+    }
+
+    .swp-input {
+        width: 100%; /* Full width on mobile */
+    }
+
+    .swp-dropdown-btn {
+        width: 100%; /* Full width for dropdown button */
+        margin-left: 0; /* Remove margin */
+        margin-top: 10px; /* Space above */
+    }
+
+    .swp-output {
+        width: 100%; /* Full width for output */
+        margin-right: 0; /* Remove margin */
+    }
+
+    .swp-swap-btn {
+        width: 100%; /* Full width for swap button */
+    }
+}
+
+
 
 .mini-page {
     position: fixed; /* Make it fixed to overlay */
@@ -1045,7 +1070,7 @@ button:hover {
     padding: 10px; /* Add padding around the mini page */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 1000; /* Ensure it appears above other elements */
-    max-height: 400px; /* Set a maximum height */
+    max-height: 10000px; /* Set a maximum height */
     overflow: hidden; /* Prevent overflow from the mini page */
 }
 
@@ -1085,7 +1110,6 @@ button:hover {
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
-
 *, *:before, *:after {
     box-sizing: border-box;
 }
@@ -1101,7 +1125,8 @@ button:hover {
 .range {
     position: relative;
     background-color: #333;
-    width: 600px; /* Fixed width for consistency */
+    width: 100%; /* Changed to 100% for responsiveness */
+    max-width: 600px; /* Max width for larger screens */
     height: 30px; /* Fixed height */
     transform: skew(30deg);
     font-family: 'Orbitron', monospace; /* Ensure this is applied correctly */
@@ -1145,7 +1170,7 @@ button:hover {
     2% {
         transform: translate(10%, 30%);
     }
-    3%{
+    3% {
         transform: translate(-43%, 10%);
     }
     4% {
@@ -1153,11 +1178,42 @@ button:hover {
     }
 }
 
-
-
 #raisedAmount, #tokenBalance {
     margin-right: 10px; /* Optional: add space between the elements */
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .progress-container-2 {
+        flex-direction: column; /* Stack vertically on smaller screens */
+        align-items: center; /* Center items horizontally */
+    }
+
+    .range {
+        height: 25px; /* Adjust height for smaller screens */
+    }
+
+    .range__label {
+        font-size: 14px; /* Smaller font size for label */
+        left: 10%; /* Adjust position for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .range {
+        height: 20px; /* Further reduce height for mobile */
+    }
+
+    .range__label {
+        font-size: 12px; /* Smaller font size for label */
+        left: 15%; /* Further adjust position for smaller screens */
+    }
+
+    #raisedAmount, #tokenBalance {
+        margin-right: 5px; /* Reduce space for smaller screens */
+    }
+}
+
 
 
 

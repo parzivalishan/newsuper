@@ -1729,6 +1729,7 @@ setTimeout(() => {
            
             <div class="swp-ratio">
                 <p>Your Max Buy Limit in USD : <span id="maxBuyLimit">0.00</span></p>
+                <p> Eth price for this ido is set at 2000 </p>
             </div>
 
             <p></p>
@@ -2369,7 +2370,7 @@ const TOKEN_CONTRACT_ADDRESS = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // 
 
 // Function to fetch and display ETH balance
 async function updateBalance(walletAddress) {
-    const url = `https://explorer-testnet.soneium.org/api?module=account&action=eth_get_balance&address=${walletAddress}&tag=latest`;
+    const url = `https://soneium-minato.blockscout.com/api?module=account&action=eth_get_balance&address=${walletAddress}&tag=latest`;
 
     try {
         const response = await fetch(url);
@@ -2393,7 +2394,7 @@ async function updateBalance(walletAddress) {
 
 // Function to fetch and display token balance
 async function fetchTokenBalance(walletAddress) {
-    const url = `https://explorer-testnet.soneium.org/api?module=account&action=tokenbalance&contractaddress=${TOKEN_CONTRACT_ADDRESS}&address=${walletAddress}`;
+    const url = `https://soneium-minato.blockscout.com/api?module=account&action=tokenbalance&contractaddress=${TOKEN_CONTRACT_ADDRESS}&address=${walletAddress}`;
 
     try {
         const response = await fetch(url);
@@ -2475,7 +2476,7 @@ async function connectWallet() {
 
          // Add explorer button functionality here
          document.getElementById('viexplorer').onclick = function() {
-            const url = `https://explorer-testnet.soneium.org/address/${accounts}`;
+            const url = `https://soneium-minato.blockscout.com/address/${accounts}`;
             window.open(url, '_blank'); // Opens the URL in a new tab
         };
 
@@ -2709,13 +2710,13 @@ async function fetchIncomingTransactions(userAddress) {
 
     try {
         // Fetch ETH transactions
-        const ethResponse = await fetch(`https://explorer-testnet.soneium.org/api?module=account&action=txlist&address=${userAddress}&page=1&offset=10000&sort=asc`);
+        const ethResponse = await fetch(`https://soneium-minato.blockscout.com/api?module=account&action=txlist&address=${userAddress}&page=1&offset=10000&sort=asc`);
         const ethData = await ethResponse.json();
 
         console.log("ETH Data Fetched:", ethData); 
 
         // Fetch token transactions for the specific contract
-        const tokenResponse = await fetch(`https://explorer-testnet.soneium.org/api?module=account&action=tokentx&address=${userAddress}&contractaddress=${tokenContractAddress}&page=1&offset=10000&sort=asc`);
+        const tokenResponse = await fetch(`https://soneium-minato.blockscout.com/api?module=account&action=tokentx&address=${userAddress}&contractaddress=${tokenContractAddress}&page=1&offset=10000&sort=asc`);
         const tokenData = await tokenResponse.json();
 
         console.log("Token Data Fetched:", tokenData); 
@@ -3145,7 +3146,7 @@ const amountoteth=amountToSend/2000
        // Create a link to the transaction based on the current network
        const txHashLink = currentNetwork === 'Sepolia'
            ? `https://sepolia.etherscan.io/tx/${tx.hash}`
-           : `https://explorer-testnet.soneium.org/tx/${tx.hash}`;
+           : `https://soneium-minato.blockscout.com/tx/${tx.hash}`;
 
        // Show transaction status in modal for token transfer
        openModal('Transaction Sent', `
@@ -3322,7 +3323,7 @@ if (newRaisedAmountForTokenTransfer > adjustedEffectiveMaxBuyLimitForTokenTransf
 
        const txHashLinkForTokenTransfer = currentNetwork === 'Sepolia'
            ? `https://sepolia.etherscan.io/tx/${txForTokenTransfer.hash}`
-           : `https://explorer-testnet.soneium.org/tx/${txForTokenTransfer.hash}`;
+           : `https://soneium-minato.blockscout.com/tx/${txForTokenTransfer.hash}`;
 
   // Show transaction status in modal for token transfer
   openModal('Transaction Sent', `

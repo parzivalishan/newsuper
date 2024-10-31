@@ -94,8 +94,6 @@ h1 {
 /* Button Styles */
 #connectWalletBtn, 
 #networkBtn, 
-#copyAddressBtn,
-#viexplorer,
 .connectwalletbtn { /* Added connectwalletbtn */
     display: inline-block; /* Allows buttons to sit next to each other */
     position: relative;
@@ -117,8 +115,6 @@ h1 {
 /* Neon Effect on Hover */
 #connectWalletBtn:hover, 
 #networkBtn:hover, 
-#viexplorer:hover,
-#copyAddressBtn:hover,
 .connectwalletbtn:hover { /* Added connectwalletbtn hover effect */
     letter-spacing: 0.1rem; /* Increased letter spacing on hover */
     padding: 0.85rem 1.6rem; /* Slightly increase padding on hover for consistency */
@@ -131,8 +127,6 @@ h1 {
 /* Button Before Element for Depth Effect */
 #connectWalletBtn::before,
 #networkBtn::before,
-#viexplorer::before,
-#copyAddressBtn::before,
 .connectwalletbtn::before { /* Added connectwalletbtn before element */
     content: "";
     position: absolute;
@@ -269,6 +263,81 @@ h1 {
     background: rgba(0, 70, 150, 1); /* Darker background when button is pressed */
 }
 
+.walletmini {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1E1E2F; /* Background color */
+    border: 1px solid #ddd; /* Border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow */
+    padding: 20px; /* Inner spacing */
+    width: 300px; /* Width */
+    z-index: 1000; /* Stack order */
+    display: none; /* Start hidden */
+}
+
+.walletmini .close-btn {
+    position: absolute; /* Position relative to parent */
+    top: 10px; /* Space from top */
+    right: 10px; /* Space from right */
+    background: none; /* No background */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer cursor */
+    padding: 0; /* No padding */
+}
+
+.walletmini p {
+    margin: 0; /* Remove margin */
+    padding: 5px 0; /* Vertical spacing */
+    font-size: 14px; /* Font size */
+    color: #fff; /* Text color */
+}
+
+.walletmini button {
+    margin-top: 10px; /* Spacing above buttons */
+    cursor: pointer; /* Pointer cursor */
+    background-color: #007bff; /* Button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Inner padding */
+    width: 100%; /* Full width */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.walletmini button:hover {
+    background-color: #1E1E2F; /* Darker color on hover */
+}
+
+#copyaddressmodal {
+    color: green; /* Text color */
+    margin-top: 10px; /* Spacing above modal */
+    font-size: 12px; /* Font size */
+}
+
+#copyAddressBtn,
+#viexplorer {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    padding: 10px; /* Inner spacing */
+    background-color: #1E1E2F; /* Background color */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+#copyAddressBtn:hover,
+#viexplorer:hover {
+    background-color: #1E1E2F; /* Slightly darker background on hover */
+}
+
+#copyaddressmodal {
+    color: green; /* Text color for modal */
+    margin-top: 10px; /* Spacing above modal */
+    font-size: 12px; /* Font size for modal */
+}
 
 
 
@@ -294,7 +363,7 @@ h1 {
         max-width: 200px;
         right: -10px; /* Slight offset to keep within viewport */
     }
-    .wallet-dropdown .dropdown-btn, #viexplorer {
+    .wallet-dropdown .dropdown-btn{
         font-size: 0.85rem; /* Adjusted font size */
         padding: 0.6rem 1rem;
     }
@@ -306,7 +375,7 @@ h1 {
         max-width: 180px;
         right: -15px; /* Further offset for alignment */
     }
-    .wallet-dropdown .dropdown-btn, #viexplorer {
+    .wallet-dropdown .dropdown-btn {
         font-size: 0.8rem;
         padding: 0.55rem 0.9rem;
     }
@@ -318,7 +387,7 @@ h1 {
         max-width: 150px;
         right: -20px; /* Adjusted alignment */
     }
-    .wallet-dropdown .dropdown-btn, #viexplorer {
+    .wallet-dropdown .dropdown-btn  {
         font-size: 0.75rem;
         padding: 0.5rem 0.8rem;
     }
@@ -966,6 +1035,50 @@ button:hover {
 }
 
 
+.mini-page {
+    position: fixed; /* Make it fixed to overlay */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1E1E2F; /* Dark grey background similar to ChatGPT */
+    border-radius: 8px;
+    padding: 10px; /* Add padding around the mini page */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* Ensure it appears above other elements */
+    max-height: 400px; /* Set a maximum height */
+    overflow: hidden; /* Prevent overflow from the mini page */
+}
+
+.mini-page-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Ensure buttons stretch to full width */
+    max-height: 100%; /* Set to fill the mini page height */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.network-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align content to the left */
+    height: 60px; /* Set fixed height for buttons */
+    padding: 0 20px; /* Horizontal padding */
+    border: none; /* Remove default button border */
+    background-color: transparent; /* Make button background transparent */
+    color: #fff; /* Set text color */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.network-button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Change background color on hover */
+}
+
+.logo {
+    width: 30px; /* Set a fixed width for logos */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 10px; /* Space between logo and text */
+}
 
 
     
@@ -1195,57 +1308,68 @@ footer {
 
         <button id="networkBtn">Network</button> <!-- Network button -->
 
-        
-        <div id="dropdownContent">
-            <button id="minatoNetworkBtn" class="network-button">
-                <img src="https://soneium-minato.blockscout.com/assets/configs/network_logo_dark.svg" alt="Minato Logo" class="logo" style="width: 100px; height: auto;" />
-            </button>
-            
-            <button id="sepoliaNetworkBtn" class="network-button">
-                <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none'><path fill='%2325292E' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23a)' fill-opacity='.3' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23b)' d='M8.19 14.77 L14 18.21l5.8-3.44-5.8 8.19-5.81-8.19Z'/><path fill='%23fff' d='m14 16.93-5.81-3.44L14 4.34l5.81 9.15L14 16.93Z'/><defs><linearGradient id='a' x1='0' x2='14' y1='0' y2='28' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='0'/></linearGradient><linearGradient id='b' x1='14' x2='14' y1='14.77' y2='22.96' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='.9'/></linearGradient></defs></svg>" alt="Sepolia Logo" class="logo" />
-                Sepolia
-            </button>
+        <div id="miniPage" class="mini-page" style="display: none;">
+            <div class="mini-page-content">
+                <button id="minatoNetworkBtn" class="network-button">
+                    <img src="https://soneium-minato.blockscout.com/assets/configs/network_logo_dark.svg" alt="Minato Logo" class="logo" />
+                    Minato
+                </button>
+                
+                <button id="sepoliaNetworkBtn" class="network-button">
+                    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none'><path fill='%2325292E' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23a)' fill-opacity='.3' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23b)' d='M8.19 14.77 L14 18.21l5.8-3.44-5.8 8.19-5.81-8.19Z'/><path fill='%23fff' d='m14 16.93-5.81-3.44L14 4.34l5.81 9.15L14 16.93Z'/><defs><linearGradient id='a' x1='0' x2='14' y1='0' y2='28' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='0'/></linearGradient><linearGradient id='b' x1='14' x2='14' y1='14.77' y2='22.96' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='.9'/></linearGradient></defs></svg>" alt="Sepolia Logo" class="logo" />
+                    Sepolia
+                </button>
+                
+                <!-- You can add more network buttons here -->
+            </div>
         </div>
-
-
-        <div class="wallet-dropdown">
-            
-            <button id="connectWalletBtn" class="connectwalletbtn">Connect Wallet</button>
-            <div class="dropdown-content">
-<p> Your Balance</p>
- 
-   <div id="accountDisplay" style="margin-top: 1px;"> <!-- Add margin for spacing -->
-    <p style="display: flex; align-items: center; gap: 5px;">
-        <img src="https://token-icons.s3.amazonaws.com/eth.png" 
-             alt="ETH Logo" 
-             style="width: 20px; height: 20px;">
-        <span id="balanceAmount">0.00</span>
-    </p>
-    
-    <p style="display: flex; align-items: center; gap: 5px;">
-        <img src="https://tether.to/images/logoMarkGreen.svg" 
-             alt="USDT Logo" 
-             style="width: 20px; height: 20px;">
-        <span id="tokenBalanceAmount">0.00</span>
-    </p>
-    
-</div>
-
         
-<!-- Copy Address Button with SVG Icon -->
-<button id="copyAddressBtn" style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #f0f0f0; border: none; border-radius: 5px; cursor: pointer;">
-    Copy Address
-    <svg width="20" height="20" viewBox="0 0 20 20" style="margin-left: 8px;">
+        <div class="wallet-dropdown">
+            <button id="connectWalletBtn" class="connectwalletbtn">Connect Wallet</button>
+            <div class="walletmini" id="walletMini">
+                <!-- Close button as SVG only -->
+                <svg class="close-btn" id="closeWalletMini" width="20" height="20" viewBox="0 0 20 20" style="cursor: pointer;">
+                    <path d="M2.13388 0.366117C1.64573 -0.122039 0.854272 -0.122039 0.366117 0.366117C-0.122039 0.854272 -0.122039 1.64573 0.366117 2.13388L3.98223 5.75L0.366117 9.36612C-0.122039 9.85427 -0.122039 10.6457 0.366117 11.1339C0.854272 11.622 1.64573 11.622 2.13388 11.1339L5.75 7.51777L9.36612 11.1339C9.85427 11.622 10.6457 11.622 11.1339 11.1339C11.622 10.6457 11.622 9.85427 11.1339 9.36612L7.51777 5.75L11.1339 2.13388C11.622 1.64573 11.622 0.854272 11.1339 0.366117C10.6457 -0.122039 9.85427 -0.122039 9.36612 0.366117L5.75 3.98223L2.13388 0.366117Z" fill="currentColor"></path>
+                </svg>
+        
+                <p>Your Balance</p>
+                <div id="accountDisplay" style="margin-top: 1px;">
+                    <p style="display: flex; align-items: center; gap: 5px;">
+                        <img src="https://token-icons.s3.amazonaws.com/eth.png" 
+                             alt="ETH Logo" 
+                             style="width: 20px; height: 20px;">
+                        <span id="balanceAmount">0.00</span>
+                    </p>
+                    <p style="display: flex; align-items: center; gap: 5px;">
+                        <img src="https://tether.to/images/logoMarkGreen.svg" 
+                             alt="USDT Logo" 
+                             style="width: 20px; height: 20px;">
+                        <span id="tokenBalanceAmount">0.00</span>
+                    </p>
+                </div>
+        
+<!-- Copy Address as a clickable div -->
+<div id="copyAddressBtn" style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #f0f0f0; border-radius: 5px; cursor: pointer;" onclick="copyAddress()">
+    <span style="margin-right: 8px;">Copy Address</span> <!-- Add margin to separate text from SVG -->
+    <svg width="20" height="20" viewBox="0 0 20 20">
         <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027ZM3.23376 10.5391C2.68689 10.5391 2.39294 10.2656 2.39294 9.68457V3.06055C2.39294 2.47949 2.68689 2.21289 3.23376 2.21289H9.8783C10.4252 2.21289 10.7191 2.47949 10.7191 3.06055V3.84668H6.59705C5.03845 3.84668 4.18396 4.69434 4.18396 6.24609V10.5391H3.23376ZM6.78845 13.9365C6.24158 13.9365 5.94763 13.6699 5.94763 13.0889V6.45801C5.94763 5.87695 6.24158 5.61035 6.78845 5.61035H13.433C13.9799 5.61035 14.2738 5.87695 14.2738 6.45801V13.0889C14.2738 13.6699 13.9799 13.9365 13.433 13.9365H6.78845Z" fill="currentColor"></path>
     </svg>
-</button>
+</div>
 
 
-                <div id="copyaddressmodal" style="display:none;">Wallet address copied to clipboard!</div>
-                <button id="viexplorer" class="dropdown-btn" style="font-size: 10px;">View in Explorer ↗</button>
-        
-             
+<!-- Copy address modal -->
+<div id="copyaddressmodal" style="display:none;">Wallet address copied to clipboard!</div>
+
+<!-- View in Explorer as a clickable div -->
+<div id="viexplorer"style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #f0f0f0; border-radius: 5px; cursor: pointer;" onclick="viewInExplorer()">View in Explorer ↗</div>
+
             </div>
+        </div>
+        
+        
+
+
+            
         </div>
 </div>
 
@@ -1810,7 +1934,42 @@ setTimeout(() => {
             
         </div>
         
+
+
+
         <script>
+
+
+
+
+document.getElementById('networkBtn').addEventListener('click', function() {
+    const miniPage = document.getElementById('miniPage');
+    miniPage.style.display = miniPage.style.display === 'none' ? 'block' : 'none';
+});
+
+document.getElementById('minatoNetworkBtn').addEventListener('click', function() {
+    // Logic to switch to Minato Network
+    console.log('Switched to Minato Network');
+    document.getElementById('miniPage').style.display = 'none'; // Close mini page
+});
+
+document.getElementById('sepoliaNetworkBtn').addEventListener('click', function() {
+    // Logic to switch to Sepolia Network
+    console.log('Switched to Sepolia Network');
+    document.getElementById('miniPage').style.display = 'none'; // Close mini page
+});
+
+// Optional: Close the mini page when clicking outside of it
+window.addEventListener('click', function(event) {
+    const miniPage = document.getElementById('miniPage');
+    if (!document.getElementById('networkBtn').contains(event.target) && !miniPage.contains(event.target)) {
+        miniPage.style.display = 'none'; // Hide the mini page if clicked outside
+    }
+});
+
+
+
+
             document.addEventListener("DOMContentLoaded", function() {
                 const sendSceTokenBtn = document.getElementById('sendSceTokenBtn');
                 const sendTransactionBtn = document.getElementById('sendTransactionBtn'); // Assuming you have this button
@@ -1963,22 +2122,33 @@ if (selectedToken === 'USDT') {
 <script>
 
 
-// JavaScript for Dropdown Functionality
-document.addEventListener('DOMContentLoaded', function () {
+// Show or hide the wallet mini page
+document.getElementById('connectWalletBtn').addEventListener('click', function(event) {
+    const walletMini = document.getElementById('walletMini');
+    walletMini.style.display = (walletMini.style.display === 'none' || walletMini.style.display === '') ? 'block' : 'none';
+});
+
+// Close the wallet mini page when the close button is clicked
+document.getElementById('closeWalletMini').addEventListener('click', function() {
+    document.getElementById('walletMini').style.display = 'none';
+});
+
+// Close the wallet mini page when clicking outside of it
+window.addEventListener('click', function(event) {
+    const walletMini = document.getElementById('walletMini');
     const connectWalletBtn = document.getElementById('connectWalletBtn');
-    const dropdownContent = document.querySelector('.wallet-dropdown .dropdown-content');
+    if (event.target !== walletMini && !walletMini.contains(event.target) && event.target !== connectWalletBtn) {
+        walletMini.style.display = 'none';
+    }
+});
 
-    connectWalletBtn.addEventListener('click', function () {
-        // Toggle the 'visible' class on dropdown content
-        dropdownContent.classList.toggle('visible');
-    });
-
-    // Optional: Close dropdown when clicking outside of it
-    window.addEventListener('click', function (event) {
-        if (!connectWalletBtn.contains(event.target) && !dropdownContent.contains(event.target)) {
-            dropdownContent.classList.remove('visible');
-        }
-    });
+// Optional: Add event listener for the copy address button
+document.getElementById('copyAddressBtn').addEventListener('click', function() {
+    // Add logic to copy address to clipboard here
+    document.getElementById('copyaddressmodal').style.display = 'block';
+    setTimeout(() => {
+        document.getElementById('copyaddressmodal').style.display = 'none';
+    }, 2000); // Hide after 2 seconds
 });
 
 
@@ -2488,11 +2658,11 @@ copyAddressBtn.classList.remove('hidden'); // Remove hidden class to show copy a
 
 
 copyAddressBtn.innerHTML = `
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <svg width="20" height="20" viewBox="0 0 20 20" style="margin-bottom: 5px;">
+    <div style="display: flex; align-items: center;">
+        <span style="font-size: 14px; margin-right: 8px;">Copy Address</span> <!-- Move the text before the SVG -->
+        <svg width="20" height="20" viewBox="0 0 20 20">
             <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027ZM3.23376 10.5391C2.68689 10.5391 2.39294 10.2656 2.39294 9.68457V3.06055C2.39294 2.47949 2.68689 2.21289 3.23376 2.21289H9.8783C10.4252 2.21289 10.7191 2.47949 10.7191 3.06055V3.84668H6.59705C5.03845 3.84668 4.18396 4.69434 4.18396 6.24609V10.5391H3.23376ZM6.78845 13.9365C6.24158 13.9365 5.94763 13.6699 5.94763 13.0889V6.45801C5.94763 5.87695 6.24158 5.61035 6.78845 5.61035H13.433C13.9799 5.61035 14.2738 5.87695 14.2738 6.45801V13.0889C14.2738 13.6699 13.9799 13.9365 13.433 13.9365H6.78845Z" fill="currentColor"></path>
         </svg>
-        <span style="font-size: 14px;">Copy address</span>
     </div>
 `;
 

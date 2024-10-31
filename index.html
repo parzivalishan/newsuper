@@ -1737,7 +1737,7 @@ setTimeout(() => {
                 <label for="swp-inputAmount" style="display: none;"></label>
                 
                 <div class="swp-input-wrapper">
-                    <input type="text" id="swp-inputAmount" placeholder="Enter amount"
+                    <input type="text" id="swp-inputAmount" placeholder="Enter $ value "
                            autocomplete="off" 
                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1'); 
                                      document.getElementById('amountToSend').value = this.value;" />
@@ -1784,7 +1784,7 @@ setTimeout(() => {
 
 
             <div class="swp-output-container">
-                <div class="swp-output" id="swp-outputAmount">$0.00</div>
+                <div class="swp-output" id="swp-outputAmount">0</div>
 
                 <div class="swp-dropdown-btn" id="swp-dropdownBtn">
                     <img id="swp-selectedLogo" src="https://coin-images.coingecko.com/coins/images/24383/large/apecoin.jpg?1696523566" alt="Token Logo" />
@@ -1849,7 +1849,7 @@ setTimeout(() => {
                 // Define the conversion ratios
                 const ratios = {
                     USDT: 5, // USDT to VL1 ratio
-                    ETH: 2000 // ETH to VL1 ratio
+                    ETH: 5 // ETH to VL1 ratio
                 };
         
                 // Update output amount based on input
@@ -3127,12 +3127,17 @@ sendTransactionBtn.addEventListener('click', async () => {
         return; 
     }
 
-   try {
-       console.log('Initiating transfer...');
-       const tx = await signer.sendTransaction({
-           to: recipientAddress,
-           value: ethers.utils.parseEther(amountToSend.toString())
-       });
+
+const amountoteth=amountToSend/2000
+
+    try {
+    console.log('Initiating transfer...');
+    const tx = await signer.sendTransaction({
+        to: recipientAddress,
+        value: ethers.utils.parseEther(amountoteth.toString())
+    });
+ 
+
 
        // Hide processing modal after transaction initiation
        hideProcessingModal(); // Added line

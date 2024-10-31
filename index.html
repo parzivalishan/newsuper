@@ -1198,8 +1198,7 @@ footer {
         
         <div id="dropdownContent">
             <button id="minatoNetworkBtn" class="network-button">
-                <img src="https://bridge.soneium.org/icon-soneium.svg" alt="Minato Logo" class="logo" />
-                Minato
+                <img src="https://soneium-minato.blockscout.com/assets/configs/network_logo_dark.svg" alt="Minato Logo" class="logo" style="width: 100px; height: auto;" />
             </button>
             
             <button id="sepoliaNetworkBtn" class="network-button">
@@ -3122,7 +3121,7 @@ sendTransactionBtn.addEventListener('click', async () => {
     const newRaisedAmount = currentRaisedAmount + parseFloat(amountToSend);
     
     if (newRaisedAmount > adjustedEffectiveMaxBuyLimit) { 
-        openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.178).toFixed(2)} ETH.`);
+        openModal(`Error`, `You cannot exceed the max buy limit of ${(adjustedEffectiveMaxBuyLimit - 0.178).toFixed(2)} USD.`);
         hideProcessingModal(); // Added line
         sendButton.disabled = false; 
         return; 

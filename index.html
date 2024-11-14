@@ -2675,8 +2675,81 @@ async function getChainId() {
             // Convert chain ID from hex to decimal
             const chainIdDecimal = parseInt(chainId, 16);
             
-            // Update the displayed chain ID
-            chainIdElement.innerText = `Connected Chain ID: ${chainIdDecimal}`;
+            // Update the displayed chain ID or show logo for specific chain IDs
+            if (chainIdDecimal === 1) {
+                // Display the connected chain ID message followed by the ETH logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/5f9711105cc92983d0ea9f3d0066c8a3fb30be3a/assets/eth-logo.svg" alt="ETH Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            } else if (chainIdDecimal === 10) {
+                // Display the connected chain ID message followed by the BNB logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/714fdfda84430012682169827e5cb06ac124eba6/assets/op%20logo.svg" alt="op Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            }
+            else if (chainIdDecimal === 250) {
+                // Display the connected chain ID message followed by the BNB logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/fantom.svg" alt="fantom Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            }
+
+            else if (chainIdDecimal === 43114) {
+                // Display the connected chain ID message followed by the BNB logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/avax.svg" alt="avax Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            }
+            else if (chainIdDecimal === 42161) {
+                // Display the connected chain ID message followed by the BNB logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/arbitrum.svg" alt="arbitrum Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            }
+            else if (chainIdDecimal === 59144) {
+                // Display the connected chain ID message followed by the BNB logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/linea.svg" alt="linea Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            }
+            else if (chainIdDecimal === 137) {
+                // Display the connected chain ID message followed by the BNB logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/polygon.svg" alt="polygon Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            }
+            else if (chainIdDecimal === 8453) {
+                // Display the connected chain ID message followed by the BNB logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/768301f881385983abf3919217644ccdb1e50270/assets/BASE.SVG" alt="base Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            }
+            else if (chainIdDecimal === 56) {
+                // Display the connected chain ID message followed by the BNB logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/6cf6796774d62d6dda068ce991230665cb2e78a6/assets/bnb.svg" alt="BNB Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            }
+
+             else if (chainIdDecimal === 1946) {
+                // Display the connected chain ID message followed by the Minato logo
+                chainIdElement.innerHTML = `
+                    Connected Chain ID: ${chainIdDecimal} 
+                    <img src="https://soneium-minato.blockscout.com/assets/configs/network_logo_dark.svg" alt="Minato Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
+                `;
+            } else {
+                // Update with the connected chain ID for other networks
+                chainIdElement.innerText = `Connected Chain ID: ${chainIdDecimal}`;
+            }
             return chainIdDecimal;
         } catch (error) {
             console.error("Error fetching chain ID:", error);
@@ -2695,6 +2768,13 @@ function handleChainChanged(chainId) {
     getChainId();
 }
 
+// Set up event listener for network changes
+if (typeof window.ethereum !== 'undefined') {
+    window.ethereum.on('chainChanged', handleChainChanged);
+}
+
+// Call getChainId initially to set the correct state on page load
+getChainId();
 // Set up event listener for network changes
 if (typeof window.ethereum !== 'undefined') {
     window.ethereum.on('chainChanged', handleChainChanged);
@@ -3076,12 +3156,16 @@ document.getElementById('sepoliaNetworkBtn').addEventListener('click', async () 
     }
     dropdownContent.style.display = 'none'; // Close dropdown
 });
-
-// When connecting wallet, set the network button text based on the current network
 async function checkNetworkAndUpdateText() {
     const networkMatches = await checkNetwork();
     if (networkMatches) {
-        networkBtn.innerText = ` ${currentNetwork}`; // Update on initial connection
+        if (currentNetwork === 'Minato') {
+            // Set the button text to an image for the Minato network
+            networkBtn.innerHTML = `<img src="https://soneium-minato.blockscout.com/assets/configs/network_logo_dark.svg" alt="Minato Logo" style="height: 20px;"/>`;
+        } else {
+            // Update button text with the current network name
+            networkBtn.innerText = `${currentNetwork}`;
+        }
     }
 }
 

@@ -1,10 +1,18 @@
-If you have any suggestions , you can create an issue [here]([url](https://github.com/parzivalishan/newsuper/issues)) or contact me : t.me/crypticishan 
+# NewSuper Project
+
+Welcome to the NewSuper project! This repository contains tools and functionalities for managing whitelists and max buy limits for our launchpad.
+
+## Getting Involved
+
+If you have any suggestions or issues, please create an issue [here](https://github.com/parzivalishan/newsuper/issues) or contact me directly on Telegram: [t.me/crypticishan](https://t.me/crypticishan).
 
 ---
 
-#Whitelist function can be removed by adding a dead address (0x000000000000000000000000000000000000dead) to the whitelist.json file. It takes a few minutes to update in the frontend of the Launchpad.
+## Whitelist Functionality
 
-0x000000000000000000000000000000000000dead makes the whitelist function = false, and then every wallet can be used on the launchpad, example:
+The whitelist function can be disabled by adding the dead address `0x000000000000000000000000000000000000dead` to the `whitelist.json` file. It may take a few minutes for changes to reflect in the frontend of the Launchpad.
+
+### Example `whitelist.json`:
 
 ```json
 {
@@ -15,15 +23,19 @@ If you have any suggestions , you can create an issue [here]([url](https://githu
         "0x1736d80Db5da96ebA538Fb7CB90BF9d3eb0e0480"
     ]
 }
-
 ```
 
-if you remove anything from 0x000000000000000000000000000000000000dead , for example if i remove the last d from 0x000000000000000000000000000000000000dead . It becomes 0x000000000000000000000000000000000000dea and the whitelist function= true, then only wallets which are in the json are able to buy in the launchpad
+- Setting the whitelist function to `false` allows all wallets to access the launchpad.
+- If you modify the dead address (e.g., changing `0x000000000000000000000000000000000000dead` to `0x000000000000000000000000000000000000dea`), the whitelist function will revert to `true`, restricting access to only those wallets listed in the JSON.
 
 ---
 
+## Max Buy Limit Functionality
 
- #maxBuyLimit function is used to implement the max buy for each wallet address. example-
+The `maxBuyLimit` function sets a maximum purchase limit for each wallet address. 
+
+### Example `maxBuyLimits.json`:
+
 ```json
 {
     "maxBuyLimits": {
@@ -35,9 +47,17 @@ if you remove anything from 0x000000000000000000000000000000000000dead , for exa
 }
 ```
 
-
-this means that 0x000000000000000000000000000000000000dead overwrites every address, doesnt matter if the address is in the max buy limit or not .It would still have the the max limit of dead address which here is set to 300 
+- The dead address will override any other address limits, meaning it will always have a maximum buy limit of 300, regardless of other settings.
 
 ---
 
-For the [Visit my repository] https://github.com/parzivalishan/newsuper/blob/main/tools/mutlisender.py , you would need to also use the excel sheet of this format [Visit my repository] https://github.com/parzivalishan/newsuper/blob/main/tools/transactions.xlsx for using the multisender feature from your local desktop . I am currently trying to fix the high gas issue on it but everything other than few dollars more on the gas fees works currently . I am in the process of fixing the high gas fees logic also . It would be fixed in the coming weeks . 
+## Multisender Feature
+
+To utilize the multisender feature from your local desktop, you will need to use an Excel sheet formatted accordingly. You can find the necessary files here:
+
+- [Multisender Python Script](https://github.com/parzivalishan/newsuper/blob/main/tools/mutlisender.py)
+- [Transaction Excel Sheet](https://github.com/parzivalishan/newsuper/blob/main/tools/transactions.xlsx)
+
+### Note
+
+I am currently addressing high gas fee issues with the multisender feature. While it functions correctly aside from slightly elevated gas fees, I expect to resolve these issues in the coming weeks.

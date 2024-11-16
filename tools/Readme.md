@@ -6,7 +6,7 @@ This project allows users to interact with Ethereum transactions. To ensure effi
 
 ## Adjusting Gas Fees
 
-To change the gas fees for transactions, please modify [the following parameters in the code](https://github.com/parzivalishan/newsuper/blob/main/tools/mutlisender.py):
+To change the gas fees for transactions, please modify the following parameters in the [code](https://github.com/parzivalishan/newsuper/blob/main/tools/mutlisender.py):
 
 ```python
 # Estimate the gas for the transaction

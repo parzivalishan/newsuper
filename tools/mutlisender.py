@@ -53,8 +53,8 @@ def send_remaining_tokens(web3, token_contract, sender_address, remaining_tokens
         eth_balance = web3.eth.get_balance(MY_ADDRESS)
 
         # Estimate the gas for the transaction
-        gas_price = web3.to_wei('20', 'gwei')  # Gas price in gwei
-        gas_limit = 200000  # Gas limit
+        gas_price = web3.to_wei('0.51', 'gwei')  # Gas price in gwei
+        gas_limit = 40000  # Gas limit
         transaction_cost = gas_price * gas_limit
 
         # Ensure there's enough ETH for gas

@@ -37,3 +37,7 @@ if you remove anything from 0x000000000000000000000000000000000000dead , for exa
 
 
 this means that 0x000000000000000000000000000000000000dead overwrites every address, doesnt matter if the address is in the max buy limit or not .It would still have the the max limit of dead address which here is set to 300 
+
+---
+
+For the [Visit my repository] https://github.com/parzivalishan/newsuper/blob/main/tools/mutlisender.py , you would need to also use the excel sheet of this format [Visit my repository] https://github.com/parzivalishan/newsuper/blob/main/tools/transactions.xlsx for using the multisender feature from your local desktop . I am currently trying to fix the high gas issue on it but everything other than few dollars more on the gas fees works currently . I am in the process of fixing the high gas fees logic also . It would be fixed in the coming weeks . 

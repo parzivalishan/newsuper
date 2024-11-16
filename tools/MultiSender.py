@@ -22,7 +22,7 @@ def initialize_web3():
         except Exception as e:
             print(f"An error occurred: {str(e)}. Please try again.")
 
-# Function to initialize the contract
+# Function to initialize the ERC-20 contract
 def initialize_contract(web3):
     while True:
         try:
@@ -40,44 +40,37 @@ def initialize_contract(web3):
         except Exception as e:
             print(f"Invalid contract address. Error: {e}. Please try again.")
 
-# Function to send tokens
-def send_remaining_tokens(web3, token_contract, sender_address, remaining_tokens, chain_id):
+# Function to send native currency (e.g., ETH)
+def send_native_currency(web3, recipient_address, amount, chain_id):
     try:
-        # Convert tokens to Wei (smallest unit of Ether)
-        value_in_wei = web3.to_wei(remaining_tokens, 'ether')
-
-        # Convert the sender address to checksum format
-        sender_address = web3.to_checksum_address(sender_address)
-
-        # Get the ETH balance of the sender for gas fees
+        recipient_address = web3.to_checksum_address(recipient_address)
+        value_in_wei = web3.to_wei(amount, 'ether')
         eth_balance = web3.eth.get_balance(MY_ADDRESS)
 
-        # Estimate the gas for the transaction
-        gas_price = web3.to_wei('0.51', 'gwei')  # Gas price in gwei
-        gas_limit = 40000  # Gas limit
+        # Gas details
+        gas_price = web3.to_wei('0.51', 'gwei')
+        gas_limit = 21000
         transaction_cost = gas_price * gas_limit
 
-        # Ensure there's enough ETH for gas
-        if eth_balance < transaction_cost:
-            print("Insufficient ETH balance for gas fees!")
+        if eth_balance < (transaction_cost + value_in_wei):
+            print("Insufficient ETH balance for the transaction!")
             return False
 
-        # Prepare the transaction
-        txn = token_contract.functions.transfer(sender_address, value_in_wei).build_transaction({
-            'chainId': chain_id,
+        # Build and sign the transaction
+        txn = {
+            'to': recipient_address,
+            'value': value_in_wei,
             'gas': gas_limit,
             'gasPrice': gas_price,
             'nonce': web3.eth.get_transaction_count(MY_ADDRESS),
-        })
-
-        # Sign the transaction
-        signed_txn = web3.eth.account.sign_transaction(txn, private_key=PRIVATE_KEY)
-
-        # Send the transaction
+            'chainId': chain_id
+        }
+        signed_txn = web3.eth.account.sign_transaction(txn, PRIVATE_KEY)
         txn_hash = web3.eth.send_raw_transaction(signed_txn.raw_transaction)
+
         print(f"Transaction sent with hash: {web3.to_hex(txn_hash)}")
 
-        # Wait for the transaction receipt
+        # Wait for transaction receipt
         receipt = web3.eth.wait_for_transaction_receipt(txn_hash, timeout=120)
         if receipt.status == 1:
             print(f"Transaction confirmed! Hash: {web3.to_hex(txn_hash)}")
@@ -90,27 +83,68 @@ def send_remaining_tokens(web3, token_contract, sender_address, remaining_tokens
         print(f"An error occurred: {str(e)}")
         return False
 
-# Function to process transactions from Excel
-def process_transactions_from_excel(web3, token_contract, file_path, chain_id):
+# Function to send tokens
+def send_tokens(web3, token_contract, recipient_address, amount, chain_id):
     try:
-        # Load the Excel file
+        recipient_address = web3.to_checksum_address(recipient_address)
+        value_in_wei = web3.to_wei(amount, 'ether')
+        eth_balance = web3.eth.get_balance(MY_ADDRESS)
+
+        # Gas details
+        gas_price = web3.to_wei('0.51', 'gwei')
+        gas_limit = 40000
+        transaction_cost = gas_price * gas_limit
+
+        if eth_balance < transaction_cost:
+            print("Insufficient ETH balance for gas fees!")
+            return False
+
+        # Build and sign the transaction
+        txn = token_contract.functions.transfer(recipient_address, value_in_wei).build_transaction({
+            'chainId': chain_id,
+            'gas': gas_limit,
+            'gasPrice': gas_price,
+            'nonce': web3.eth.get_transaction_count(MY_ADDRESS),
+        })
+        signed_txn = web3.eth.account.sign_transaction(txn, PRIVATE_KEY)
+        txn_hash = web3.eth.send_raw_transaction(signed_txn.raw_transaction)
+
+        print(f"Transaction sent with hash: {web3.to_hex(txn_hash)}")
+
+        # Wait for transaction receipt
+        receipt = web3.eth.wait_for_transaction_receipt(txn_hash, timeout=120)
+        if receipt.status == 1:
+            print(f"Transaction confirmed! Hash: {web3.to_hex(txn_hash)}")
+            return True
+        else:
+            print(f"Transaction failed! Hash: {web3.to_hex(txn_hash)}")
+            return False
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return False
+
+# Function to process multi-transfers from Excel
+def process_multi_transfer(web3, transfer_function, file_path, chain_id, token_contract=None):
+    try:
         data = pd.read_excel(file_path)
 
-        # Check for required columns
         if "Amount" not in data.columns or "Receiver" not in data.columns:
             print("Excel file must have 'Amount' and 'Receiver' columns.")
             return
 
-        # Process each row in the Excel file
         for index, row in data.iterrows():
             amount = row['Amount']
-            receiver = row['Receiver']
+            recipient = row['Receiver']
 
             print(f"\nProcessing transaction {index + 1}:")
-            print(f"Amount: {amount}, Receiver: {receiver}")
+            print(f"Amount: {amount}, Receiver: {recipient}")
 
-            # Send the tokens
-            success = send_remaining_tokens(web3, token_contract, receiver, amount, chain_id)
+            if token_contract:
+                success = transfer_function(web3, token_contract, recipient, amount, chain_id)
+            else:
+                success = transfer_function(web3, recipient, amount, chain_id)
+
             if not success:
                 print("Transaction failed. Stopping further transactions.")
                 break
@@ -120,7 +154,7 @@ def process_transactions_from_excel(web3, token_contract, file_path, chain_id):
     except Exception as e:
         print(f"An error occurred while processing the Excel file: {str(e)}")
 
-# ERC-20 Token ABI (simplified for transfer function and balanceOf)
+# ERC-20 Token ABI
 contract_abi = [
     {
         "constant": False,
@@ -156,46 +190,65 @@ contract_abi = [
 
 # Main Execution
 if __name__ == "__main__":
-    print("Welcome to the Token Transfer Script!")
+    print("Welcome to the Token and Native Currency Transfer Script!")
 
-    # Prompt the user for RPC URL, Chain ID, and Explorer
     web3, chain_id, explorer_url = initialize_web3()
-
-    # Prompt for private key
     PRIVATE_KEY = input("Enter your private key: ").strip()
     MY_ADDRESS = web3.eth.account.from_key(PRIVATE_KEY).address
     print(f"Your address: {MY_ADDRESS}")
 
-    # Initialize the contract
-    token_contract = initialize_contract(web3)
-
     while True:
         print("\nMenu:")
-        print("1. Send tokens manually")
-        print("2. Import transactions from Excel")
+        print("1. Send Native Currency (like ETH , BNB , AVAX )")
+        print("2. Send ERC-20 Tokens ")
         print("3. Exit")
 
         choice = input("Enter your choice: ").strip()
 
         if choice == "1":
-            try:
-                # Ask user for the amount of tokens to send
-                remaining_tokens = float(input("Enter the amount of tokens to send: "))
+            print("\n1. Single Transfer")
+            print("2. Multi-Transfer (Excel)")
+            sub_choice = input("Enter your choice: ").strip()
 
-                # Ask user for the recipient address
-                sender_address = input("Enter the recipient's address: ")
+            if sub_choice == "1":
+                try:
+                    amount = float(input("Enter the amount to send: "))
+                    recipient_address = input("Enter the recipient's address: ")
+                    send_native_currency(web3, recipient_address, amount, chain_id)
+                except ValueError:
+                    print("Invalid input. Please enter a valid amount and address.")
+                except Exception as e:
+                    print(f"An error occurred: {str(e)}")
 
-                # Send the transaction
-                send_remaining_tokens(web3, token_contract, sender_address, remaining_tokens, chain_id)
-            except ValueError:
-                print("Invalid input. Please enter a valid amount and address.")
-            except Exception as e:
-                print(f"An error occurred: {str(e)}")
+            elif sub_choice == "2":
+                file_path = input("Enter the path to the Excel file: ").strip()
+                process_multi_transfer(web3, send_native_currency, file_path, chain_id)
+
+            else:
+                print("Invalid choice. Returning to the main menu.")
 
         elif choice == "2":
-            # Process transactions from Excel
-            file_path = input("Enter the path to the Excel file (e.g., transactions.xlsx): ").strip()
-            process_transactions_from_excel(web3, token_contract, file_path, chain_id)
+            token_contract = initialize_contract(web3)
+            print("\n1. Single Transfer")
+            print("2. Multi-Transfer (Excel)")
+            sub_choice = input("Enter your choice: ").strip()
+
+            if sub_choice == "1":
+                try:
+                    amount = float(input("Enter the amount to send: "))
+                    recipient_address = input("Enter the recipient's address: ")
+                    send_tokens(web3, token_contract, recipient_address, amount, chain_id)
+                except ValueError:
+                    print("Invalid input. Please enter a valid amount and address.")
+                except Exception as e:
+                    print(f"An error occurred: {str(e)}")
+
+            elif sub_choice == "2":
+                file_path = input("Enter the path to the Excel file: ").strip()
+                process_multi_transfer(web3, send_tokens, file_path, chain_id, token_contract)
+
+            else:
+                print("Invalid choice. Returning to the main menu.")
 
         elif choice == "3":
             print("Exiting the script. Goodbye!")

@@ -12,6 +12,7 @@ transaction_cost = gas_price * gas_limit
 
 ```
 
+## XLXS File Format
 Make an Excel file with two colums named as Amount and Receiver like the following and add the data in it to use the multisend functionality of the tool
 
 
@@ -19,6 +20,6 @@ Make an Excel file with two colums named as Amount and Receiver like the followi
 
 | Amount | Receiver |
 |--------|----------|
-| 100    | 0xAddress    |
-| 200    | 0xAddress      |
-| 150    | 0xAddress  |
+| 100    | 0x220866B1A2219f40e72f5c628B65D54268cA3A9D|
+| 200    | 0x86A41524CB61edd8B115A72Ad9735F8068996688 |
+| 150    | 0x86A41524CB61edd8B115A72Ad9735F8068996688  |

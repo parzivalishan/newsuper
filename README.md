@@ -56,7 +56,7 @@ The `maxBuyLimit` function sets a maximum purchase limit for each wallet address
 To utilize the multisender feature from your local desktop, you will need to use an Excel sheet formatted accordingly. You can find the necessary files here:
 
 - [Multisender Python Script](https://github.com/parzivalishan/newsuper/blob/main/tools/mutlisender.py)
-- [Transaction Excel Sheet](https://github.com/parzivalishan/newsuper/blob/main/tools/transactions.xlsx)
+- [Transaction Excel Format](https://github.com/parzivalishan/newsuper/blob/main/tools/transactions.md)
 
 ### Note
 

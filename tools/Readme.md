@@ -1,4 +1,4 @@
-Multisend Local computer
+Send Tokens to multiple accounts with your personal computer
 
 ## Adjusting Gas Fees
 

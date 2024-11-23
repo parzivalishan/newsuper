@@ -133,7 +133,7 @@
 .connectwalletbtn {
     display: inline-block;
     position: relative;
-    background-color: #333; /* Simple dark background color */
+    background-color: #1E1E2F; /* Simple dark background color */
     color: #fff; /* White text for contrast */
     text-decoration: none;
     text-transform: uppercase;
@@ -1424,6 +1424,8 @@ footer {
                         <span id="tokenBalanceAmount">0.00</span>
                     </p>
                 </div>
+
+                
         
 <!-- Copy Address as a clickable div -->
 <div id="copyAddressBtn" style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #424242; border-radius: 5px; cursor: pointer;" onclick="copyAddress()">
@@ -1439,6 +1441,13 @@ footer {
 
 <!-- View in Explorer as a clickable div -->
 <div id="viexplorer"style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #424242; border-radius: 5px; cursor: pointer;" onclick="viewInExplorer()">View in Explorer ↗</div>
+
+
+
+<!-- Disconnect Wallet Button -->
+<div id="disconnectWalletBtn" style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #ff4d4d; border-radius: 5px; cursor: pointer;" onclick="disconnectWallet()">
+    Disconnect Wallet
+</div>
 
             </div>
         </div>
@@ -2013,7 +2022,19 @@ setTimeout(() => {
         </div>
         
 
-
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6740e2252480f5b4f5a2938f/1idan6pi8';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
 
         <script>
 
@@ -2807,6 +2828,45 @@ async function connectWallet() {
             window.open(url, '_blank'); // Opens the URL in a new tab
         };
 
+
+
+
+        // Function to disconnect the wallet
+function disconnectWallet() {
+    // Clear the connected account variable
+    connectedAccount = null;
+
+    // Update UI elements
+    const accountDisplay = document.getElementById('accountDisplay');
+    const balanceAmount = document.getElementById('balanceAmount');
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const disconnectWalletBtn = document.getElementById('disconnectWalletBtn');
+
+    // Hide account information
+    if (accountDisplay) {
+        accountDisplay.classList.add('hidden'); // Hide account info
+    }
+
+    // Reset balance display
+    if (balanceAmount) {
+        balanceAmount.innerText = "0.00"; // Reset balance display
+    }
+
+    // Reset connect button text
+    if (connectWalletBtn) {
+        connectWalletBtn.innerText = "Connect Wallet"; // Reset button text
+        connectWalletBtn.style.display = "block"; // Ensure connect button is visible
+    }
+
+    // Hide disconnect button
+    if (disconnectWalletBtn) {
+        disconnectWalletBtn.style.display = "none"; // Hide disconnect button
+    }
+
+    alert("Wallet disconnected!"); // Optional feedback to user
+
+    // Additional cleanup actions can be added here if necessary.
+}
 // Show copy address button and set the full address
 const copyAddressBtn = document.getElementById('copyAddressBtn');
 copyAddressBtn.classList.remove('hidden'); // Remove hidden class to show copy address button

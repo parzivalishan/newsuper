@@ -148,6 +148,9 @@
 
         /* Button to purchase */
         .swp-btn {
+            display: inline-flex; /* Align text and logo inline */
+            align-items: center; /* Center align the text and image */
+            justify-content: center; /* Center content horizontally */
             width: 100%;
             padding: 12px;
             background-color: #00ff87;
@@ -157,15 +160,23 @@
             color: #121212;
             cursor: pointer;
             transition: background-color 0.3s;
+            gap: 8px; /* Space between the text and the logo */
         }
 
+        .swp-btn img.logo {
+            width: 20px; /* Logo width */
+            height: 20px; /* Logo height */
+        }
+
+        /* Hover effect for enabled button */
         .swp-btn:hover {
             background-color: #00e77a;
         }
 
-        /* Disabled button hover effect */
+        /* Disabled button styles */
         .swp-btn:disabled {
             background-color: #333; /* Darker color when disabled */
+            color: #888; /* Dimmed text color for disabled state */
             cursor: not-allowed; /* Disable cursor */
         }
 
@@ -213,7 +224,7 @@
                    id="swp-inputAmount" 
                    placeholder="Enter $ value" 
                    autocomplete="off"
-                   oninput="updateButtonText();" />
+                   oninput="updateButtonText()" />
 
             <!-- Custom Dropdown -->
             <div class="swp-custom-dropdown">
@@ -244,7 +255,10 @@
     </div>
 
     <!-- Purchase Button -->
-    <button class="swp-btn" id="purchaseBtn" disabled>Purchase VL1</button>
+    <button class="swp-btn" id="purchaseBtn" disabled>
+        Purchase VL1 
+        <img src="https://coin-images.coingecko.com/coins/images/24383/large/apecoin.jpg?1696523566" alt="Logo" class="logo">
+    </button>
 </div>
 
 <script>
@@ -280,11 +294,17 @@
         const convertedValue = inputAmount * 5; // 1 USD = 5 VL1
 
         if (inputAmount && !isNaN(inputAmount) && inputAmount > 0) {
-            // Update the purchase button text with calculated VL1
-            purchaseBtn.textContent = `Purchase ${convertedValue} VL1`;
+            // Update the purchase button text with calculated VL1 and logo
+            purchaseBtn.innerHTML = `
+                Purchase ${convertedValue} VL1
+                <img src="https://coin-images.coingecko.com/coins/images/24383/large/apecoin.jpg?1696523566" alt="Logo" class="logo">
+            `;
         } else {
-            // Set the default button text when input is invalid or empty
-            purchaseBtn.textContent = 'Purchase VL1';
+            // Set the default button text with the logo when input is invalid or empty
+            purchaseBtn.innerHTML = `
+                Purchase VL1
+                <img src="https://coin-images.coingecko.com/coins/images/24383/large/apecoin.jpg?1696523566" alt="Logo" class="logo">
+            `;
         }
     }
 

@@ -825,33 +825,26 @@ button:hover {
 
 
 .swp-container {
-    background-color: #1e1e1e; /* Darker container */
-    border-radius: 20px; /* Rounded corners */
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3); /* Stronger shadow effect */
-    padding: 40px; /* Padding inside container */
-    width: 90%; /* Responsive width */
-    max-width: 400px; /* Max width for larger screens */
-    text-align: center; /* Center text alignment */
-    margin-top: 30px; /* Add space above the container */
-}
-
-.swp-h1 {
-    font-size: 28px; /* Title size */
-    margin-bottom: 20px; /* Space below title */
-    color: #61dafb; /* Light blue title color */
-}
+    max-width: 500px;
+            margin: 0 auto;
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+.swp-h1{
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
 /* Styles for .swp-input-container and its inputs */
 .swp-input-container,
 .swp-output-container {
     display: flex;
-    flex-direction: column; /* Column layout for inputs and outputs */
-    margin-bottom: 30px; /* Increased space below input/output containers */
-    padding: 15px; /* Padding around the container */
-    background-color: #1c1c1c; /* Darker background for better contrast */
-    border-radius: 12px; /* Rounded corners for the container */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
-}
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
 .swp-label {
     font-size: 18px; /* Increased label font size for better readability */
@@ -867,27 +860,22 @@ button:hover {
 }
 
 .swp-input {
-    padding: 16px; /* Adjusted padding inside input field */
-    border: 2px solid #61dafb; /* Light blue border */
-    border-radius: 10px; /* Rounded corners */
-    font-size: 20px; /* Slightly smaller input text size for balance */
-    width: calc(100% - 100px); /* Adjust width to accommodate the dropdown */
-    background-color: #2a2a2a; /* Dark input background */
-    color: #ffffff; /* White text color */
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4); /* Inner shadow effect */
-    transition: border-color 0.3s, box-shadow 0.3s; /* Transition for border color and shadow on focus */
-    outline: none; /* Remove default outline on focus */
-}
+    width: 100%;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background-color: #252525;
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
 
 /* Focus styling for swp-input */
 .swp-input:focus {
-    border-color: #21a1f1; /* Brighter blue on focus */
-}
+    border-color: #00ff87;
+            outline: none;
+        }
 
-/* Hover effect for swp-input */
-.swp-input:hover {
-    border-color: #4bc3ff; /* Lighten border on hover for feedback */
-}
 
 /* CSS to remove up/down arrows from number input */
 .swp-input[type="number"]::-webkit-inner-spin-button,
@@ -902,28 +890,19 @@ button:hover {
 
 /* Styles for the swp-inputAmount */
 #swp-inputAmount {
-    padding: 16px; /* Padding inside input field */
-    border: 2px solid #61dafb; /* Light blue border */
-    border-radius: 10px; /* Rounded corners */
-    font-size: 20px; /* Font size for input text */
-    width: 100%; /* Full width to match container */
-    background-color: #2a2a2a; /* Dark input background */
-    color: #ffffff; /* White text color */
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4); /* Inner shadow effect */
-    transition: border-color 0.3s, box-shadow 0.3s; /* Transition for border color and shadow on focus */
-    outline: none; /* Remove default outline on focus */
-}
+    width: 100%;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background-color: #252525;
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
 
-/* Focus styling for swp-inputAmount */
-#swp-inputAmount:focus {
-    border-color: #21a1f1; /* Brighter blue on focus */
-    box-shadow: 0 0 5px rgba(33, 161, 241, 0.5); /* Glow effect on focus */
-}
 
-/* Hover effect for swp-inputAmount */
-#swp-inputAmount:hover {
-    border-color: #4bc3ff; /* Lighten border on hover for feedback */
-}
+
+
 
 /* Placeholder styling to match design */
 #swp-inputAmount::placeholder {
@@ -937,7 +916,7 @@ button:hover {
 
 .swp-dropdown-btn {
     padding: 15px; /* Padding inside the dropdown button */
-    border: 2px solid #61dafb; /* Light blue border */
+    border: 2px solid #333; /* Light blue border */
     border-radius: 10px; /* Rounded corners */
     background: #1e1e1e; /* Dark button background */
     color: #ffffff; /* White text */
@@ -1032,17 +1011,21 @@ button:hover {
 }
 
 .swp-swap-btn {
-    margin-top: 20px;
-    padding: 15px;
-    border: none;
-    border-radius: 10px;
-    background-color: #61dafb; /* Light blue button */
-    color: black; /* Black text color */
-    font-size: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    width: calc(100% - 10px); 
-}
+    display: inline-flex; /* Align text and logo inline */
+            align-items: center; /* Center align the text and image */
+            justify-content: center; /* Center content horizontally */
+            width: 100%;
+            padding: 12px;
+            background-color: #00ff87;
+            border-radius: 6px;
+            border: none;
+            font-size: 18px;
+            color: #121212;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            gap: 8px; /* Space between the text and the logo */
+        }
+
 
 .swp-swap-btn:hover {
     background-color: #21a1f1; /* Darker blue on hover */
@@ -1958,15 +1941,17 @@ setTimeout(() => {
         <div class="swp-container">
 
                 <!-- Connection Status -->
-            <div id="chainId">Not connected</div>
+                <div id="chainId" style="color: rgb(41, 141, 96);">Not connected</div>
 
-
-
-            <h1>Purchase Your VL1</h1>
+                <h1 style="color: rgb(104, 100, 66);">Purchase Your VL1</h1>
+                
             
 
-               <!-- Countdown Timer -->
-    <div class="swp-countdown" id="countdown"></div>
+      <!-- Countdown Timer -->
+<div class="swp-countdown" id="countdown" style="color: white;  font-size: 20px;">
+    <!-- Countdown content here -->
+  </div>
+  
 
 
             <div class="swp-ratio">1 USD = 5 VL1 Ratio</div>
@@ -2013,7 +1998,7 @@ setTimeout(() => {
        <script>
     // Countdown Timer Logic
     const countdownElement = document.getElementById('countdown');
-    const saleStartTime = new Date("2024-11-23T16:53:00Z").getTime(); // Set your sale start time here
+    const saleStartTime = new Date("2024-11-23T20:03:00Z").getTime(); // Set your sale start time here
 
    
 
@@ -2116,26 +2101,11 @@ setTimeout(() => {
 
 
 
-            <div class="swp-output-container">
-                <div class="swp-output" id="swp-outputAmount">0</div>
+<button id="swp-sendSceTokenBtn" class="swp-swap-btn">
+    Send USDT
+    <img src="https://tether.to/images/logoMarkGreen.svg" alt="USDT Logo" style="height: 35px; vertical-align: middle; margin-left: 5px;">
+</button>
 
-                <div class="swp-dropdown-btn" id="swp-dropdownBtn">
-                    <img id="swp-selectedLogo" src="https://coin-images.coingecko.com/coins/images/24383/large/apecoin.jpg?1696523566" alt="Token Logo" />
-                    <span id="swp-selectedOption">VL1</span>
-
-
-                </div>
-            </div>
-
-
-
-            
-            
-      
-            <button id="swp-sendSceTokenBtn" class="swp-swap-btn">
-                Send USDT
-                <img src="https://tether.to/images/logoMarkGreen.svg" alt="USDT Logo" style="height: 35px; vertical-align: middle; margin-left: 5px;">
-            </button>
             
 
 

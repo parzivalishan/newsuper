@@ -967,6 +967,7 @@ button:hover {
     margin-right: 10px; /* Space between logo and text */
 }
 
+
 #swp-maxButton {
     background-color: #6200ea; /* Deep purple */
     color: white; /* White text */
@@ -979,12 +980,16 @@ button:hover {
     font-size: 16px; /* Font size */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for elevation */
     transition: all 0.3s ease; /* Smooth transition */
+    display: block; /* Makes the button a block-level element */
+    margin-left: auto; /* Auto margin on the left side */
+    margin-right: auto; /* Auto margin on the right side */
 }
 
 #swp-maxButton:hover {
     background-color: #3700b3; /* Darker purple on hover */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
 }
+
 
 .swp-output-container {
     flex-direction: row; /* Row layout for output and logo */
@@ -1937,41 +1942,50 @@ setTimeout(() => {
         <div id="txStatus"></div>
 
 
-
+</div>
+<div>
         <div class="swp-container">
 
-                <!-- Connection Status -->
-                <div id="chainId" style="color: rgb(41, 141, 96);">Not connected</div>
+               <!-- Connection Status -->
+<div id="chainId" style="color: rgb(41, 141, 96); text-align: center; width: 100%;">Not connected</div>
 
-                <h1 style="color: rgb(104, 100, 66);">Purchase Your VL1</h1>
+
+<h1 style="color: rgb(104, 100, 66); text-align: center;">Purchase Your VL1</h1>
+
                 
             
 
-      <!-- Countdown Timer -->
-<div class="swp-countdown" id="countdown" style="color: white;  font-size: 20px;">
+   <!-- Countdown Timer -->
+<div class="swp-countdown" id="countdown" style="color: white; font-size: 20px; text-align: center;">
     <!-- Countdown content here -->
-  </div>
+</div>
+
   
 
 
-            <div class="swp-ratio">1 USD = 5 VL1 Ratio</div>
+       <!-- Ratio Information -->
+<div class="swp-ratio" style="text-align: center;">
+    1 USD = 5 VL1 Ratio
+</div>
+
+<div class="swp-ratio" style="text-align: center;">
+    <p>Your Max Buy Limit in USD: <span id="maxBuyLimit">0.00</span></p>
+    <p>Eth price for this IDO is set at 2000</p>
+</div>
+
 
            
-            <div class="swp-ratio">
-                <p>Your Max Buy Limit in USD : <span id="maxBuyLimit">0.00</span></p>
-                <p> Eth price for this ido is set at 2000 </p>
-            </div>
-
-            <p></p>
             
-            <div class="swp-input-container">
+<div class="swp-input-container" style="text-align: center; width: 100%;">
                 <label for="swp-inputAmount" style="display: none;"></label>
                 
-                <div class="swp-input-wrapper">
-                    <input type="text" id="swp-inputAmount" placeholder="Enter $ value "
-                           autocomplete="off" 
-                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1'); 
-                                     document.getElementById('amountToSend').value = this.value;" />
+           <div class="swp-input-wrapper">
+    <input type="text" id="swp-inputAmount" placeholder="Enter $ value" autocomplete="off" 
+           style="text-align: center; line-height: normal;" 
+           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1'); 
+                    document.getElementById('amountToSend').value = this.value;" />
+
+
 
                                      
        

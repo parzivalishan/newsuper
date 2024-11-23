@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Purchase VL1</title>
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #fff;
+            padding: 20px;
+            font-size: 16px;
+        }
+
+        /* Container */
+        .swp-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Connection Status */
+        #chainId {
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* Main Title */
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Ratio Info */
+        .swp-ratio {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .swp-ratio p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        /* Input Section */
+        .swp-input-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .swp-input-wrapper {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background-color: #252525;
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00ff87;
+            outline: none;
+        }
+
+        /* Custom Dropdown */
+        .swp-custom-dropdown {
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: 10;
+        }
+
+        .swp-dropdown-btn {
+            display: flex;
+            align-items: center;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .swp-dropdown-btn:hover {
+            background-color: #444;
+        }
+
+        .swp-dropdown-btn img {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .swp-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #333;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            display: none;
+            z-index: 20;
+        }
+
+        .swp-dropdown-item {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .swp-dropdown-item:hover {
+            background-color: #444;
+        }
+
+        .swp-dropdown-item img {
+            width: 18px;
+            margin-right: 10px;
+        }
+
+        /* Show the dropdown when clicked */
+        .swp-dropdown-menu.active {
+            display: block;
+        }
+
+        /* Button to purchase */
+        .swp-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #00ff87;
+            border-radius: 6px;
+            border: none;
+            font-size: 18px;
+            color: #121212;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .swp-btn:hover {
+            background-color: #00e77a;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="swp-container">
+    <!-- Connection Status -->
+    <div id="chainId">Not connected</div>
+
+    <!-- Title -->
+    <h1>Purchase Your VL1</h1>
+
+    <!-- Exchange Ratio Information -->
+    <div class="swp-ratio">
+        <p>1 USD = 5 VL1 Ratio</p>
+    </div>
+
+    <!-- Max Buy Limit and ETH Price -->
+    <div class="swp-ratio">
+        <p>Your Max Buy Limit in USD: <span id="maxBuyLimit">0.00</span></p>
+        <p>ETH price for this IDO is set at 2000</p>
+    </div>
+
+    <!-- Input Field for Purchase -->
+    <div class="swp-input-container">
+        <div class="swp-input-wrapper">
+            <!-- Input Field -->
+            <input type="text" 
+                   id="swp-inputAmount" 
+                   placeholder="Enter $ value" 
+                   autocomplete="off"
+                   oninput="updateButtonText();" />
+
+            <!-- Custom Dropdown -->
+            <div class="swp-custom-dropdown">
+                <!-- Selected Token -->
+                <div class="swp-dropdown-btn" id="swp-dropdownBtn">
+                    <img id="swp-selectedLogo" 
+                         src="https://tether.to/images/logoMarkGreen.svg" 
+                         alt="Token Logo" />
+                    <span id="swp-selectedOption">USDT</span>
+                </div>
+
+                <!-- Dropdown Menu -->
+                <div class="swp-dropdown-menu" id="swp-dropdownMenu">
+                    <!-- USDT Option -->
+                    <div class="swp-dropdown-item" data-value="usdt">
+                        <img src="https://tether.to/images/logoMarkGreen.svg" alt="USDT Logo" />
+                        USDT
+                    </div>
+
+                    <!-- ETH Option -->
+                    <div class="swp-dropdown-item" data-value="eth">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/e878707eac174405c16eab4f9b455cbb08952248/assets/eth-logo.svg" alt="ETH Logo" />
+                        ETH
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Button -->
+    <button class="swp-btn" id="purchaseBtn">Purchase VL1</button>
+</div>
+
+<script>
+    // Update the button text dynamically
+    function updateButtonText() {
+        const inputAmount = document.getElementById('swp-inputAmount').value;
+        const purchaseBtn = document.getElementById('purchaseBtn');
+        const convertedValue = inputAmount * 5; // 1 USD = 5 VL1
+
+        // Check if the input is a valid number and greater than 0
+        if (inputAmount && !isNaN(inputAmount) && inputAmount > 0) {
+            // Update the purchase button text with calculated VL1
+            purchaseBtn.textContent = `Purchase ${convertedValue} VL1`;
+        } else {
+            // Set the default button text when input is invalid or empty
+            purchaseBtn.textContent = 'Purchase VL1';
+        }
+    }
+
+    // Dropdown Toggle
+    document.getElementById('swp-dropdownBtn').addEventListener('click', function() {
+        document.getElementById('swp-dropdownMenu').classList.toggle('active');
+    });
+
+    // Dropdown Item Selection
+    const dropdownItems = document.querySelectorAll('.swp-dropdown-item');
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const selectedValue = item.getAttribute('data-value');
+            const selectedLogo = selectedValue === 'usdt' 
+                                 ? 'https://tether.to/images/logoMarkGreen.svg' 
+                                 : 'https://raw.githubusercontent.com/parzivalishan/newsuper/e878707eac174405c16eab4f9b455cbb08952248/assets/eth-logo.svg';
+            const selectedText = selectedValue === 'usdt' ? 'USDT' : 'ETH';
+
+            // Change the selected option text and logo
+            document.getElementById('swp-selectedOption').textContent = selectedText;
+            document.getElementById('swp-selectedLogo').src = selectedLogo;
+
+            // Close the dropdown
+            document.getElementById('swp-dropdownMenu').classList.remove('active');
+        });
+    });
+</script>
+
+</body>
+</html>

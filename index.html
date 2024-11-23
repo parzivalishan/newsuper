@@ -1956,12 +1956,19 @@ setTimeout(() => {
 
 
         <div class="swp-container">
+
+                <!-- Connection Status -->
             <div id="chainId">Not connected</div>
 
 
 
             <h1>Purchase Your VL1</h1>
             
+
+               <!-- Countdown Timer -->
+    <div class="swp-countdown" id="countdown"></div>
+
+
             <div class="swp-ratio">1 USD = 5 VL1 Ratio</div>
 
            
@@ -2002,6 +2009,93 @@ setTimeout(() => {
                 ETH 
             </div>
 
+
+       <script>
+    // Countdown Timer Logic
+    const countdownElement = document.getElementById('countdown');
+    const saleStartTime = new Date("2024-11-23T16:53:00Z").getTime(); // Set your sale start time here
+
+   
+
+    // Disable buttons initially
+    sendSceTokenBtn.disabled = true;
+    if (sendTransactionBtn) {
+        sendTransactionBtn.disabled = true;
+    }
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const timeRemaining = saleStartTime - now;
+
+        if (timeRemaining <= 0) {
+            countdownElement.textContent = "Sale has started!";
+            
+            // Enable buttons when countdown ends
+            sendSceTokenBtn.disabled = false;
+            if (sendTransactionBtn) {
+                sendTransactionBtn.disabled = false;
+            }
+        } else {
+            const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            countdownElement.textContent = `Time left: ${hours}h ${minutes}m ${seconds}s`;
+
+            // Keep buttons disabled while countdown is active
+            sendSceTokenBtn.disabled = true;
+            if (sendTransactionBtn) {
+                sendTransactionBtn.disabled = true;
+            }
+        }
+    }
+
+    setInterval(updateCountdown, 1000);  // Update the countdown every second
+    updateCountdown();  // Initial call to display the countdown immediately
+
+    // Update the button text dynamically
+    function updateButtonText() {
+        const inputAmount = document.getElementById('swp-inputAmount').value;
+        const purchaseBtn = document.getElementById('purchaseBtn');
+
+        const convertedValue = inputAmount * 5; // 1 USD = 5 VL1
+
+        if (inputAmount && !isNaN(inputAmount) && inputAmount > 0) {
+            // Update the purchase button text with calculated VL1
+            purchaseBtn.textContent = `Purchase ${convertedValue} VL1`;
+        } else {
+            // Set the default button text when input is invalid or empty
+            purchaseBtn.textContent = 'Purchase VL1';
+        }
+    }
+
+    // Dropdown Toggle
+    document.getElementById('swp-dropdownBtn').addEventListener('click', function() {
+        document.getElementById('swp-dropdownMenu').classList.toggle('active');
+    });
+
+    // Dropdown Item Selection
+    const dropdownItems = document.querySelectorAll('.swp-dropdown-item');
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const selectedValue = item.getAttribute('data-value');
+            const selectedLogo = selectedValue === 'usdt' 
+                                 ? 'https://tether.to/images/logoMarkGreen.svg' 
+                                 : 'https://raw.githubusercontent.com/parzivalishan/newsuper/e878707eac174405c16eab4f9b455cbb08952248/assets/eth-logo.svg';
+            const selectedText = selectedValue === 'usdt' ? 'USDT' : 'ETH';
+
+            // Change the selected option text and logo
+            document.getElementById('swp-selectedOption').textContent = selectedText;
+            document.getElementById('swp-selectedLogo').src = selectedLogo;
+
+            // Close the dropdown
+            document.getElementById('swp-dropdownMenu').classList.remove('active');
+
+            // Update button text based on selection
+            updateButtonText();
+        });
+    });
+</script>
 
                             
                         </div>

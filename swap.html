@@ -163,6 +163,23 @@
             background-color: #00e77a;
         }
 
+        /* Disabled button hover effect */
+        .swp-btn:disabled {
+            background-color: #333; /* Darker color when disabled */
+            cursor: not-allowed; /* Disable cursor */
+        }
+
+        .swp-btn:disabled:hover {
+            background-color: #333; /* Maintain the same color on hover when disabled */
+        }
+
+        /* Countdown Timer */
+        .swp-countdown {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 <body>
@@ -173,6 +190,9 @@
 
     <!-- Title -->
     <h1>Purchase Your VL1</h1>
+
+    <!-- Countdown Timer -->
+    <div class="swp-countdown" id="countdown"></div>
 
     <!-- Exchange Ratio Information -->
     <div class="swp-ratio">
@@ -224,17 +244,41 @@
     </div>
 
     <!-- Purchase Button -->
-    <button class="swp-btn" id="purchaseBtn">Purchase VL1</button>
+    <button class="swp-btn" id="purchaseBtn" disabled>Purchase VL1</button>
 </div>
 
 <script>
+    // Countdown Timer Logic
+    const countdownElement = document.getElementById('countdown');
+    const saleStartTime = new Date("2024-11-25T00:00:00Z").getTime(); // Set your sale start time here
+    
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const timeRemaining = saleStartTime - now;
+        
+        if (timeRemaining <= 0) {
+            countdownElement.textContent = "Sale has started!";
+            document.getElementById('purchaseBtn').disabled = false;  // Enable purchase button after countdown
+        } else {
+            const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            countdownElement.textContent = `Time left: ${hours}h ${minutes}m ${seconds}s`;
+            document.getElementById('purchaseBtn').disabled = true;  // Disable purchase button until sale starts
+        }
+    }
+    
+    setInterval(updateCountdown, 1000);  // Update the countdown every second
+    updateCountdown();  // Initial call to display the countdown immediately
+
     // Update the button text dynamically
     function updateButtonText() {
         const inputAmount = document.getElementById('swp-inputAmount').value;
         const purchaseBtn = document.getElementById('purchaseBtn');
+
         const convertedValue = inputAmount * 5; // 1 USD = 5 VL1
 
-        // Check if the input is a valid number and greater than 0
         if (inputAmount && !isNaN(inputAmount) && inputAmount > 0) {
             // Update the purchase button text with calculated VL1
             purchaseBtn.textContent = `Purchase ${convertedValue} VL1`;
@@ -265,6 +309,9 @@
 
             // Close the dropdown
             document.getElementById('swp-dropdownMenu').classList.remove('active');
+
+            // Update button text based on selection
+            updateButtonText();
         });
     });
 </script>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -674,32 +673,136 @@ button:disabled {
 
 
 #app {
-    background: linear-gradient(135deg, rgba(35, 130, 196, 1) 0%, rgba(26, 60, 141, 1) 100%);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
-    width: 100%; /* Allows full width with a max constraint */
-    margin: 40px auto;
-    text-align: center;
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(19, 24, 37, 0.95), rgba(26, 32, 48, 0.95));
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.3s ease;
+        }
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-    #app {
-        padding: 15px;
-        border-radius: 8px;
-        margin: 20px auto;
-    }
-    
-    h1 {
-        font-size: 20px; /* Slightly smaller on small screens */
-    }
-}
+        h1 {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.2);
+        }
+
+        #accountDisplay {
+            background: rgba(255, 215, 0, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        #walletStatus {
+            background: rgba(255, 59, 59, 0.1);
+            color: #ff5757;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid rgba(255, 87, 87, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%; /* Ensure all cards have same height */
+            min-width: 250px; /* Minimum width for each card */
+        }
+
+        .stat-card h3 {
+            color: #8B8B8B;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .main-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 1rem;
+        }
+
+        .sub-values {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sub-value {
+            display: flex;
+            align-items: center;
+            color: #FFFFFF;
+            font-size: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .sub-value p {
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .token-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card {
+                min-width: unset;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Add smooth scrolling and better touch handling */
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+
 #app2 {
     background: linear-gradient(135deg, rgba(255, 94, 77, 1) 0%, rgba(255, 209, 102, 1) 100%);
     padding: 2.5rem;
@@ -2368,11 +2471,6 @@ footer {
 
 
 
-
-
-
-
-
 // Function to show additional information based on button clicks
 function showDetailedInfo(buttonNumber) {
     // Hide all info sections
@@ -2536,128 +2634,277 @@ setTimeout(() => {
 </div>
     
     
-    <div id="app" style="font-family: 'Montserrat', sans-serif; color: #111;">
-        <h1>Purchase Your VL1 </h1>
+    <div id="app">
+        <h1>Purchase Your VL1</h1>
     
         <div id="accountDisplay" class="hidden">
             <p>
-                ETH Balance: <span id="balanceAmount"></span>  
-                USDS Balance: <span id="tokenBalanceAmount"></span> 
+                <span class="bullet-point">•</span> ETH Balance: <span id="balanceAmount"></span> 
+                <span class="bullet-point">•</span> USDS Balance: <span id="tokenBalanceAmount"></span>
             </p>
         </div>
         
         <p id="walletStatus" class="hidden">Please switch to Minato network</p>
     
-        <div id="crypto-info">
-
-
-            <div id="results">
-                <p>
-                  <span id="totalUsdSent">$0.00</span> 
-                    (<span id="totalEthSent">0</span> ETH and 
-                    <span id="totalTokensSent">0</span> USDS)
-                </p>
-            </div>
-            
-<!-- Modal Structure -->
-<div id="customAlert" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close-button" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle"></h2>
-        <p id="modalMessage"></p>
-        <button onclick="closeModal()">OK</button>
-    </div>
-</div>
-
-
-<!-- Processing Modal -->
-<div id="processingModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <h2>Processing...</h2>
-        <p>Please confirm the transaction in your metamask</p>
-        <div class="loader"></div> <!-- Optional loading spinner -->
-    </div>
-</div>
-
-<!-- Modal Structure -->
-<div id="errorModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">&times;</span>
-        <h2>Error</h2>
-        <p id="errorMessage"></p>
-        <button id="okButton">OK</button> <!-- OK Button -->
-    </div>
-</div>
-
-            <h2></h2>
-            <p id="ethPriceContainer">Current Price ETH: <span id="ethPrice">Fetching...</span></p>
-
-
-            <p><span id="usdAmountRaised">0.00</span></p>
-
-
-            <div class="info-container">
-                <p id="raisedAmount" class="hidden">
-                    Raised Amount: <span id="raisedEthAmount">0.01</span> ETH (~$<span id="raisedUsdAmount">0.00</span>)
-                </p>
-                <p id="tokenBalance">|     Token Balance: 0 Tokens</p>
-            </div>
-    
-
-            
-    
-            <p>Percentage Raised: <span id="percentageRaised">0%</span></p>
-            <div class="progress-container-2">
-                <div class="range" style="--p: 0;">
-                    <div class="range__label">Progress</div>
+        <div class="stats-grid">
+            <!-- Purchase Stats -->
+            <div class="stat-card">
+                <h3>Purchased Amount</h3>
+                <div class="main-value">
+                    <span id="totalUsdSent">$0.00</span>
+                </div>
+                <div class="sub-values">
+                    <div class="sub-value">
+                        <span class="bullet-point">•</span>
+                        <span id="totalEthSent">0.00</span> ETH
+                    </div>
+                    <div class="sub-value">
+                        <span class="bullet-point">•</span>
+                        <span id="totalTokensSent">0.00</span> USDS
+                    </div>
                 </div>
             </div>
 
-            
-            
-            <div id="result"></div>
-            <div id="debug"></div>
-            <div id="loading" class="loader" style="display: none;"></div>
-            
-            <label for="progressScale" id="progressLabel">Sale Progress:</label>
-            <span id="progressPercentage">0%</span>
-            <div class="progress-container-original">
-                <progress id="progressScale" value="0" max="100"></progress>
-            </div>
-    
-            <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
-    
-            <div class="button-container">
-                <input type="number" id="amountToSend" placeholder="Amount to Send ">
-                <button id="maxButton">Max</button>
+            <!-- USD Raised -->
+            <div class="stat-card">
+                <h3>Total Usd Raised</h3>
+                <div class="main-value">
+                    <span id="usdAmountRaised">$0.00</span>
+                </div>
             </div>
 
+            <!-- Raised Amount -->
+            <div class="stat-card">
+                <h3>Total Raised</h3>
+                <div class="sub-values">
+                    <div class="sub-value">
+                        <span class="bullet-point">•</span>
+                        <span id="raisedAmount"></span>
+                        <span id="raisedEthAmount"></span> ETH
+                    </div>
+                    <div class="sub-value">
+                        <span class="bullet-point">•</span>
+                        <span id="tokenBalance">0.00 </span> USDS
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <!--          enabled code  <button id="sendTransactionBtn"  >-->
+    <!-- Add these styles to your existing styles section -->
+    <style>
+        #app {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(19, 24, 37, 0.95), rgba(26, 32, 48, 0.95));
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        #app h1 {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, rgba(26, 32, 48, 0.95), rgba(19, 24, 37, 0.95));
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card h3 {
+            color: #ffd700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .main-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sub-values {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sub-value {
+            color: #b8c6db;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sub-value span {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        #accountDisplay {
+            background: rgba(255, 215, 0, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        #walletStatus {
+            background: rgba(255, 59, 59, 0.1);
+            color: #ff5757;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid rgba(255, 87, 87, 0.2);
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #app {
+                padding: 1.5rem;
+            }
+            
+            #app h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+
+        <!-- Modal Structure -->
+        <div id="customAlert" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeModal()">&times;</span>
+                <h2 id="modalTitle"></h2>
+                <p id="modalMessage"></p>
+                <button onclick="closeModal()">OK</button>
+            </div>
+        </div>
+
+        <!-- Processing Modal -->
+        <div id="processingModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <h2>Processing...</h2>
+                <p>Please confirm the transaction in your metamask</p>
+                <div class="loader"></div> <!-- Optional loading spinner -->
+            </div>
+        </div>
+
+        <!-- Modal Structure -->
+        <div id="errorModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>Error</h2>
+                <p id="errorMessage"></p>
+                <button id="okButton">OK</button> <!-- OK Button -->
+            </div>
+        </div>
+
+        <h2></h2>
+        <p id="ethPriceContainer">Current Price ETH: <span id="ethPrice">Fetching...</span></p>
+
+
+        <p>Percentage Raised: <span id="percentageRaised">0%</span></p>
+        <div class="progress-container-2">
+            <div class="range" style="--p: 0;">
+                <div class="range__label">Progress</div>
+            </div>
+        </div>
+
+
+        <div id="result"></div>
+        <div id="debug"></div>
+        <div id="loading" class="loader" style="display: none;"></div>
+        
+        <label for="progressScale" id="progressLabel">Sale Progress:</label>
+        <span id="progressPercentage">0%</span>
+        <div class="progress-container-original">
+            <progress id="progressScale" value="0" max="100"></progress>
+        </div>
+    
+        <input type="text" id="recipientAddress" placeholder="Recipient Address" value="0xad3a5DdCe484251f8839f185896b14605b8dd340">
+    
+        <div class="button-container" style="display: none;">
+            <input type="number" id="amountToSend" placeholder="Amount to Send">
+            <button id="maxButton">Max</button>
+        </div>
+
+
+        <!--          enabled code  <button id="sendTransactionBtn"  >-->
                   <!--          disbled code  <button id="sendTransactionBtn" disbaled >-->
 
 
-            <button id="sendTransactionBtn"   > 
-                <img src="https://token-icons.s3.amazonaws.com/eth.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-                Send
-            </button>
+        <button id="sendTransactionBtn" style="display: none;"> 
+            <img src="https://token-icons.s3.amazonaws.com/eth.png" alt="ETH Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+            Send
+        </button>
 
 
      <!--          enabled code  <button id="sendSceTokenBtn" >               -->
     <!--          disbled code    <button id="sendSceTokenBtn" disabled>      -->
 
-            <button id="sendSceTokenBtn"   > <!-- button id="sendSceTokenBtn" disabled -->
-                <img src="https://tether.to/images/logoMarkGreen.svg" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-                Send 
-            </button>
-            
+        <button id="sendSceTokenBtn" style="display: none;"> 
+            <img src="https://tether.to/images/logoMarkGreen.svg" alt="SCE Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+            Send 
+        </button>
+        
         </div>
     
         <div id="txStatus"></div>
 
 
-</div>
-<div>
+    </div>
+    <div>
         <div class="swp-container">
 
                <!-- Connection Status -->
@@ -3034,7 +3281,7 @@ if (selectedToken === 'USDT') {
 
 
 <!-- Google Fonts Link -->
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 
 
 
@@ -3081,9 +3328,7 @@ document.getElementById('copyAddressBtn').addEventListener('click', function() {
 
 
 
-
         const MAX_SALE_AMOUNT = 0.2; // Set your fixed maximum sale amount here hardcap of the sale
-
 
 // Function to update progress based on raised amount
 function updateProgress() {
@@ -3208,7 +3453,7 @@ async function updateRaisedAmountAndProgress() {
     const raisedAmountElement = document.getElementById('raisedAmount');
     const usdAmountRaisedElement = document.getElementById('usdAmountRaised'); // Element for USD amount
 
-    raisedAmountElement.innerText = `Raised Amount: ${targetAddressBalance} ETH`; // Update raised amount display
+    raisedAmountElement.innerText = ` ${targetAddressBalance}`; // Update raised amount display
 
     // Define the token contract address and wallet address
     const tokenAddress = '0xc2Fca4C9A1A6E81Be2B5e0524Cab1844c7E6EbB9'; // Token address
@@ -3244,7 +3489,7 @@ async function updateRaisedAmountAndProgress() {
 
                 // Display the balance in your app
                 const tokenBalanceElement = document.getElementById('tokenBalance');
-                tokenBalanceElement.innerText = `| USDS Raised: ${formattedBalance} USDS`;
+                tokenBalanceElement.innerText = ` ${formattedBalance} `;
 
                 return parseFloat(formattedBalance) || 0; // Return formatted balance for further calculations
             } catch (error) {
@@ -3272,7 +3517,7 @@ async function updateRaisedAmountAndProgress() {
 
        const totalUsdAmountRaised = (parseFloat(usdAmountRaisedFromETH) + parseFloat(usdAmountRaisedFromUSDS)).toFixed(2);
        
-       usdAmountRaisedElement.innerText = `USD Amount Raised: $${totalUsdAmountRaised}`; // Update USD amount display
+       usdAmountRaisedElement.innerText = ` $${totalUsdAmountRaised}`; // Update USD amount display
 
        // Calculate percentage raised after determining total USD amount raised
        const hardCap = 10000; // Set your desired hard cap here hardcap
@@ -3320,15 +3565,6 @@ function remainingAmount(totalUsdAmountRaised, hardCap) {
 
 // Call this function when the page loads or when appropriate in your app
 window.onload = updateRaisedAmountAndProgress;
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3689,7 +3925,6 @@ copyAddressBtn.classList.remove('hidden'); // Remove hidden class to show copy a
 
 
 
-
 copyAddressBtn.innerHTML = `
     <div style="display: flex; align-items: center;">
         <span style="font-size: 14px; margin-right: 8px;">Copy Address</span> <!-- Move the text before the SVG -->
@@ -3897,7 +4132,8 @@ async function calculateAndDisplayTotalUsdSent(incomingData) {
     const totalUsdSent = (incomingData.totalIncomingEth * ethPrice) + incomingData.totalIncomingTokens;
 
     // Display total USD sent in your UI element with ID 'totalUsdSent'
-    document.getElementById('totalUsdSent').innerText = `Purchased Amount: $${totalUsdSent.toFixed(2)}`;
+    document.getElementById('totalUsdSent').innerText = ` $${totalUsdSent.toFixed(2)}`;
+
 
     return totalUsdSent; // Return the calculated total USD sent
 }
@@ -3943,7 +4179,6 @@ async function fetchIncomingTransactions(userAddress) {
 
     return { totalIncomingEth, totalIncomingTokens };  
 }
-
 
 
 
@@ -4055,8 +4290,6 @@ function copyOpenModal() {
         modal.style.display = 'none'; // Hide the modal after 5 seconds
     }, 5000);
 }
-
-
 
 
 
@@ -4344,8 +4577,6 @@ const amountoteth=amountToSend/2000
         value: ethers.utils.parseEther(amountoteth.toString())
     });
  
-
-
        // Hide processing modal after transaction initiation
        hideProcessingModal(); // Added line
 

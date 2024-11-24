@@ -3635,8 +3635,7 @@ async function connectWallet() {
         accountDisplay.classList.remove('hidden');
         balanceAmount.innerText = "Fetching..."; // Initial loading message
         document.getElementById('connectWalletBtn').innerText = `${accounts.slice(0, 5)}...${accounts.slice(-3)}`; // Update button text
-
-
+        document.getElementById('connectWalletBtn').style.fontSize = '18px'; // Increase font size
 
          // Add explorer button functionality here
          document.getElementById('viexplorer').onclick = function() {

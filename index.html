@@ -740,36 +740,41 @@ button:hover {
 .progress-container-original {
     display: none; /* Hide these elements */
 }
-
 /* Custom styles for .chakra-tabs__tab class */
 #app2 .chakra-tabs__tab {
     background-color: transparent;         /* Transparent background for tabs */
-    color: rgb(255, 0, 0);                 /* Default text color (bright red) */
+    color: rgb(99, 234, 113);              /* Default text color (light green) */
     font-size: 16px;                       /* Font size for consistency */
     padding: 12px 24px;                    /* Padding for visual spacing */
     border: none;                          /* No border for a cleaner look */
-    border-bottom: 2px solid transparent;  /* Invisible underline for inactive tabs */
-    border-radius: 0;                      /* No rounding for a flat look */
+    border-radius: 25px;                   /* Rounded corners for each tab */
     cursor: pointer;                       /* Pointer cursor on hover */
-    transition: color 0.3s ease, border-color 0.3s ease; /* Smooth transition effect */
-    margin-right: 10px;                    /* Space between tabs */
+    transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease; /* Smooth transition effect */
+    text-align: center;                    /* Ensure the text is centered within the tab */
+    z-index: 1;                             /* Ensure it is above other elements */
 }
 
 /* Hover effect for .chakra-tabs__tab */
 #app2 .chakra-tabs__tab:hover {
-    color: rgb(226, 232, 240);             /* Subtle color change on hover */
+    color: rgb(99, 234, 113);                          /* Light green color on hover */
+    background-color: rgba(99, 234, 113, 0.2);         /* Light green background on hover with opacity */
+    border: 2px solid rgb(99, 234, 113);               /* Light green border to match hover color */
+    z-index: 2;                                        /* Make sure hover is visible above other elements */
 }
 
 /* Active state styling for the selected tab */
 #app2 .chakra-tabs__tab[aria-selected="true"] {
-    color: rgb(150, 0, 0);                 /* Darker red for active tab */
-    border-bottom: 2px solid rgb(150, 0, 0); /* Underline effect for active tab */
+    color: rgb(99, 234, 113);              /* Light green text for the active tab */
+    background-color: rgb(15, 17, 19);     /* Dark background for active tab */
+    border: 2px solid rgb(99, 234, 113);   /* Light green border for active tab */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Slightly deeper shadow for active state */
 }
 
-/* Inactive tabs */
+/* Inactive tabs (not selected) */
 #app2 .chakra-tabs__tab[aria-selected="false"] {
-    color: rgb(255, 0, 0);                 /* Bright red for inactive tabs */
-    border-bottom: 2px solid transparent;  /* No underline for inactive tabs */
+    color: rgb(177, 180, 179);             /* Light gray text color for inactive tabs */
+    background-color: transparent;         /* Transparent background for inactive tabs */
+    border: 2px solid transparent;         /* No border for inactive tabs */
 }
 
 /* General styles for #app2 container */
@@ -779,7 +784,7 @@ button:hover {
     text-align: center;
     background: linear-gradient(135deg, rgba(255, 94, 77, 1) 0%, rgba(255, 209, 102, 1) 100%);
     padding: 40px;                         /* Spacing within the container */
-    border-radius: 15px;                   /* Rounded corners */
+    border-radius: 25px;                   /* Rounded corners for the container */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
     max-width: 1950px;                     /* Max width for larger screens */
     width: calc(100% - 20px);              /* Full width minus margins */
@@ -795,11 +800,27 @@ button:hover {
 
 /* Tab list styling to ensure proper layout and spacing */
 #app2 .tab-list {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;                             /* Consistent spacing between tabs */
+    display: flex;                          /* Flexbox for horizontal alignment */
+    flex-direction: row;                    /* Align the tabs horizontally */
+    justify-content: center;                /* Center the tabs */
+    align-items: center;                    /* Vertically center items */
+    gap: 0px;                               /* Remove margin between tabs */
+    width: fit-content;                     /* Set width to fit the content of the tabs */
+    height: 48px;                           /* Height for the container */
+    background-color: rgb(15, 17, 19);      /* Dark background for the container */
+    border-radius: 25px;                    /* Rounded corners for the container */
+    box-sizing: border-box;                 /* Ensure padding and border are included in width/height */
+    padding: 0px;                           /* Remove padding inside the container */
+    margin: 0 auto;                         /* Center the tab list */
+    flex-wrap: nowrap;                      /* Prevent wrapping of tabs */
 }
+
+/* Adjust general layout of the container if necessary */
+#app2 {
+    max-width: 100%;                        /* Ensure the container takes the full width of the screen */
+    padding: 40px 20px;                     /* Add some padding around the entire container */
+}
+
 
 /* Responsive styles */
 @media (max-width: 600px) {
@@ -1485,11 +1506,12 @@ footer {
 
 
     <div role="tablist" aria-orientation="horizontal" class="tab-list">
-        <button type="button" id="project-info-tab" role="tab" tabindex="0" aria-selected="true" aria-controls="project-info-panel" class="chakra-tabs__tab" data-index="0" onclick="showInfo(1)">Project Info</button>
-        <button type="button" id="tokenomics-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="tokenomics-panel" class="chakra-tabs__tab" data-index="1" onclick="showInfo(2)">Tokenomics & Unlocks</button>
-        <button type="button" id="vesting-schedule-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="vesting-schedule-panel" class="chakra-tabs__tab" data-index="2" onclick="showInfo(3)">Vesting Schedule</button>
-        <button type="button" id="audit-listing-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="audit-listing-panel" class="chakra-tabs__tab" data-index="3" onclick="showInfo(4)">Audit & Listing Plan</button>
+        <button type="button" id="project-info-tab" role="tab" tabindex="0" aria-selected="true" aria-controls="project-info-panel" class="chakra-tabs__tab menu-item" data-index="0" onclick="showInfo(1)">Project Info</button>
+        <button type="button" id="tokenomics-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="tokenomics-panel" class="chakra-tabs__tab menu-item" data-index="1" onclick="showInfo(2)">Tokenomics & Unlocks</button>
+        <button type="button" id="vesting-schedule-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="vesting-schedule-panel" class="chakra-tabs__tab menu-item" data-index="2" onclick="showInfo(3)">Vesting Schedule</button>
+        <button type="button" id="audit-listing-tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="audit-listing-panel" class="chakra-tabs__tab menu-item" data-index="3" onclick="showInfo(4)">Audit & Listing Plan</button>
     </div>
+    
 
 
     
@@ -1601,16 +1623,211 @@ footer {
           
     </div>
 
-    <!-- Content for Button 2 (Empty) -->
-    <div id="info2" style="display: none;">
-        <h2>Still fixing this shit</h2>
+ <!-- Content for Button 2 (Empty) -->
+<div id="info2" style="display: none;">
+    <h2>Still fixing this shit</h2>
 
-        <!-- Smaller Pie Chart Canvas -->
-        <div id="pieChartContainer" style="margin-top: 20px; display: block;">
-            <canvas id="myPieChart" width="2" height="2" style="max-width: 100%;"></canvas>
-            <div id="legendContainer" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div> <!-- Legend Container -->
-        </div>
+    <!-- Table to display token metrics -->
+    <h3>Token Metrics</h3>
+    <table id="tokenMetricsTable" style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th class="css-1jfxsz5">Allocation</th>
+                <th class="css-1jfxsz5">Allocation %</th>
+                <th class="css-1jfxsz5">Amount</th>
+                <th class="css-1jfxsz5">Price</th>
+                <th class="css-1jfxsz5">Raise</th>
+                <th class="css-1jfxsz5">TGE</th>
+                <th class="css-1jfxsz5">Vesting</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-row">
+                <td>Pre-Seed</td>
+                <td>13.35%</td>
+                <td>133.5M</td>
+                <td>$0.01</td>
+                <td>$1.33M</td>
+                <td>0</td>
+                <td>12 Month Cliff, 12 Months Vested thereafter</td>
+            </tr>
+            <tr class="table-row">
+                <td>Seed</td>
+                <td>6.9825%</td>
+                <td>69.82M</td>
+                <td>$0.02</td>
+                <td>$1.39M</td>
+                <td>0</td>
+                <td>12 Month Cliff, 12 Months Vested thereafter</td>
+            </tr>
+            <tr class="table-row">
+                <td>Private</td>
+                <td>2.2%</td>
+                <td>22M</td>
+                <td>$0.025</td>
+                <td>$550k</td>
+                <td>5</td>
+                <td>12 Month Cliff, 12 Months Vested thereafter</td>
+            </tr>
+            <tr class="table-row">
+                <td>Private 2</td>
+                <td>0.44%</td>
+                <td>4.4M</td>
+                <td>$0.05</td>
+                <td>$220k</td>
+                <td>10</td>
+                <td>12 Month Cliff, 12 Months Vested thereafter</td>
+            </tr>
+            <tr class="table-row">
+                <td>Strategic</td>
+                <td>2.7778%</td>
+                <td>27.77M</td>
+                <td>$0.018</td>
+                <td>$500k</td>
+                <td>20</td>
+                <td>1 Month Cliff, 6 Months Thereafter</td>
+            </tr>
+            <tr class="table-row">
+                <td>Launchpad Sale</td>
+                <td>2.7778%</td>
+                <td>27.77M</td>
+                <td>$0.018</td>
+                <td>$500k</td>
+                <td>20</td>
+                <td>1 Month Cliff, 6 Months Thereafter</td>
+            </tr>
+            <tr class="table-row">
+                <td>Treasury</td>
+                <td>19.1469%</td>
+                <td>191.46M</td>
+                <td>$0</td>
+                <td>$0</td>
+                <td>25</td>
+                <td>0 Month Cliff, 36 Months Vested Thereafter</td>
+            </tr>
+            <tr class="table-row">
+                <td>Liquidity</td>
+                <td>15%</td>
+                <td>150M</td>
+                <td>$0</td>
+                <td>$0</td>
+                <td>100</td>
+                <td>Fully Unlock at TGE</td>
+            </tr>
+            <tr class="table-row">
+                <td>Team</td>
+                <td>15%</td>
+                <td>150M</td>
+                <td>$0</td>
+                <td>$0</td>
+                <td>0</td>
+                <td>12 Month Cliff, 36 Months Vested Thereafter</td>
+            </tr>
+            <tr class="table-row">
+                <td>Ecosystem & Creator Fund</td>
+                <td>20%</td>
+                <td>200M</td>
+                <td>$0</td>
+                <td>$0</td>
+                <td>0</td>
+                <td>3 Month Cliff, 36 Months Vested Thereafter</td>
+            </tr>
+            <tr class="table-row">
+                <td>Advisors & Ecosystem Partners</td>
+                <td>2.325%</td>
+                <td>23.25M</td>
+                <td>$0</td>
+                <td>$0</td>
+                <td>12.5</td>
+                <td>1 Month Cliff, 23 Months Vested Thereafter</td>
+            </tr>
+            <tr class="table-row total-row">
+                <td>Total</td>
+                <td>100%</td>
+                <td>1B</td>
+                <td>-</td>
+                <td>$4.50M</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Smaller Pie Chart Canvas -->
+    <div id="pieChartContainer" style="margin-top: 20px; display: block;">
+        <canvas id="myPieChart" width="2" height="2" style="max-width: 100%;"></canvas>
+        <div id="legendContainer" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div> <!-- Legend Container -->
     </div>
+</div>
+
+
+<!-- CSS Styling for the Table -->
+<style>
+    /* Table Styling */
+    #tokenMetricsTable {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 12px; /* Rounded corners for the table */
+        overflow: hidden; /* Ensures that the border-radius is applied to the corners */
+    }
+
+    /* Header Cell Styling */
+    .css-1jfxsz5 {
+        background-color: rgb(0, 0, 0);
+        color: rgb(255, 255, 255);
+        text-align: center;  /* Center the header content */
+        vertical-align: middle;  /* Vertically align the content in the header */
+        font-family: 'Inter', sans-serif;
+        font-size: 15px;
+        padding: 12px 8px;
+        border: 1px solid rgb(29, 31, 33);
+    }
+
+    /* Table Data Styling */
+    #tokenMetricsTable td {
+        display: table-cell;
+        vertical-align: middle;  /* Vertically align the content in the cells */
+        text-align: center;  /* Center the content horizontally */
+        height: 56px;
+        border-bottom: 1px solid rgb(29, 31, 33);
+        color: rgb(177, 180, 179);
+        font-family: 'Inter', sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        flex-shrink: 1;
+        white-space: nowrap;
+        padding: 0px 10px;
+        max-height: 56px;
+        line-height: 15px;
+    }
+
+    /* Make all rows the same color */
+    .table-row {
+        background-color: #212224; /* Dark background for all rows */
+    }
+
+    /* Row Highlight for Total */
+    .total-row {
+        background-color: #245485; /* Green color for total row */
+        color: white;
+        font-weight: bold;
+    }
+
+    /* Hover effect */
+    .table-row:hover {
+        background-color: #333; /* Darker hover effect */
+    }
+
+    /* Optional: Adjust the legend container */
+    #legendContainer {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+</style>
+
+
 
     <!-- Content for Button 3 (Empty) -->
     <div id="info3" style="display: none;">

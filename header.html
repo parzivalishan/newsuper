@@ -36,6 +36,196 @@
       gap: 10px;
     }
 
+  /* Mini page styles */
+  .mini-page {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      min-width: 300px;
+      margin-top: 10px;
+      z-index: 1000;
+      padding: 16px;
+      display: none;
+    }
+
+    .wallet-mini-page {
+      right: 0;
+    }
+
+    .network-mini-page {
+      right: 80px; /* Adjust based on your layout */
+    }
+
+    .mini-page-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Network button styles */
+    .network-button {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background-color: #2a2a2a;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+
+    .network-button:hover {
+      background-color: #333333;
+    }
+
+    .network-button img {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+    }
+
+    /* Wallet mini page styles */
+    .wallet-balance {
+      background-color: #2a2a2a;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .balance-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .balance-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .balance-item img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .wallet-action-button {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background-color: #2a2a2a;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .wallet-action-button:hover {
+      background-color: #333333;
+    }
+
+    .wallet-action-button svg {
+      margin-right: 8px;
+    }
+
+    .disconnect-button {
+      background-color: #ff4d4d;
+    }
+
+    .disconnect-button:hover {
+      background-color: #ff3333;
+    }
+
+    .mini-page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .mini-page-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .close-button:hover {
+      opacity: 0.8;
+    }
+
+    /* Copy address modal */
+    .copy-modal {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      display: none;
+      animation: fadeInOut 2s ease;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(20px); }
+      20% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(20px); }
+    }
+
+    /* Header buttons */
+    .home-button, .product-button {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      background-color: transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      margin-right: 20px;
+    }
+
+    .network-button, .connect-button {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      background-color: transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .right-buttons-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+
+
+
     .home-button, .product-button {
       display: flex;
       align-items: center;
@@ -184,14 +374,14 @@
     </div>
 
     <div class="right-buttons-container">
-      <a href="#" class="network-button">
+      <button class="network-button" id="networkBtn">
         Network
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-icon">
           <path d="m6 9 l6 6 l6-6"></path>
         </svg>
-      </a>
+      </button>
 
-      <a href="#" class="connect-button">
+      <button class="connect-button" id="connectWalletBtn">
         Connect
         <svg class="wallet-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 969.486 969.486">
           <g>
@@ -199,9 +389,124 @@
             <polygon points="614.146,564.57 614.146,576.676 614.146,631.152 680.73,631.152 680.73,564.57 658.498,564.57"/>
           </g>
         </svg>
-      </a>
+      </button>
+
+      <!-- Network Mini Page -->
+      <div class="mini-page network-mini-page" id="networkMiniPage">
+        <div class="mini-page-header">
+          <h3 class="mini-page-title">Select Network</h3>
+          <button class="close-button" id="closeNetworkMini">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="mini-page-content">
+          <button class="network-button">
+            <img src="https://soneium-minato.blockscout.com/assets/configs/network_logo_dark.svg" alt="Minato Logo" />
+            Minato
+          </button>
+          <button class="network-button">
+            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none'><path fill='%2325292E' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23a)' fill-opacity='.3' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23b)' d='M8.19 14.77 L14 18.21l5.8-3.44-5.8 8.19-5.81-8.19Z'/><path fill='%23fff' d='m14 16.93-5.81-3.44L14 4.34l5.81 9.15L14 16.93Z'/><defs><linearGradient id='a' x1='0' x2='14' y1='0' y2='28' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='0'/></linearGradient><linearGradient id='b' x1='14' x2='14' y1='14.77' y2='22.96' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='.9'/></linearGradient></defs></svg>" alt="Sepolia Logo" />
+            Sepolia
+          </button>
+        </div>
+      </div>
+
+      <!-- Wallet Mini Page -->
+      <div class="mini-page wallet-mini-page" id="walletMiniPage">
+        <div class="mini-page-header">
+          <h3 class="mini-page-title">Wallet</h3>
+          <button class="close-button" id="closeWalletMini">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="mini-page-content">
+          <div class="wallet-balance">
+            <p class="mini-page-title" style="margin-bottom: 12px;">Your Balance</p>
+            <div class="balance-item">
+              <img src="https://token-icons.s3.amazonaws.com/eth.png" alt="ETH Logo" />
+              <span id="balanceAmount">0.00</span>
+            </div>
+            <div class="balance-item">
+              <img src="https://tether.to/images/logoMarkGreen.svg" alt="USDT Logo" />
+              <span id="tokenBalanceAmount">0.00</span>
+            </div>
+          </div>
+
+          <button class="wallet-action-button" onclick="copyAddress()">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027Z" fill="currentColor"/>
+            </svg>
+            Copy Address
+          </button>
+
+          <button class="wallet-action-button" onclick="viewInExplorer()">
+            View in Explorer ↗
+          </button>
+
+          <button class="wallet-action-button disconnect-button" onclick="disconnectWallet()">
+            Disconnect Wallet
+          </button>
+        </div>
+      </div>
+
+      <!-- Copy address modal -->
+      <div class="copy-modal" id="copyAddressModal">
+        Wallet address copied to clipboard!
+      </div>
     </div>
   </div>
-  
+
+  <script>
+    // Network mini page
+    const networkBtn = document.getElementById('networkBtn');
+    const networkMiniPage = document.getElementById('networkMiniPage');
+    const closeNetworkMini = document.getElementById('closeNetworkMini');
+
+    networkBtn.addEventListener('click', () => {
+      networkMiniPage.style.display = networkMiniPage.style.display === 'none' ? 'block' : 'none';
+      walletMiniPage.style.display = 'none'; // Close wallet mini page if open
+    });
+
+    closeNetworkMini.addEventListener('click', () => {
+      networkMiniPage.style.display = 'none';
+    });
+
+    // Wallet mini page
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const walletMiniPage = document.getElementById('walletMiniPage');
+    const closeWalletMini = document.getElementById('closeWalletMini');
+
+    connectWalletBtn.addEventListener('click', () => {
+      walletMiniPage.style.display = walletMiniPage.style.display === 'none' ? 'block' : 'none';
+      networkMiniPage.style.display = 'none'; // Close network mini page if open
+    });
+
+    closeWalletMini.addEventListener('click', () => {
+      walletMiniPage.style.display = 'none';
+    });
+
+    // Copy address function
+    function copyAddress() {
+      const modal = document.getElementById('copyAddressModal');
+      modal.style.display = 'block';
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 2000);
+    }
+
+    // Close mini pages when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.network-button') && !e.target.closest('.network-mini-page')) {
+        networkMiniPage.style.display = 'none';
+      }
+      if (!e.target.closest('.connect-button') && !e.target.closest('.wallet-mini-page')) {
+        walletMiniPage.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>

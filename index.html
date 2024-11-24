@@ -29,20 +29,21 @@ body {
     position: relative;
 }
 
-/* Infinite grid background */
+/* Infinite grid background with larger squares */
 body::before {
     content: '';
     position: absolute;
     top: 60px; /* Adjust to the height of your header */
     left: 0;
     width: 100%;
-    height: calc(100% - 260px); /* Subtract the combined height of the header (60px) and footer (100px) */
-    background-image:
-        repeating-linear-gradient(transparent, transparent 9px, rgba(255, 255, 255, 0.1) 10px),
-        repeating-linear-gradient(90deg, transparent, transparent 9px, rgba(255, 255, 255, 0.1) 10px);
-    background-size: 100px 100px;
+    height: calc(100% - 260px); /* Subtract the combined height of the header (60px) and footer (200px) */
+    background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"><line x1="0" y1="20" x2="20" y2="20"/><line x1="20" y1="0" x2="20" y2="20"/></svg>');
+    background-size: 20px 20px; /* Size of each square (20x20 pixels) */
     z-index: -1; /* Ensure the grid stays in the background */
-    pointer-events: none;
+    pointer-events: none; /* Prevent interaction with the grid */
+    background-repeat: repeat; /* Ensure seamless tiling */
+    image-rendering: crisp-edges; /* Force sharp rendering */
+    image-rendering: pixelated; /* Prevent smoothing on scaled screens */
 }
 
 

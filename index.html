@@ -47,18 +47,331 @@ body::before {
 }
 
 
-/* Header styling (Solid black background for header) */
-#header {
-    width: 100%; /* Full width */
-    display: flex; /* Flex layout for buttons */
-    justify-content: flex-end; /* Align buttons to the right */
-    padding: 10px; /* Padding for buttons */
-    position: relative; /* Use relative positioning */
-    top: 0; /* Align to the top */
-    background-color: #000; /* Solid black background for the header */
-    z-index: 1; /* Ensure the header stays above the grid */
-}
+.header-wrapper {
+      background-color: #0a0a0a;
+      color: white;
+      width: 100%;
+      padding: 15px 20px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
+    .header-buttons-container {
+      display: flex;
+      align-items: center;
+      position: relative; /* Added for dropdown positioning */
+    }
+
+    .right-buttons-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+  /* Mini page styles */
+  .mini-page {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      min-width: 300px;
+      margin-top: 10px;
+      z-index: 1000;
+      padding: 16px;
+      display: none;
+    }
+
+    .wallet-mini-page {
+      right: 0;
+    }
+
+    .network-mini-page {
+      right: 80px; /* Adjust based on your layout */
+    }
+
+    .mini-page-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Network button styles */
+    .network-button {
+      display: flex;
+      align-items: center;
+      padding: 25px;
+      background-color: #2a2a2a;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+
+    .network-button:hover {
+      background-color: #333333;
+    }
+
+    .network-button img {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+    }
+
+    /* Wallet mini page styles */
+    .wallet-balance {
+        background-color: #2a2a2a;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .balance-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .balance-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .balance-item img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .wallet-action-button {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background-color: #2a2a2a;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .wallet-action-button:hover {
+      background-color: #333333;
+    }
+
+    .wallet-action-button svg {
+      margin-right: 8px;
+    }
+
+    .disconnect-button {
+      background-color: #ff4d4d;
+    }
+
+    .disconnect-button:hover {
+      background-color: #ff3333;
+    }
+
+    .mini-page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .mini-page-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .close-button:hover {
+      opacity: 0.8;
+    }
+
+    /* Copy address modal */
+    .copy-modal {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      display: none;
+      animation: fadeInOut 2s ease;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(20px); }
+      20% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(20px); }
+    }
+
+    /* Header buttons */
+    .home-button, .product-button {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      background-color: transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      margin-right: 20px;
+    }
+
+    .network-button, .connect-button {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      background-color: transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .right-buttons-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+
+
+
+    .home-button, .product-button {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      background-color: transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      margin-right: 20px;
+      cursor: pointer; /* Added for better UX */
+    }
+
+    .network-button, .connect-button {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      background-color: transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+
+    /* New dropdown styles */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #1a1a1a;
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      margin-top: 5px;
+      z-index: 1000;
+    }
+
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      color: white;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: all 0.2s ease;
+      font-size: 16px;
+    }
+
+    .dropdown-content a:hover {
+      background-color: rgba(176, 176, 176, 0.1);
+    }
+
+    .dropdown-content a:first-child {
+      border-radius: 8px 8px 0 0;
+    }
+
+    .dropdown-content a:last-child {
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* Existing hover styles */
+    .home-button.selected {
+      color: #1db954;
+    }
+
+    .home-button:hover, .product-button:hover, .network-button:hover, .connect-button:hover {
+      background-color: rgba(176, 176, 176, 0.2);
+      color: #b0b0b0;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Icon styles */
+    .home-button svg, .product-button svg, .network-button svg {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
+
+    .wallet-icon {
+      fill: white;
+      width: 24px;
+      height: 24px;
+      margin-left: 8px;
+    }
+
+    .chevron-icon {
+      margin-left: 8px;
+      width: 16px;
+      height: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .home-button, .product-button, .network-button, .connect-button {
+        font-size: 16px;
+        padding: 10px;
+      }
+      
+      .header-buttons-container a:last-child {
+        margin-right: 0;
+      }
+    }
 
 
 
@@ -207,13 +520,12 @@ body::before {
 }
 
 .walletmini .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
     background: none;
-    border: none;
-    cursor: pointer;
-}
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 4px;
+    }
 
 .walletmini p {
     margin: 0;
@@ -1117,18 +1429,23 @@ button:hover {
 
 
 .mini-page {
-    position: fixed; /* Make it fixed to overlay */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #1E1E2F; /* Dark grey background similar to ChatGPT */
-    border-radius: 8px;
-    padding: 10px; /* Add padding around the mini page */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000; /* Ensure it appears above other elements */
-    max-height: 10000px; /* Set a maximum height */
-    overflow: hidden; /* Prevent overflow from the mini page */
-}
+    display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .close-button:hover {
+      opacity: 0.8;
+    }
 
 .mini-page-content {
     display: flex;
@@ -1140,20 +1457,20 @@ button:hover {
 
 .network-button {
     display: flex;
-    align-items: center;
-    justify-content: flex-start; /* Align content to the left */
-    height: 60px; /* Set fixed height for buttons */
-    padding: 0 20px; /* Horizontal padding */
-    border: none; /* Remove default button border */
-    background-color: transparent; /* Make button background transparent */
-    color: #fff; /* Set text color */
-    cursor: pointer; /* Change cursor to pointer on hover */
-    transition: background-color 0.3s; /* Smooth background transition */
-}
+      align-items: center;
+      padding: 12px;
+      background-color: #2a2a2a;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
 
 .network-button:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Change background color on hover */
-}
+      background-color: #333333;
+    }
 
 .logo {
     width: 30px; /* Set a fixed width for logos */
@@ -1162,6 +1479,11 @@ button:hover {
 }
 
 
+.network-button img {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+    }
     
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
@@ -1418,10 +1740,59 @@ footer {
 <body>
     
     <div id="header">
+        <div class="header-wrapper">
+            <div class="header-buttons-container">
+              <a href="#" class="home-button selected">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house size-4">
+                  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
+                  <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                </svg>
+                Home
+              </a>
+              <div class="dropdown">
+                <a href="#" class="product-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-collapse size-4">
+                    <path d="m3 10 l2.5-2.5L3 5"></path>
+                    <path d="m3 19 l2.5-2.5L3 14"></path>
+                    <path d="M10 6h11"></path>
+                    <path d="M10 12h11"></path>
+                    <path d="M10 18h11"></path>
+                  </svg>
+                  Product
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down relative top-px ml-1 size-3 transition duration-200 group-data-[state=open]:rotate-180" aria-hidden="true">
+                    <path d="m6 9 l6 6 l6-6"></path>
+                  </svg>
+                </a>
+                <div class="dropdown-content">
+                  <a href="index.html">Launchpad</a>
+                  <a href="predictionmarket.html">Prediction Market</a>
+                  <a href="disperse.html">MultiSender</a>
+                </div>
+              </div>
+ </div>
+
+    <div class="right-buttons-container">
 
 
+        <button id="networkBtn" class="network-button" style="font-size: 18px; padding: 10px;">
+            Network
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24" height="24"  <!-- Increased size -->
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="chevron-icon"
+              style="margin-left: 8px;" <!-- Adjusted spacing -->
+            >
+              <path d="M6 9 L12 15 L18 9"></path>
+            </svg>
+          </button>
+          
 
-        <button id="networkBtn">Network</button> <!-- Network button -->
 
         <div id="miniPage" class="mini-page" style="display: none;">
             <div class="mini-page-content">
@@ -1440,12 +1811,32 @@ footer {
         </div>
         
         <div class="wallet-dropdown">
-            <button id="connectWalletBtn" class="connectwalletbtn">Connect Wallet</button>
-            <div class="walletmini" id="walletMini">
-                <!-- Close button as SVG only -->
-                <svg class="close-btn" id="closeWalletMini" width="20" height="20" viewBox="0 0 20 20" style="cursor: pointer;">
-                    <path d="M2.13388 0.366117C1.64573 -0.122039 0.854272 -0.122039 0.366117 0.366117C-0.122039 0.854272 -0.122039 1.64573 0.366117 2.13388L3.98223 5.75L0.366117 9.36612C-0.122039 9.85427 -0.122039 10.6457 0.366117 11.1339C0.854272 11.622 1.64573 11.622 2.13388 11.1339L5.75 7.51777L9.36612 11.1339C9.85427 11.622 10.6457 11.622 11.1339 11.1339C11.622 10.6457 11.622 9.85427 11.1339 9.36612L7.51777 5.75L11.1339 2.13388C11.622 1.64573 11.622 0.854272 11.1339 0.366117C10.6457 -0.122039 9.85427 -0.122039 9.36612 0.366117L5.75 3.98223L2.13388 0.366117Z" fill="currentColor"></path>
+
+
+            <button id="connectWalletBtn" class="connectwalletbtn" style="font-size: 12px; padding: 8px;">
+                Connect
+                <svg
+                  class="wallet-icon"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 969.486 969.486"
+                  style="width: 16px; height: 16px; margin-left: 5px;"
+                >
+                  <g>
+                    <path
+                      d="M806.582,235.309L766.137,87.125l-137.434,37.51L571.451,9.072L114.798,235.309H0v725.105h907.137V764.973h62.35v-337.53 h-62.352V235.309H806.582z M718.441,170.63l17.654,64.68h-52.561h-75.887h-126.19l111.159-30.339l66.848-18.245L718.441,170.63z M839.135,892.414H68V522.062v-129.13v-10.233v-69.787v-9.602h35.181h27.538h101.592h409.025h75.889h37.43h35.242h35.244h13.994 v51.272v72.86h-15.357h-35.244h-87.85H547.508h-55.217v27.356v75.888v8.758v35.244v35.244v155.039h346.846v127.441H839.135z M901.486,696.973h-28.352h-34H560.291V591.375v-35.244v-35.244v-23.889v-1.555h3.139h90.086h129.129h56.492h34h4.445h23.904 V696.973z M540.707,100.191l21.15,42.688l-238.955,65.218L540.707,100.191z"
+                    />
+                    <polygon points="614.146,564.57 614.146,576.676 614.146,631.152 680.73,631.152 680.73,564.57 658.498,564.57" />
+                  </g>
                 </svg>
+              </button>
+              
+              
+              <div id="walletMini" class="mini-page" style="display: none;">
+                <div class="mini-page-content">
+              
+                
+            
         
                 <p>Your Balance</p>
                 <div id="accountDisplay" style="margin-top: 1px;">
@@ -1465,27 +1856,132 @@ footer {
 
                 
         
-<!-- Copy Address as a clickable div -->
-<div id="copyAddressBtn" style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #424242; border-radius: 5px; cursor: pointer;" onclick="copyAddress()">
-    <span style="margin-right: 8px;">Copy Address</span> <!-- Add margin to separate text from SVG -->
+  <!-- Action Buttons -->
+  <button id="copyAddressBtn" class="wallet-action-button">
+    Copy Address
     <svg width="20" height="20" viewBox="0 0 20 20">
-        <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027ZM3.23376 10.5391C2.68689 10.5391 2.39294 10.2656 2.39294 9.68457V3.06055C2.39294 2.47949 2.68689 2.21289 3.23376 2.21289H9.8783C10.4252 2.21289 10.7191 2.47949 10.7191 3.06055V3.84668H6.59705C5.03845 3.84668 4.18396 4.69434 4.18396 6.24609V10.5391H3.23376ZM6.78845 13.9365C6.24158 13.9365 5.94763 13.6699 5.94763 13.0889V6.45801C5.94763 5.87695 6.24158 5.61035 6.78845 5.61035H13.433C13.9799 5.61035 14.2738 5.87695 14.2738 6.45801V13.0889C14.2738 13.6699 13.9799 13.9365 13.433 13.9365H6.78845Z" fill="currentColor"></path>
+      <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027Z" fill="currentColor"/>
     </svg>
-</div>
+  </button>
 
 
 <!-- Copy address modal -->
 <div id="copyaddressmodal" style="display:none;">Wallet address copied to clipboard!</div>
 
-<!-- View in Explorer as a clickable div -->
-<div id="viexplorer"style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #424242; border-radius: 5px; cursor: pointer;" onclick="viewInExplorer()">View in Explorer ↗</div>
+<button id="viexplorer" class="wallet-action-button">
+    View in Explorer
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M7 17L17 7M17 7H7M17 7V17"/>
+    </svg>
+  </button>
 
 
 
 <!-- Disconnect Wallet Button -->
-<div id="disconnectWalletBtn" style="font-size: 20px; display: flex; align-items: center; padding: 10px; background-color: #ff4d4d; border-radius: 5px; cursor: pointer;" onclick="disconnectWallet()">
+<button id="disconnectWalletBtn" class="wallet-action-button disconnect">
     Disconnect Wallet
-</div>
+  </button>
+
+
+
+
+<style>
+    .network-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid #424242;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .network-button:hover {
+      background: #424242;
+    }
+    
+    .mini-page {
+      position: absolute;
+      background: #1a1a1a;
+      border: 1px solid #424242;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 8px;
+      min-width: 280px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .mini-page-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .balance-section {
+      padding: 12px;
+      background: #2a2a2a;
+      border-radius: 8px;
+    }
+    
+    .section-title {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    
+    .balance-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    
+    .token-icon {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .wallet-action-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 12px;
+      background: #424242;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.2s;
+    }
+    
+    .wallet-action-button:hover {
+      background: #525252;
+    }
+    
+    .wallet-action-button.disconnect {
+      background: #ff4d4d;
+    }
+    
+    .wallet-action-button.disconnect:hover {
+      background: #ff3333;
+    }
+    
+    #copyaddressmodal {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #424242;
+      padding: 12px 24px;
+      border-radius: 8px;
+      z-index: 1000;
+    }
+    </style>
 
             </div>
         </div>
@@ -2551,10 +3047,6 @@ document.getElementById('connectWalletBtn').addEventListener('click', function(e
     walletMini.style.display = (walletMini.style.display === 'none' || walletMini.style.display === '') ? 'block' : 'none';
 });
 
-// Close the wallet mini page when the close button is clicked
-document.getElementById('closeWalletMini').addEventListener('click', function() {
-    document.getElementById('walletMini').style.display = 'none';
-});
 
 // Close the wallet mini page when clicking outside of it
 window.addEventListener('click', function(event) {

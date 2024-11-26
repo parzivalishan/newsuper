@@ -563,15 +563,32 @@ body::before {
 
 /* Copy Address Button */
 #copyAddressBtn {
-    border: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
     font-size: 0.9rem;
+    font-weight: 500;
     margin: 0;
-    padding: 8px 16px;
+    padding: 10px 16px;
     text-align: left;
-    color: #000;
-    background-color: #3399ff; /* Solid color background */
-    border-radius: 8px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #4A90E2 0%, #63B3ED 100%);
+    border-radius: 12px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#copyAddressBtn:hover {
+    background: linear-gradient(135deg, #3A7BD5 0%, #4A90E2 100%);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+#copyAddressBtn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Wallet Modal Styles */
@@ -768,13 +785,13 @@ button:disabled {
         }
 
         #accountDisplay {
-            background: rgba(255, 215, 0, 0.05);
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-        }
+    background: rgba(33, 150, 243, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    border: 1px solid rgba(33, 150, 243, 0.1);
+}
 
         #walletStatus {
             background: rgba(255, 59, 59, 0.1);
@@ -2417,9 +2434,27 @@ footer {
   <!-- Action Buttons -->
   <button id="copyAddressBtn" class="wallet-action-button">
     Copy Address
-    <svg width="20" height="20" viewBox="0 0 20 20">
-      <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027Z" fill="currentColor"/>
-    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <g filter="url(#filter0_d_enhanced_copy)">
+          <path d="M8.08472 24.6055H9.36792V26.6016C9.36792 29.7051 10.8769 31.4004 13.1941 31.4004H27.2488C29.566 31.4004 31.075 29.7051 31.075 26.6016V12.4922C31.075 9.38867 29.566 7.69336 27.2488 7.69336H24.9656V5.6836C24.9656 2.59375 23.4567 0.884766 20.1394 0.884766H8.08472C5.76756 0.884766 4.25854 2.58008 4.25854 5.6836V19.8066C4.25854 22.9102 5.76756 24.6055 8.08472 24.6055Z" fill="url(#paint0_linear_enhanced_copy)"/>
+        </g>
+        <defs>
+          <filter id="filter0_d_enhanced_copy" x="0.25854" y="0.884766" width="34.8164" height="34.5156" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feOffset dy="4"/>
+            <feGaussianBlur stdDeviation="2"/>
+            <feComposite in2="hardAlpha" operator="out"/>
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_enhanced_copy"/>
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_enhanced_copy" result="shape"/>
+          </filter>
+          <linearGradient id="paint0_linear_enhanced_copy" x1="17.6668" y1="0.884766" x2="17.6668" y2="31.4004" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#4A90E2"/>
+            <stop offset="1" stop-color="#63B3ED"/>
+          </linearGradient>
+        </defs>
+      </svg>
   </button>
 
 
@@ -3324,13 +3359,13 @@ setTimeout(() => {
         }
 
         #accountDisplay {
-            background: rgba(255, 215, 0, 0.05);
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-        }
+    background: rgba(0, 150, 136, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    border: 1px solid rgba(0, 150, 136, 0.1);
+}
 
         #walletStatus {
             background: rgba(255, 59, 59, 0.1);

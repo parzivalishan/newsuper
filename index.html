@@ -125,6 +125,7 @@ body::before {
 
     .wallet-mini-page {
       right: 0;
+      z-index:10000;
     }
 
     .network-mini-page {
@@ -1246,13 +1247,16 @@ button:hover {
     z-index: 2;                                        /* Make sure hover is visible above other elements */
 }
 
-/* Active state styling for the selected tab */
-#app2 .chakra-tabs__tab[aria-selected="true"] {
-    color: rgb(99, 234, 113);              /* Light green text for the active tab */
-    background-color: rgb(15, 17, 19);     /* Dark background for active tab */
-    border: 2px solid rgb(99, 234, 113);   /* Light green border for active tab */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Slightly deeper shadow for active state */
+/* Specific selector to ensure network dropdown takes precedence */
+#app2 .chakra-tabs__tab[aria-selected="true"],
+.network-dropdown .chakra-tabs__tab[aria-selected="true"] {
+    color: rgb(99, 234, 113);
+    border: 2px solid rgb(99, 234, 113);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000; /* Ensure it's above other elements but below dropdown */
 }
+
+
 
 /* Inactive tabs (not selected) */
 #app2 .chakra-tabs__tab[aria-selected="false"] {
@@ -2001,23 +2005,23 @@ footer {
     justify-content: center; /* Horizontally centers items */
 }
 
-        .network-dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 8px;
-            z-index: 1000;
-            min-width: 180px;
-        }
+.network-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 8px;
+    z-index: 1001; /* Increased z-index to ensure it's above other elements */
+    min-width: 180px;
+    pointer-events: auto;
+}
 
-        .network-dropdown.show {
-            display: block;
-        }
-
+.network-dropdown.show {
+    display: block;
+}
         .network-option {
             display: flex;
             align-items: center;

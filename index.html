@@ -4726,15 +4726,7 @@ document.getElementById('connectWalletBtn').addEventListener('click', connectWal
 
 // Automatically switch to the connected network
 async function autoSwitchNetwork() {
-    if (provider) {
-        const network = await provider.getNetwork();
-        if (network.chainId === MINATO_CHAIN_ID) {
-            currentNetwork = 'Minato';
-        } else if (network.chainId === SEPOLIA_CHAIN_ID) {
-            currentNetwork = 'Sepolia';
-        }
-        networkBtn.innerText = ` ${currentNetwork}`; // Update button text
-    }
+  
 }
 
 // Call autoSwitchNetwork after wallet connection

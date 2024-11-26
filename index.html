@@ -77,17 +77,35 @@ body::before {
    -webkit-tap-highlight-color: transparent;
 }
 
-    .right-buttons-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    
-       /* Mobile and smaller screen responsiveness */
-   width: 100%;
-   max-width: 400px;
-   box-sizing: border-box;
-   touch-action: manipulation;
-   -webkit-tap-highlight-color: transparent;
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+   .header-buttons-container {
+      flex-direction: column; /* Switch to vertical layout on mobile */
+      align-items: flex-start; /* Align items to the left */
+      width: auto; /* Let it adjust to the content width */
+      max-width: none; /* Remove max-width constraint */
+   }
+}
+
+.right-buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  /* Mobile and smaller screen responsiveness */
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Adjust layout for small devices */
+@media (max-width: 600px) {
+  .right-buttons-container {
+    flex-direction: column; /* Change to vertical layout on small screens */
+    align-items: flex-start; /* Align items to the start (top) */
+  }
 }
 
   /* Mini page styles */
@@ -271,11 +289,24 @@ body::before {
     }
 
     .right-buttons-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      position: relative;
-    }
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   position: relative;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+   .right-buttons-container {
+      gap: 5px; /* Reduce the space between items */
+      font-size: 0.875rem; /* Reduce the font size */
+      padding: 5px; /* Reduce padding */
+   }
+
+   .right-buttons-container > * {
+      transform: scale(0.9); /* Scale down the children elements */
+   }
+}
 
 
 
@@ -1251,22 +1282,44 @@ button:hover {
     padding: 0;                            /* Reset padding */
 }
 
-/* Tab list styling to ensure proper layout and spacing */
+/* Default (Desktop/Tablet) */
 #app2 .tab-list {
-    display: flex;                          /* Flexbox for horizontal alignment */
-    flex-direction: row;                    /* Align the tabs horizontally */
-    justify-content: center;                /* Center the tabs */
-    align-items: center;                    /* Vertically center items */
-    gap: 0px;                               /* Remove margin between tabs */
-    width: fit-content;                     /* Set width to fit the content of the tabs */
-    height: 48px;                           /* Height for the container */
-    background-color: rgb(15, 17, 19);      /* Dark background for the container */
-    border-radius: 25px;                    /* Rounded corners for the container */
-    box-sizing: border-box;                 /* Ensure padding and border are included in width/height */
-    padding: 0px;                           /* Remove padding inside the container */
-    margin: 0 auto;                         /* Center the tab list */
-    flex-wrap: nowrap;                      /* Prevent wrapping of tabs */
+  display: flex;                          /* Flexbox for horizontal alignment */
+  flex-direction: row;                    /* Align the tabs horizontally */
+  justify-content: center;                /* Center the tabs */
+  align-items: center;                    /* Vertically center items */
+  gap: 0px;                               /* Remove margin between tabs */
+  width: fit-content;                     /* Set width to fit the content of the tabs */
+  height: 48px;                           /* Height for the container */
+  background-color: rgb(15, 17, 19);      /* Dark background for the container */
+  border-radius: 25px;                    /* Rounded corners for the container */
+  box-sizing: border-box;                 /* Ensure padding and border are included in width/height */
+  padding: 0px;                           /* Remove padding inside the container */
+  margin: 0 auto;                         /* Center the tab list */
+  flex-wrap: nowrap;                      /* Prevent wrapping of tabs */
 }
+
+/* Mobile (Small Screen) */
+@media (max-width: 600px) {
+  #app2 .tab-list {
+    flex-direction: column;               /* Stack tabs vertically */
+    justify-content: flex-start;          /* Align tabs to the top */
+    align-items: stretch;                 /* Stretch tabs to fit container width */
+    width: 100%;                          /* Make tab list take full width */
+    height: auto;                         /* Allow height to adjust dynamically */
+    border-radius: 10px;                  /* Smaller rounding for vertical layout */
+    padding: 10px;                        /* Add spacing inside the container */
+    gap: 10px;                            /* Add spacing between tabs */
+  }
+
+  #app2 .tab-list button {
+    text-align: left;                     /* Align text to the left */
+    width: 100%;                          /* Make buttons take full width */
+    padding: 12px 16px;                   /* Add padding for better tap targets */
+    border-radius: 8px;                   /* Round button corners */
+  }
+}
+
 
 /* Adjust general layout of the container if necessary */
 #app2 {
@@ -2386,7 +2439,7 @@ footer {
 
 
 
-<style>
+  <style>
     .network-button {
       display: flex;
       align-items: center;
@@ -2399,11 +2452,11 @@ footer {
       cursor: pointer;
       font-size: 16px;
     }
-    
+
     .network-button:hover {
       background: #424242;
     }
-    
+
     .mini-page {
       position: absolute;
       background: #1a1a1a;
@@ -2414,37 +2467,37 @@ footer {
       min-width: 280px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
-    
+
     .mini-page-content {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    
+
     .balance-section {
       padding: 12px;
       background: #2a2a2a;
       border-radius: 8px;
     }
-    
+
     .section-title {
       font-size: 14px;
       color: #888;
       margin-bottom: 8px;
     }
-    
+
     .balance-item {
       display: flex;
       align-items: center;
       gap: 8px;
       margin: 8px 0;
     }
-    
+
     .token-icon {
       width: 24px;
       height: 24px;
     }
-    
+
     .wallet-action-button {
       display: flex;
       align-items: center;
@@ -2459,19 +2512,19 @@ footer {
       font-size: 16px;
       transition: background 0.2s;
     }
-    
+
     .wallet-action-button:hover {
       background: #525252;
     }
-    
+
     .wallet-action-button.disconnect {
       background: #ff4d4d;
     }
-    
+
     .wallet-action-button.disconnect:hover {
       background: #ff3333;
     }
-    
+
     #copyaddressmodal {
       position: fixed;
       bottom: 20px;
@@ -2482,7 +2535,96 @@ footer {
       border-radius: 8px;
       z-index: 1000;
     }
-    </style>
+
+    /* Media Query for Small Devices */
+    @media (max-width: 600px) {
+        .network-button {
+            font-size: 14px;
+            padding: 6px 12px;
+        }
+
+        .mini-page {
+            min-width: 240px;
+            padding: 12px;
+        }
+
+        .mini-page-content {
+            gap: 8px;
+        }
+
+        .balance-section {
+            padding: 10px;
+        }
+
+        .section-title {
+            font-size: 12px;
+        }
+
+        .balance-item {
+            margin: 6px 0;
+        }
+
+        .wallet-action-button {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .token-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        #copyaddressmodal {
+            bottom: 15px;
+            padding: 10px 20px;
+        }
+    }
+
+    /* Media Query for Extra Small Devices */
+    @media (max-width: 400px) {
+        .network-button {
+            font-size: 12px;
+            padding: 4px 10px;
+        }
+
+        .mini-page {
+            min-width: 200px;
+            padding: 8px;
+        }
+
+        .mini-page-content {
+            gap: 6px;
+        }
+
+        .balance-section {
+            padding: 8px;
+        }
+
+        .section-title {
+            font-size: 10px;
+        }
+
+        .balance-item {
+            margin: 4px 0;
+        }
+
+        .wallet-action-button {
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .token-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        #copyaddressmodal {
+            bottom: 10px;
+            padding: 8px 16px;
+        }
+    }
+</style>
+
 
             </div>
         </div>
@@ -3473,8 +3615,6 @@ setTimeout(() => {
 
 <!-- Hidden field to hold the calculated maximum amount -->
 <input type="hidden" id="amountToSend" />
-
-
 
 
 

@@ -58,16 +58,37 @@ body::before {
     }
 
     .header-buttons-container {
-      display: flex;
-      align-items: center;
-      position: relative; /* Added for dropdown positioning */
-    }
+   display: flex;
+   align-items: center;
+   position: relative;
+   
+   /* Added dark theme and border effects */
+   background-color: #0a0a0a;
+   border: 1px solid #4a4a4a;
+   border-radius: 4px;
+   box-shadow: 0 0 8px rgba(74, 74, 74, 0.3);
+   padding: 10px;
+   
+   /* Mobile and smaller screen responsiveness */
+   width: 100%;
+   max-width: 300px;
+   box-sizing: border-box;
+   touch-action: manipulation;
+   -webkit-tap-highlight-color: transparent;
+}
 
     .right-buttons-container {
       display: flex;
       align-items: center;
       gap: 10px;
-    }
+    
+       /* Mobile and smaller screen responsiveness */
+   width: 100%;
+   max-width: 400px;
+   box-sizing: border-box;
+   touch-action: manipulation;
+   -webkit-tap-highlight-color: transparent;
+}
 
   /* Mini page styles */
   .mini-page {
@@ -378,20 +399,37 @@ body::before {
 #connectWalletBtn, 
 #networkBtn, 
 .connectwalletbtn {
-    display: inline-block;
+    background-color: #0a0a0a;
+    color: white;
+    width: 100%;
+    max-width: 250px;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    /* Border with a metallic/futuristic edge */
+    border: 1px solid #4a4a4a; /* Dark metallic gray */
+    box-shadow: 0 0 8px rgba(74, 74, 74, 0.3); /* Subtle glow effect */
+    
+    /* Keeping some of the original properties */
     position: relative;
-    background-color: #1E1E2F; /* Simple dark background color */
-    color: #fff; /* White text for contrast */
     text-decoration: none;
     text-transform: uppercase;
-    border: none;
     letter-spacing: 0.05rem;
     font-size: 1rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
-    cursor: pointer;
-    box-shadow: none; /* No shadow */
     margin: 0 10px;
+}
+
+/* Optional: Hover effect */
+#connectWalletBtn:hover, 
+#networkBtn:hover, 
+.connectwalletbtn:hover {
+    border-color: #6a6a6a; /* Slightly lighter border on hover */
+    box-shadow: 0 0 12px rgba(74, 74, 74, 0.5); /* Enhanced glow on hover */
 }
 
 /* Responsive Styles */
@@ -1877,62 +1915,422 @@ footer {
     <div class="right-buttons-container">
 
 
-        <button id="networkBtn" class="network-button" style="font-size: 18px; padding: 10px;">
-            Network
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24" height="24"  <!-- Increased size -->
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="chevron-icon"
-              style="margin-left: 8px;" <!-- Adjusted spacing -->
-            >
-              <path d="M6 9 L12 15 L18 9"></path>
-            </svg>
-          </button>
-          
-
-
-        <div id="miniPage" class="mini-page" style="display: none;">
-            <div class="mini-page-content">
-                <button id="minatoNetworkBtn" class="network-button">
-                    <img src="https://soneium-minato.blockscout.com/assets/configs/network_logo_dark.svg" alt="Minato Logo" class="logo" />
-                    Minato
-                </button>
-                
-                <button id="sepoliaNetworkBtn" class="network-button">
-                    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none'><path fill='%2325292E' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23a)' fill-opacity='.3' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23b)' d='M8.19 14.77 L14 18.21l5.8-3.44-5.8 8.19-5.81-8.19Z'/><path fill='%23fff' d='m14 16.93-5.81-3.44L14 4.34l5.81 9.15L14 16.93Z'/><defs><linearGradient id='a' x1='0' x2='14' y1='0' y2='28' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='0'/></linearGradient><linearGradient id='b' x1='14' x2='14' y1='14.77' y2='22.96' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='.9'/></linearGradient></defs></svg>" alt="Sepolia Logo" class="logo" />
-                    Sepolia
-                </button>
-                
-                <!-- You can add more network buttons here -->
+        <!-- Replace your existing networkBtn with this -->
+        <div id="networkBtn" class="network-selector">
+            <div class="current-network">
+                <img src="" alt="Current Network" title="Current Network" style="height: 25px; width: auto; cursor: pointer;">
+            </div>
+            <div class="network-dropdown">
+                <!-- Network options will be populated dynamically -->
             </div>
         </div>
+
+        <style>
+       .network-selector {
+    position: relative;
+    display: flex; /* Change display to flex */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    background-color: #0a0a0a;
+    color: white;
+    width: 100%;
+    max-width: 250px;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.current-network {
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center; /* Vertically centers items */
+    justify-content: center; /* Horizontally centers items */
+}
+
+        .network-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 8px;
+            z-index: 1000;
+            min-width: 180px;
+        }
+
+        .network-dropdown.show {
+            display: block;
+        }
+
+        .network-option {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .network-option:hover {
+            background-color: #333;
+        }
+
+        .network-option img {
+            margin-right: 10px;
+            height: 25px;
+            width: auto;
+        }
+
+        .network-option span {
+            color: #fff;
+            font-size: 14px;
+        }
+        </style>
+
+        <script>
+        // Network configuration
+        const networkConfig = {
+            1: {
+                name: 'Ethereum',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/5f9711105cc92983d0ea9f3d0066c8a3fb30be3a/assets/eth-logo.svg',
+                rpcUrl: 'https://mainnet.infura.io/v3/your-project-id'
+            },
+            10: {
+                name: 'Optimism',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/714fdfda84430012682169827e5cb06ac124eba6/assets/op%20logo.svg',
+                rpcUrl: 'https://optimism-mainnet.infura.io/v3/your-project-id'
+            },
+            250: {
+                name: 'Fantom',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/fantom.svg',
+                rpcUrl: 'https://rpc.ftm.tools'
+            },
+            43114: {
+                name: 'Avalanche',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/avax.svg',
+                rpcUrl: 'https://api.avax.network/ext/bc/C/rpc'
+            },
+            42161: {
+                name: 'Arbitrum',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/arbitrum.svg',
+                rpcUrl: 'https://arb1.arbitrum.io/rpc'
+            },
+            59144: {
+                name: 'Linea',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/linea.svg',
+                rpcUrl: 'https://linea-mainnet.infura.io/v3/your-project-id'
+            },
+            137: {
+                name: 'Polygon',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/polygon.svg',
+                rpcUrl: 'https://polygon-rpc.com'
+            },
+            8453: {
+                name: 'Base',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/768301f881385983abf3919217644ccdb1e50270/assets/BASE.SVG',
+                rpcUrl: 'https://mainnet.base.org'
+            },
+            56: {
+                name: 'BNB Chain',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/6cf6796774d62d6dda068ce991230665cb2e78a6/assets/bnb.svg',
+                rpcUrl: 'https://bsc-dataseed.binance.org'
+            },
+            1946: {
+                name: '',
+                logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/minato3.svg',
+                rpcUrl: 'https://rpc.minato.soneium.org/'
+            }
+        };
+
+        // Function to update network display and options
+        async function updateNetworkDisplay() {
+            const networkBtn = document.getElementById('networkBtn');
+            const currentNetwork = networkBtn.querySelector('.current-network img');
+            const dropdown = networkBtn.querySelector('.network-dropdown');
+
+            try {
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                const chainIdDecimal = parseInt(chainId, 16);
+
+                // Update current network display
+                currentNetwork.src = networkConfig[chainIdDecimal]?.logo || '';
+                currentNetwork.alt = networkConfig[chainIdDecimal]?.name || 'Unknown Network';
+                currentNetwork.title = networkConfig[chainIdDecimal]?.name || 'Unknown Network';
+
+                // Populate dropdown options
+                dropdown.innerHTML = Object.entries(networkConfig)
+                    .map(([id, network]) => `
+                        <div class="network-option" data-chain-id="${id}">
+                            <img src="${network.logo}" 
+                                 alt="${network.name}"
+                                 title="${network.name}">
+                            <span>${network.name}</span>
+                        </div>
+                    `).join('');
+
+                // Add click handlers for network options
+                dropdown.querySelectorAll('.network-option').forEach(option => {
+                    option.addEventListener('click', async () => {
+                        const newChainId = option.dataset.chainId;
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_switchEthereumChain',
+                                params: [{ chainId: `0x${parseInt(newChainId).toString(16)}` }],
+                            });
+                        } catch (switchError) {
+                            if (switchError.code === 4902) {
+                                try {
+                                    await window.ethereum.request({
+                                        method: 'wallet_addEthereumChain',
+                                        params: [{
+                                            chainId: `0x${parseInt(newChainId).toString(16)}`,
+                                            chainName: networkConfig[newChainId].name,
+                                            rpcUrls: [networkConfig[newChainId].rpcUrl],
+                                            nativeCurrency: {
+                                                name: 'ETH',
+                                                symbol: 'ETH',
+                                                decimals: 18
+                                            }
+                                        }],
+                                    });
+                                } catch (addError) {
+                                    console.error('Error adding network:', addError);
+                                }
+                            }
+                        }
+                        dropdown.classList.remove('show');
+                    });
+                });
+            } catch (error) {
+                console.error("Error updating network display:", error);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const networkBtn = document.getElementById('networkBtn');
+            const dropdown = networkBtn.querySelector('.network-dropdown');
+
+            // Toggle dropdown on click
+            networkBtn.querySelector('.current-network').addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+
+            // Initial update
+            updateNetworkDisplay();
+
+            // Listen for network changes
+            if (window.ethereum) {
+                window.ethereum.on('chainChanged', updateNetworkDisplay);
+            }
+        });
+        </script>
+
+<div id="miniPage" class="mini-page" style="display: none !important; visibility: hidden; position: absolute; top: -9999px; left: -9999px; width: 0; height: 0; opacity: 0;">
+</div>
+
+<div>
+
+    
+    <div class="current-network">
+        <button id="ethereumNetworkBtn" class="network-dropdown" data-chain-id="1">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/5f9711105cc92983d0ea9f3d0066c8a3fb30be3a/assets/eth-logo.svg" alt="Ethereum Logo" class="logo" />
+            Ethereum
+        </button>
+        
+        <button id="optimismNetworkBtn" class="network-dropdown" data-chain-id="10">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/714fdfda84430012682169827e5cb06ac124eba6/assets/op%20logo.svg" alt="Optimism Logo" class="logo" />
+            Optimism
+        </button>
+        
+        <button id="fantomNetworkBtn" class="network-dropdown" data-chain-id="250">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/fantom.svg" alt="Fantom Logo" class="logo" />
+            Fantom
+        </button>
+        
+        <button id="avalancheNetworkBtn" class="network-dropdown" data-chain-id="43114">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/avax.svg" alt="Avalanche Logo" class="logo" />
+            Avalanche
+        </button>
+        
+        <button id="arbitrumNetworkBtn" class="network-dropdown" data-chain-id="42161">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/arbitrum.svg" alt="Arbitrum Logo" class="logo" />
+            Arbitrum
+        </button>
+        
+        <button id="lineaNetworkBtn" class="network-dropdown" data-chain-id="59144">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/linea.svg" alt="Linea Logo" class="logo" />
+            Linea
+        </button>
+        
+        <button id="polygonNetworkBtn" class="network-dropdown" data-chain-id="137">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/polygon.svg" alt="Polygon Logo" class="logo" />
+            Polygon
+        </button>
+        
+        <button id="baseNetworkBtn" class="network-dropdown" data-chain-id="8453">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/768301f881385983abf3919217644ccdb1e50270/assets/BASE.SVG" alt="Base Logo" class="logo" />
+            Base
+        </button>
+        
+        <button id="bnbNetworkBtn" class="network-dropdown" data-chain-id="56">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/6cf6796774d62d6dda068ce991230665cb2e78a6/assets/bnb.svg" alt="BNB Chain Logo" class="logo" />
+            BNB Chain
+        </button>
+        
+        <button id="minatoNetworkBtn" class="network-dropdown" data-chain-id="1946">
+            <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/minato3.svg" alt="Minato Logo" class="logo" />
+            
+        </button>
+        
+        <button id="sepoliaNetworkBtn" class="network-dropdown" data-chain-id="11155111">
+            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none'><path fill='%2325292E' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23a)' fill-opacity='.3' fill-rule='evenodd' d='M14 28a14 14 0 1 0 0-28 14 14 0 0 0 0 28Z' clip-rule='evenodd'/><path fill='url(%23b)' d='M8.19 14.77 L14 18.21l5.8-3.44-5.8 8.19-5.81-8.19Z'/><path fill='%23fff' d='m14 16.93-5.81-3.44L14 4.34l5.81 9.15L14 16.93Z'/><defs><linearGradient id='a' x1='0' x2='14' y1='0' y2='28' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-color='%23fff' stop-opacity='0'/></linearGradient><linearGradient id='b' x1='14' x2='14' y1='14.77' y2='22.96' gradientUnits='userSpaceOnUse'><stop stop-color='%23fff'/><stop offset='1' stop-opacity='.9'/></linearGradient></defs></svg>" alt="Sepolia Logo" class="logo" />
+            Sepolia
+        </button>
+    </div>
+
+    <style>
+    .mini-page {
+        background-color: #1a1a1a;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .mini-page-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .network-button {
+        display: flex;
+        align-items: center;
+        background-color: #333;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        color: white;
+        font-size: 14px;
+    }
+
+    .network-button:hover {
+        background-color: #444;
+    }
+
+    .network-button .logo {
+        height: 25px;
+        width: 25px;
+        margin-right: 10px;
+    }
+    </style>
+
+    <script>
+    // Add event listeners to network buttons
+    document.querySelectorAll('.network-button').forEach(button => {
+        button.addEventListener('click', async () => {
+            const chainId = button.dataset.chainId;
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: `0x${parseInt(chainId).toString(16)}` }],
+                });
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: `0x${parseInt(chainId).toString(16)}`,
+                                chainName: networkConfig[chainId].name,
+                                rpcUrls: [networkConfig[chainId].rpcUrl],
+                                nativeCurrency: {
+                                    name: 'ETH',
+                                    symbol: 'ETH',
+                                    decimals: 18
+                                }
+                            }],
+                        });
+                    } catch (addError) {
+                        console.error('Error adding network:', addError);
+                    }
+                }
+            }
+        });
+    });
+    </script>
+</div>
         
         <div class="wallet-dropdown">
 
 
-            <button id="connectWalletBtn" class="connectwalletbtn" style="font-size: 12px; padding: 8px;">
-                Connect
-                <svg
-                  class="wallet-icon"
-                  version="1.1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 969.486 969.486"
-                  style="width: 16px; height: 16px; margin-left: 5px;"
-                >
-                  <g>
+            <button 
+            id="connectWalletBtn" 
+            class="connectwalletbtn" 
+            style="
+                background-color: #0a0a0a;
+                color: white;
+                width: 100%;
+                max-width: 250px;
+                padding: 15px 20px;
+                box-sizing: border-box;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border: 1px solid #4a4a4a;
+                cursor: pointer;
+                border-radius: 4px;
+                transition: background-color 0.3s ease, border-color 0.3s ease;
+                box-shadow: 0 0 8px rgba(74, 74, 74, 0.3);
+                
+                /* Mobile and smaller screen responsiveness */
+                font-size: 14px;
+                min-height: 50px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+            "
+            onclick="this.style.opacity='0.8'"
+            onmouseover="this.style.backgroundColor='#1a1a1a'; this.style.borderColor='#6a6a6a'; this.style.boxShadow='0 0 12px rgba(74, 74, 74, 0.5)'"
+            onmouseout="this.style.backgroundColor='#0a0a0a'; this.style.borderColor='#4a4a4a'; this.style.boxShadow='0 0 8px rgba(74, 74, 74, 0.3)'"
+         >
+            Connect
+            <svg
+                class="wallet-icon"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 969.486 969.486"
+                style="
+                    width: 16px; 
+                    height: 16px; 
+                    margin-left: 10px; 
+                    fill: white;
+                    
+                    /* Mobile optimization */
+                    max-width: 20px;
+                    max-height: 20px;
+                "
+            >
+                <g>
                     <path
-                      d="M806.582,235.309L766.137,87.125l-137.434,37.51L571.451,9.072L114.798,235.309H0v725.105h907.137V764.973h62.35v-337.53 h-62.352V235.309H806.582z M718.441,170.63l17.654,64.68h-52.561h-75.887h-126.19l111.159-30.339l66.848-18.245L718.441,170.63z M839.135,892.414H68V522.062v-129.13v-10.233v-69.787v-9.602h35.181h27.538h101.592h409.025h75.889h37.43h35.242h35.244h13.994 v51.272v72.86h-15.357h-35.244h-87.85H547.508h-55.217v27.356v75.888v8.758v35.244v35.244v155.039h346.846v127.441H839.135z M901.486,696.973h-28.352h-34H560.291V591.375v-35.244v-35.244v-23.889v-1.555h3.139h90.086h129.129h56.492h34h4.445h23.904 V696.973z M540.707,100.191l21.15,42.688l-238.955,65.218L540.707,100.191z"
+                        d="M806.582,235.309L766.137,87.125l-137.434,37.51L571.451,9.072L114.798,235.309H0v725.105h907.137V764.973h62.35v-337.53 h-62.352V235.309H806.582z M718.441,170.63l17.654,64.68h-52.561h-75.887h-126.19l111.159-30.339l66.848-18.245L718.441,170.63z M839.135,892.414H68V522.062v-129.13v-10.233v-69.787v-9.602h35.181h27.538h101.592h409.025h75.889h37.43h35.242h35.244h13.994 v51.272v72.86h-15.357h-35.244h-87.85H547.508h-55.217v27.356v75.888v8.758v35.244v35.244v155.039h346.846v127.441H839.135z M901.486,696.973h-28.352h-34H560.291V591.375v-35.244v-35.244v-23.889v-1.555h3.139h90.086h129.129h56.492h34h4.445h23.904 V696.973z M540.707,100.191l21.15,42.688l-238.955,65.218L540.707,100.191z"
                     />
                     <polygon points="614.146,564.57 614.146,576.676 614.146,631.152 680.73,631.152 680.73,564.57 658.498,564.57" />
-                  </g>
-                </svg>
-              </button>
+                </g>
+            </svg>
+         </button>
               
               
               <div id="walletMini" class="mini-page" style="display: none;">
@@ -2150,7 +2548,6 @@ footer {
         
     
     
-
 
 
 
@@ -3738,123 +4135,219 @@ async function fetchTokenBalance(walletAddress) {
 async function getChainId() {
     const chainIdElement = document.getElementById('chainId');
     
-    // Initially set to "Not connected"
-    chainIdElement.innerText = 'Not connected';
-
-    if (typeof window.ethereum !== 'undefined') {
-        try {
-            // Get the chain ID
-            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-            // Convert chain ID from hex to decimal
-            const chainIdDecimal = parseInt(chainId, 16);
-            
-            // Update the displayed chain ID or show logo for specific chain IDs
-            if (chainIdDecimal === 1) {
-                // Display the connected chain ID message followed by the ETH logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/5f9711105cc92983d0ea9f3d0066c8a3fb30be3a/assets/eth-logo.svg" alt="ETH Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            } else if (chainIdDecimal === 10) {
-                // Display the connected chain ID message followed by the BNB logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/714fdfda84430012682169827e5cb06ac124eba6/assets/op%20logo.svg" alt="op Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            }
-            else if (chainIdDecimal === 250) {
-                // Display the connected chain ID message followed by the BNB logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/fantom.svg" alt="fantom Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            }
-
-            else if (chainIdDecimal === 43114) {
-                // Display the connected chain ID message followed by the BNB logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/avax.svg" alt="avax Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            }
-            else if (chainIdDecimal === 42161) {
-                // Display the connected chain ID message followed by the BNB logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/arbitrum.svg" alt="arbitrum Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            }
-            else if (chainIdDecimal === 59144) {
-                // Display the connected chain ID message followed by the BNB logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/linea.svg" alt="linea Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            }
-            else if (chainIdDecimal === 137) {
-                // Display the connected chain ID message followed by the BNB logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/polygon.svg" alt="polygon Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            }
-            else if (chainIdDecimal === 8453) {
-                // Display the connected chain ID message followed by the BNB logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/768301f881385983abf3919217644ccdb1e50270/assets/BASE.SVG" alt="base Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            }
-            else if (chainIdDecimal === 56) {
-                // Display the connected chain ID message followed by the BNB logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/6cf6796774d62d6dda068ce991230665cb2e78a6/assets/bnb.svg" alt="BNB Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            }
-
-             else if (chainIdDecimal === 1946) {
-                // Display the connected chain ID message followed by the Minato logo
-                chainIdElement.innerHTML = `
-                    Connected Chain ID: ${chainIdDecimal} 
-                    <img src="https://soneium-minato.blockscout.com/assets/configs/network_logo_dark.svg" alt="Minato Logo" style="height: 20px; vertical-align: middle; margin-left: 5px;"/>
-                `;
-            } else {
-                // Update with the connected chain ID for other networks
-                chainIdElement.innerText = `Connected Chain ID: ${chainIdDecimal}`;
-            }
-            return chainIdDecimal;
-        } catch (error) {
-            console.error("Error fetching chain ID:", error);
-            chainIdElement.innerText = 'Error fetching chain ID';
+    // Define the networks configuration
+    const networkConfig = {
+        1: {
+            name: 'Ethereum',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/5f9711105cc92983d0ea9f3d0066c8a3fb30be3a/assets/eth-logo.svg',
+            rpcUrl: 'https://mainnet.infura.io/v3/your-project-id'
+        },
+        10: {
+            name: 'Optimism',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/714fdfda84430012682169827e5cb06ac124eba6/assets/op%20logo.svg',
+            rpcUrl: 'https://optimism-mainnet.infura.io/v3/your-project-id'
+        },
+        250: {
+            name: 'Fantom',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/fantom.svg',
+            rpcUrl: 'https://rpc.ftm.tools'
+        },
+        43114: {
+            name: 'Avalanche',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/avax.svg',
+            rpcUrl: 'https://api.avax.network/ext/bc/C/rpc'
+        },
+        42161: {
+            name: 'Arbitrum',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/arbitrum.svg',
+            rpcUrl: 'https://arb1.arbitrum.io/rpc'
+        },
+        59144: {
+            name: 'Linea',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/linea.svg',
+            rpcUrl: 'https://linea-mainnet.infura.io/v3/your-project-id'
+        },
+        137: {
+            name: 'Polygon',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/polygon.svg',
+            rpcUrl: 'https://polygon-rpc.com'
+        },
+        8453: {
+            name: 'Base',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/768301f881385983abf3919217644ccdb1e50270/assets/BASE.SVG',
+            rpcUrl: 'https://mainnet.base.org'
+        },
+        56: {
+            name: 'BNB Chain',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/6cf6796774d62d6dda068ce991230665cb2e78a6/assets/bnb.svg',
+            rpcUrl: 'https://bsc-dataseed.binance.org'
+        },
+        1946: {
+            name: '',
+            logo: 'https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/minato3.svg',
+            rpcUrl: 'https://rpc.minato.soneium.org/'
         }
-    } else {
-        // MetaMask is not installed
-        alert("MetaMask is not installed. Please install it to use this feature.");
-        chainIdElement.innerText = 'MetaMask not installed';
+    };
+
+    try {
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        const chainIdDecimal = parseInt(chainId, 16);
+
+        // Create the container for the current network and dropdown
+        chainIdElement.innerHTML = `
+<div 
+   class="network-selector" 
+   style="
+       background-color: #1f1f1f;
+       color: white;
+       width: auto; /* Dynamic sizing */
+       max-width: 200px; /* Decreased maximum width */
+       padding: 8px 12px; /* Reduced padding for a smaller size */
+       box-sizing: border-box;
+       display: flex; /* Use flexbox for layout */
+       justify-content: center; /* Center contents horizontally */
+       align-items: center; /* Center contents vertically */
+       border: 1px solid #4a4a4a;
+       cursor: pointer;
+       border-radius: 4px;
+       transition: background-color 0.3s ease, border-color 0.3s ease;
+       box-shadow: 0 0 8px rgba(74, 74, 74, 0.3);
+       margin: auto; /* Center the div */
+   "
+>
+                <div class="current-network">
+                    <img src="${networkConfig[chainIdDecimal]?.logo || ''}" 
+                         alt="${networkConfig[chainIdDecimal]?.name || 'Unknown Network'}"
+                         title="${networkConfig[chainIdDecimal]?.name || 'Unknown Network'}"
+                         style="height: 25px; width: auto; cursor: pointer;">
+                </div>
+                <div class="network-dropdown">
+                    ${Object.entries(networkConfig)
+                        .map(([id, network]) => `
+                            <div class="network-option" data-chain-id="${id}">
+                                <img src="${network.logo}" 
+                                     alt="${network.name}"
+                                     title="${network.name}"
+                                     style="height: 25px; width: auto;">
+                                <span>${network.name}</span>
+                            </div>
+                        `).join('')}
+                </div>
+            </div>
+        `;
+
+        // Add styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .network-selector {
+                position: relative;
+                display: inline-block;
+            }
+
+            .network-dropdown {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: #1a1a1a;
+                border: 1px solid #333;
+                border-radius: 8px;
+                padding: 8px;
+                z-index: 1000;
+                min-width: 180px;
+            }
+
+            .network-dropdown.show {
+                display: block;
+            }
+
+            .network-option {
+                display: flex;
+                align-items: center;
+                padding: 8px;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: background-color 0.2s;
+            }
+
+            .network-option:hover {
+                background-color: #333;
+            }
+
+            .network-option img {
+                margin-right: 10px;
+            }
+
+            .network-option span {
+                color: #fff;
+                font-size: 14px;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add click handlers
+        const currentNetwork = chainIdElement.querySelector('.current-network');
+        const dropdown = chainIdElement.querySelector('.network-dropdown');
+
+        currentNetwork.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+        });
+
+        // Handle network selection
+        const networkOptions = chainIdElement.querySelectorAll('.network-option');
+        networkOptions.forEach(option => {
+            option.addEventListener('click', async () => {
+                const newChainId = option.dataset.chainId;
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: `0x${parseInt(newChainId).toString(16)}` }],
+                    });
+                } catch (switchError) {
+                    // This error code indicates that the chain has not been added to MetaMask
+                    if (switchError.code === 4902) {
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: `0x${parseInt(newChainId).toString(16)}`,
+                                    chainName: networkConfig[newChainId].name,
+                                    rpcUrls: [networkConfig[newChainId].rpcUrl],
+                                    nativeCurrency: {
+                                        name: 'ETH',
+                                        symbol: 'ETH',
+                                        decimals: 18
+                                    }
+                                }],
+                            });
+                        } catch (addError) {
+                            console.error('Error adding network:', addError);
+                        }
+                    }
+                    console.error('Error switching network:', switchError);
+                }
+                dropdown.classList.remove('show');
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            dropdown.classList.remove('show');
+        });
+
+    } catch (error) {
+        console.error("Error fetching chain ID:", error);
+        chainIdElement.innerHTML = '';
     }
 }
 
-// Function to handle network changes
-function handleChainChanged(chainId) {
-    // Call getChainId to update the UI with the new chain ID
-    getChainId();
-}
-
-// Set up event listener for network changes
-if (typeof window.ethereum !== 'undefined') {
-    window.ethereum.on('chainChanged', handleChainChanged);
-}
-
-// Call getChainId initially to set the correct state on page load
+// Call the function initially and set up chain change listener
 getChainId();
-// Set up event listener for network changes
 if (typeof window.ethereum !== 'undefined') {
-    window.ethereum.on('chainChanged', handleChainChanged);
+    window.ethereum.on('chainChanged', getChainId);
 }
 
-// Call getChainId initially to set the correct state on page load
-getChainId();
 
 
 // Keep your existing connectWallet function
@@ -3929,9 +4422,9 @@ copyAddressBtn.innerHTML = `
     <div style="display: flex; align-items: center;">
         <span style="font-size: 14px; margin-right: 8px;">Copy Address</span> <!-- Move the text before the SVG -->
         <svg width="20" height="20" viewBox="0 0 20 20">
-            <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027ZM3.23376 10.5391C2.68689 10.5391 2.39294 10.2656 2.39294 9.68457V3.06055C2.39294 2.47949 2.68689 2.21289 3.23376 2.21289H9.8783C10.4252 2.21289 10.7191 2.47949 10.7191 3.06055V3.84668H6.59705C5.03845 3.84668 4.18396 4.69434 4.18396 6.24609V10.5391H3.23376ZM6.78845 13.9365C6.24158 13.9365 5.94763 13.6699 5.94763 13.0889V6.45801C5.94763 5.87695 6.24158 5.61035 6.78845 5.61035H13.433C13.9799 5.61035 14.2738 5.87695 14.2738 6.45801V13.0889C14.2738 13.6699 13.9799 13.9365 13.433 13.9365H6.78845Z" fill="currentColor"></path>
-        </svg>
-    </div>
+            <path d="M3.04236 12.3027H4.18396V13.3008C4.18396 14.8525 5.03845 15.7002 6.59705 15.7002H13.6244C15.183 15.7002 16.0375 14.8525 16.0375 13.3008V6.24609C16.0375 4.69434 15.183 3.84668 13.6244 3.84668H12.4828V2.8418C12.4828 1.29688 11.6283 0.442383 10.0697 0.442383H3.04236C1.48376 0.442383 0.629272 1.29004 0.629272 2.8418V9.90332C0.629272 11.4551 1.48376 12.3027 3.04236 12.3027Z" fill="currentColor"/>
+    </svg>
+  </div>
 `;
 
 
@@ -4245,33 +4738,13 @@ document.getElementById('connectWalletBtn').addEventListener('click', async () =
     await autoSwitchNetwork(); // Automatically update network text
 });
 
-// Change network to Minato
-document.getElementById('minatoNetworkBtn').addEventListener('click', async () => {
-    if (currentNetwork !== 'Minato') {
-        currentNetwork = 'Minato';
-        await switchNetwork(currentNetwork);
-        walletStatus.classList.add('hidden'); // Hide status message
-        networkBtn.innerText = `${currentNetwork}`; // Update button text
-    }
-    dropdownContent.style.display = 'none'; // Close dropdown
-});
 
-// Change network to Sepolia
-document.getElementById('sepoliaNetworkBtn').addEventListener('click', async () => {
-    if (currentNetwork !== 'Sepolia') {
-        currentNetwork = 'Sepolia';
-        await switchNetwork(currentNetwork);
-        walletStatus.classList.add('hidden'); // Hide status message
-        networkBtn.innerText = ` ${currentNetwork}`; // Update button text
-    }
-    dropdownContent.style.display = 'none'; // Close dropdown
-});
+
 async function checkNetworkAndUpdateText() {
     const networkMatches = await checkNetwork();
     if (networkMatches) {
         if (currentNetwork === 'Minato') {
-            // Set the button text to an image for the Minato network
-            networkBtn.innerHTML = `<img src="https://soneium-minato.blockscout.com/assets/configs/network_logo_dark.svg" alt="Minato Logo" style="height: 25px;width: auto;"/>`;
+            
         } else {
             // Update button text with the current network name
             networkBtn.innerText = `${currentNetwork}`;

@@ -1,15 +1,16 @@
-<svg width="111" height="111" viewBox="0 0 111 111" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="200" height="111" viewBox="0 0 200 111" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Logo Path -->
     <path d="M54.921 110.034C85.359 110.034 110.034 85.402 110.034 55.017C110.034 24.6319 85.359 0 54.921 0C26.0432 0 2.35281 22.1714 0 50.3923H72.8467V59.6416H3.9565e-07C2.35281 87.8625 26.0432 110.034 54.921 110.034Z" fill="#0052FF"/>
-    
+
     <!-- Path for letter B -->
-    <path d="M10 30 V10 H20 C30 10, 30 20, 20 30 H10 Z M10 30 V50 H20 C30 50, 30 40, 20 30 H10 Z" fill="#ffffff"/>
+    <path d="M120 30 V10 H130 C140 10, 140 20, 130 30 H120 Z M120 30 V50 H130 C140 50, 140 40, 130 30 H120 Z" fill="#ffffff"/>
 
     <!-- Path for letter A -->
-    <path d="M25 50 L20 10 L15 50 Z M20 30 H25 L25 40 H15 Z" fill="#ffffff"/>
+    <path d="M135 50 L130 10 L125 50 Z M130 30 H135 L135 40 H125 Z" fill="#ffffff"/>
 
     <!-- Path for letter S -->
-    <path d="M35 10 C45 -5, 55 -5, 65 10 C55 15, 45 15, 35 30 C45 35, 55,35,65,30 C55,45,45,45,35,40 Z" fill="#ffffff"/>
+    <path d="M145 10 C155 -5, 165 -5, 175 10 C165 15,155,15,145,30 C155,35,165,35,175,30 C165,45,155,45,145,40 Z" fill="#ffffff"/>
 
     <!-- Path for letter E -->
-    <path d="M70 10 V50 H60 V30 H70 H60 V10 Z" fill="#ffffff"/>
+    <path d="M180 10 V50 H170 V30 H180 H170 V10 Z" fill="#ffffff"/>
 </svg>

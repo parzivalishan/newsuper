@@ -43,72 +43,112 @@
             1: {
                 name: 'Ethereum Mainnet',
                 chainId: '0x1',
-                rpcUrl: 'https://mainnet.infura.io/v3/your-api-key',
-                symbol: 'ETH',
-                explorer: 'https://etherscan.io'
+                nativeCurrency: {
+                    name: 'Ethereum',
+                    symbol: 'ETH',
+                    decimals: 18
+                },
+                rpcUrls: ['https://mainnet.infura.io/v3/your-api-key'],
+                blockExplorerUrls: ['https://etherscan.io']
+            },
+            137: {
+                name: 'Polygon Mainnet',
+                chainId: '0x89',
+                nativeCurrency: {
+                    name: 'MATIC',
+                    symbol: 'MATIC',
+                    decimals: 18
+                },
+                rpcUrls: ['https://polygon-rpc.com'],
+                blockExplorerUrls: ['https://polygonscan.com']
             },
             10: {
                 name: 'Optimism',
                 chainId: '0xA',
-                rpcUrl: 'https://mainnet.optimism.io',
-                symbol: 'ETH',
-                explorer: 'https://optimistic.etherscan.io'
+                nativeCurrency: {
+                    name: 'Ethereum',
+                    symbol: 'ETH',
+                    decimals: 18
+                },
+                rpcUrls: ['https://mainnet.optimism.io'],
+                blockExplorerUrls: ['https://optimistic.etherscan.io']
             },
             250: {
                 name: 'Fantom',
                 chainId: '0xFA',
-                rpcUrl: 'https://rpc.ftm.tools',
-                symbol: 'FTM',
-                explorer: 'https://ftmscan.com'
+                nativeCurrency: {
+                    name: 'Fantom',
+                    symbol: 'FTM',
+                    decimals: 18
+                },
+                rpcUrls: ['https://rpc.ftm.tools'],
+                blockExplorerUrls: ['https://ftmscan.com']
             },
             43114: {
                 name: 'Avalanche',
                 chainId: '0xA86A',
-                rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
-                symbol: 'AVAX',
-                explorer: 'https://snowtrace.io'
+                nativeCurrency: {
+                    name: 'Avalanche',
+                    symbol: 'AVAX',
+                    decimals: 18
+                },
+                rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+                blockExplorerUrls: ['https://snowtrace.io']
             },
             42161: {
                 name: 'Arbitrum One',
                 chainId: '0xA4B1',
-                rpcUrl: 'https://arb1.arbitrum.io/rpc',
-                symbol: 'ETH',
-                explorer: 'https://arbiscan.io'
+                nativeCurrency: {
+                    name: 'Ethereum',
+                    symbol: 'ETH',
+                    decimals: 18
+                },
+                rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+                blockExplorerUrls: ['https://arbiscan.io']
             },
             59144: {
                 name: 'Linea',
                 chainId: '0xE708',
-                rpcUrl: 'https://rpc.linea.build',
-                symbol: 'ETH',
-                explorer: 'https://lineascan.build'
-            },
-            137: {
-                name: 'Polygon',
-                chainId: '0x89',
-                rpcUrl: 'https://polygon-rpc.com',
-                symbol: 'MATIC',
-                explorer: 'https://polygonscan.com'
+                nativeCurrency: {
+                    name: 'Ethereum',
+                    symbol: 'ETH',
+                    decimals: 18
+                },
+                rpcUrls: ['https://rpc.linea.build'],
+                blockExplorerUrls: ['https://lineascan.build']
             },
             8453: {
                 name: 'Base',
                 chainId: '0x2105',
-                rpcUrl: 'https://mainnet.base.org',
-                symbol: 'ETH',
-                explorer: 'https://basescan.org'
+                nativeCurrency: {
+                    name: 'Ethereum',
+                    symbol: 'ETH',
+                    decimals: 18
+                },
+                rpcUrls: ['https://mainnet.base.org'],
+                blockExplorerUrls: ['https://basescan.org']
             },
             56: {
                 name: 'BNB Chain',
                 chainId: '0x38',
-                rpcUrl: 'https://bsc-dataseed1.binance.org',
-                symbol: 'BNB',
-                explorer: 'https://bscscan.com'
+                nativeCurrency: {
+                    name: 'BNB',
+                    symbol: 'BNB',
+                    decimals: 18
+                },
+                rpcUrls: ['https://bsc-dataseed1.binance.org'],
+                blockExplorerUrls: ['https://bscscan.com']
             },
             1946: {
                 name: 'Minato',
                 chainId: '0x79A',
-                rpcUrl: 'https://rpc.minato.soneium.org',
-                symbol: 'ETH',
-                explorer: 'https://minato.soneium.org'
+                nativeCurrency: {
+                    name: 'Ethereum',
+                    symbol: 'ETH',
+                    decimals: 18
+                },
+                rpcUrls: ['https://rpc.minato.soneium.org'],
+                blockExplorerUrls: ['https://minato.soneium.org']
             }
         };
 
@@ -145,7 +185,7 @@
             const container = document.getElementById('networkButtons');
             container.innerHTML = '';
 
-            Object.entries(networks).forEach(([id, network]) => {
+            Object.values(networks).forEach((network) => {
                 const button = document.createElement('button');
                 button.className = 'network-button';
                 button.innerHTML = `Switch to ${network.name}`;
@@ -155,36 +195,40 @@
         }
 
         async function switchNetwork(network) {
+            if (!window.ethereum) {
+                showStatus('MetaMask is not installed!', 'error');
+                return;
+            }
+
             try {
-                await provider.request({
+                await window.ethereum.request({
                     method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: network.chainId }],
+                    params: [{ chainId: network.chainId }]
                 });
-                showStatus(`Switched to ${network.name}`, 'success');
             } catch (switchError) {
-                if (switchError.code === 4902) {
+                if (switchError.code === 4902 || switchError.code === -32603) {
                     try {
-                        await provider.request({
+                        await window.ethereum.request({
                             method: 'wallet_addEthereumChain',
                             params: [{
                                 chainId: network.chainId,
                                 chainName: network.name,
-                                nativeCurrency: {
-                                    name: network.symbol,
-                                    symbol: network.symbol,
-                                    decimals: 18
-                                },
-                                rpcUrls: [network.rpcUrl],
-                                blockExplorerUrls: [network.explorer]
+                                nativeCurrency: network.nativeCurrency,
+                                rpcUrls: network.rpcUrls,
+                                blockExplorerUrls: network.blockExplorerUrls
                             }]
                         });
-                        showStatus(`Added and switched to ${network.name}`, 'success');
                     } catch (addError) {
-                        console.error('Error adding network:', addError);
-                        showStatus(`Failed to add ${network.name}`, 'error');
+                        showStatus(`Failed to add network: ${addError.message}`, 'error');
+                        return;
                     }
+                } else {
+                    showStatus(`Failed to switch network: ${switchError.message}`, 'error');
+                    return;
                 }
             }
+            
+            showStatus(`Successfully switched to ${network.name}`, 'success');
         }
 
         function showStatus(message, type) {

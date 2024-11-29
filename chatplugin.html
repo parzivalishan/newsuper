@@ -218,6 +218,11 @@
                 height: 200px;
             }
         }
+
+        .product-item {
+            text-decoration: none; /* Remove default link underline */
+            color: inherit; /* Inherit color from parent */
+        }
     </style>
 </head>
 <body>
@@ -243,11 +248,11 @@
 <!-- Replace the existing footer line with this new structure -->
 <div class="footer-container">
     <div class="product-info">
-        <span class="product-item">Launchpad</span>
+        <a href="index.html" class="product-item">Launchpad</a>
         <span class="separator">|</span>
-        <span class="product-item">Multisender/Disperse</span>
+        <a href="disperse.html" class="product-item">Multisender/Disperse</a>
         <span class="separator">|</span>
-        <span class="product-item">Prediction Markets</span>
+        <a href="predictionmarket.html" class="product-item">Prediction Markets</a>
     </div>
     <div class="made-by">
         Superchain Exchange Inc. ©

@@ -2116,94 +2116,111 @@ footer {
             }
         };
 
-        // Function to update network display and options
-        async function updateNetworkDisplay() {
-            const networkBtn = document.getElementById('networkBtn');
-            const currentNetwork = networkBtn.querySelector('.current-network img');
-            const dropdown = networkBtn.querySelector('.network-dropdown');
+       
+    // Function to update network display and options
+async function updateNetworkDisplay() {
+    const networkBtn = document.getElementById('networkBtn');
+    const currentNetwork = networkBtn.querySelector('.current-network img');
+    const dropdown = networkBtn.querySelector('.network-dropdown');
 
-            try {
-                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                const chainIdDecimal = parseInt(chainId, 16);
+    try {
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        const chainIdDecimal = parseInt(chainId, 16);
 
-                // Update current network display
-                currentNetwork.src = networkConfig[chainIdDecimal]?.logo || '';
-                currentNetwork.alt = networkConfig[chainIdDecimal]?.name || 'Unknown Network';
-                currentNetwork.title = networkConfig[chainIdDecimal]?.name || 'Unknown Network';
+        // Update current network display
+        currentNetwork.src = networkConfig[chainIdDecimal]?.logo || '';
+        currentNetwork.alt = networkConfig[chainIdDecimal]?.name || 'Unknown Network';
+        currentNetwork.title = networkConfig[chainIdDecimal]?.name || 'Unknown Network';
 
-                // Populate dropdown options
-                dropdown.innerHTML = Object.entries(networkConfig)
-                    .map(([id, network]) => `
-                        <div class="network-option" data-chain-id="${id}">
-                            <img src="${network.logo}" 
-                                 alt="${network.name}"
-                                 title="${network.name}">
-                            <span>${network.name}</span>
-                        </div>
-                    `).join('');
+        // Populate dropdown options
+        dropdown.innerHTML = Object.entries(networkConfig)
+            .map(([id, network]) => `
+                <div class="network-option" data-chain-id="${id}">
+                    <img src="${network.logo}" 
+                         alt="${network.name}"
+                         title="${network.name}">
+                    <span>${network.name}</span>
+                </div>
+            `).join('');
 
-                // Add click handlers for network options
-                dropdown.querySelectorAll('.network-option').forEach(option => {
-                    option.addEventListener('click', async () => {
-                        const newChainId = option.dataset.chainId;
+        // Add click handlers for network options
+        dropdown.querySelectorAll('.network-option').forEach(option => {
+            option.addEventListener('click', async () => {
+                const newChainId = option.dataset.chainId;
+                try {
+                    // Attempt to switch networks
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: `0x${parseInt(newChainId).toString(16)}` }],
+                    });
+
+                    // Refresh the page after a successful network switch
+                    window.location.reload();
+
+                } catch (switchError) {
+                    // If the network is not added, add it to MetaMask
+                    if (switchError.code === 4902) {
                         try {
                             await window.ethereum.request({
-                                method: 'wallet_switchEthereumChain',
-                                params: [{ chainId: `0x${parseInt(newChainId).toString(16)}` }],
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: `0x${parseInt(newChainId).toString(16)}`,
+                                    chainName: networkConfig[newChainId].name,
+                                    rpcUrls: [networkConfig[newChainId].rpcUrl],
+                                    nativeCurrency: {
+                                        name: 'ETH',
+                                        symbol: 'ETH',
+                                        decimals: 18
+                                    }
+                                }],
                             });
-                        } catch (switchError) {
-                            if (switchError.code === 4902) {
-                                try {
-                                    await window.ethereum.request({
-                                        method: 'wallet_addEthereumChain',
-                                        params: [{
-                                            chainId: `0x${parseInt(newChainId).toString(16)}`,
-                                            chainName: networkConfig[newChainId].name,
-                                            rpcUrls: [networkConfig[newChainId].rpcUrl],
-                                            nativeCurrency: {
-                                                name: 'ETH',
-                                                symbol: 'ETH',
-                                                decimals: 18
-                                            }
-                                        }],
-                                    });
-                                } catch (addError) {
-                                    console.error('Error adding network:', addError);
-                                }
-                            }
+
+                            // Refresh the page after adding and switching to the new network
+                            window.location.reload();
+
+                        } catch (addError) {
+                            console.error('Error adding network:', addError);
                         }
-                        dropdown.classList.remove('show');
-                    });
-                });
-            } catch (error) {
-                console.error("Error updating network display:", error);
-            }
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            const networkBtn = document.getElementById('networkBtn');
-            const dropdown = networkBtn.querySelector('.network-dropdown');
-
-            // Toggle dropdown on click
-            networkBtn.querySelector('.current-network').addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdown.classList.toggle('show');
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', () => {
+                    } else {
+                        console.error('Error switching network:', switchError);
+                    }
+                }
                 dropdown.classList.remove('show');
             });
-
-            // Initial update
-            updateNetworkDisplay();
-
-            // Listen for network changes
-            if (window.ethereum) {
-                window.ethereum.on('chainChanged', updateNetworkDisplay);
-            }
         });
+    } catch (error) {
+        console.error("Error updating network display:", error);
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const networkBtn = document.getElementById('networkBtn');
+    const dropdown = networkBtn.querySelector('.network-dropdown');
+
+    // Toggle dropdown on click
+    networkBtn.querySelector('.current-network').addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('show');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+        dropdown.classList.remove('show');
+    });
+
+    // Initial update
+    updateNetworkDisplay();
+
+    // Listen for network changes
+    if (window.ethereum) {
+        window.ethereum.on('chainChanged', () => {
+            updateNetworkDisplay();
+            window.location.reload(); // Refresh page on chain change
+        });
+    }
+});
+
         </script>
 
 <div id="miniPage" class="mini-page" style="display: none !important; visibility: hidden; position: absolute; top: -9999px; left: -9999px; width: 0; height: 0; opacity: 0;">
@@ -4228,10 +4245,7 @@ async function checkNetwork() {
     try {
         const network = await provider.getNetwork();
         if (network.chainId !== networkParams[currentNetwork].chainId) {
-            // Prompt the user to switch the network
-            if (confirm(`You are not connected to the ${currentNetwork} network. Would you like to switch?`)) {
-                await switchNetwork(currentNetwork);
-            }
+           
             return false;
         }
         return true;
@@ -4631,9 +4645,7 @@ copyAddressBtn.addEventListener('click', function() {
         
         // If not on Minato, switch network
         if (currentChainId !== MINATO_CHAIN_ID) {
-            await switchNetwork(MINATO_CHAIN_ID);
-            location.reload(); // Refresh the page after switching network
-            return; // Exit early to prevent further execution until reload
+     
         }
 
         // Fetch and display balance

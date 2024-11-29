@@ -4392,6 +4392,7 @@ async function getChainId() {
 
         // Create the container for the current network and dropdown
         chainIdElement.innerHTML = `
+        
 <div 
    class="network-selector" 
    style="
@@ -4518,6 +4519,10 @@ async function getChainId() {
                                     }
                                 }],
                             });
+
+                            // Reload the page after successfully adding and switching to the new network
+                    window.location.reload();
+                    
                         } catch (addError) {
                             console.error('Error adding network:', addError);
                         }
@@ -4542,7 +4547,10 @@ async function getChainId() {
 // Call the function initially and set up chain change listener
 getChainId();
 if (typeof window.ethereum !== 'undefined') {
-    window.ethereum.on('chainChanged', getChainId);
+    window.ethereum.on('chainChanged', () => {
+        getChainId();
+        window.location.reload(); // Reload the page on network change
+    });
 }
 
 

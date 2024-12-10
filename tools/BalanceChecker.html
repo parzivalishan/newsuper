@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multi-Chain Token Balance Checker</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
+        .network-info {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multi-Chain Token Balance Checker</h1>
+    
+    <div class="network-info">
+        <strong>Popular Network Chain IDs:</strong><br>
+        Ethereum Mainnet: 1, Polygon: 137, BSC: 56, Avalanche: 43114, Arbitrum: 42161, Optimism: 10
+    </div>
+
+    <input type="text" id="chainIdInput" placeholder="Enter Chain ID (decimal)">
+
+    <input type="text" id="rpcInput" placeholder="Optional Custom RPC URL (leave blank for MetaMask)">
+
+    <input type="text" id="addressInput" placeholder="Wallet Address to Check">
+    
+    <input type="text" id="tokenInput" placeholder="Token Contract Address (leave blank for native token)">
+
+    <button onclick="checkTokenBalance()">Check Balance</button>
+
+    <div id="result"></div>
+
+    <script>
+        // ABI for ERC20 token standard
+        const ERC20_ABI = [
+            "function name() view returns (string)",
+            "function symbol() view returns (string)",
+            "function decimals() view returns (uint8)",
+            "function balanceOf(address) view returns (uint256)"
+        ];
+
+        // RPC URLs for some common networks (fallback)
+        const RPC_URLS = {
+            '1': 'https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID',
+            '137': 'https://polygon-rpc.com',
+            '56': 'https://bsc-dataseed.binance.org/',
+            '43114': 'https://api.avax.network/ext/bc/C/rpc',
+            '42161': 'https://arb1.arbitrum.io/rpc',
+            '10': 'https://mainnet.optimism.io'
+        };
+
+        async function checkTokenBalance() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Checking balance...';
+
+            try {
+                // Get inputs
+                const chainId = document.getElementById('chainIdInput').value;
+                const walletAddress = document.getElementById('addressInput').value;
+                const tokenAddress = document.getElementById('tokenInput').value;
+                const customRPC = document.getElementById('rpcInput').value;
+
+                // Validate inputs
+                if (!chainId || isNaN(chainId)) throw new Error('Please enter a valid Chain ID');
+                if (!ethers.utils.isAddress(walletAddress)) throw new Error('Invalid wallet address');
+                if (tokenAddress && !ethers.utils.isAddress(tokenAddress)) throw new Error('Invalid token contract address');
+
+                // Determine provider
+                let provider;
+                if (window.ethereum && !customRPC) {
+                    // Use MetaMask if available
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    
+                    // Switch network if needed
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: `0x${parseInt(chainId).toString(16)}` }],
+                    });
+                } else {
+                    // Use custom RPC or fallback RPC
+                    const rpcUrl = customRPC || RPC_URLS[chainId];
+                    if (!rpcUrl) throw new Error('No RPC URL available for this network. Please provide a custom RPC URL.');
+                    provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+                }
+
+                // Check native token balance
+                if (!tokenAddress) {
+                    const balance = await provider.getBalance(walletAddress);
+                    const balanceEth = ethers.utils.formatEther(balance);
+                    
+                    resultDiv.innerHTML = `
+                        Network Chain ID: ${chainId}<br>
+                        Wallet: ${walletAddress}<br>
+                        Native Token Balance: ${balanceEth}
+                    `;
+                    return;
+                }
+
+                // Check ERC20 token balance
+                const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+
+                // Fetch token details
+                const [name, symbol, decimals, balance] = await Promise.all([
+                    contract.name(),
+                    contract.symbol(),
+                    contract.decimals(),
+                    contract.balanceOf(walletAddress)
+                ]);
+
+                // Format balance
+                const formattedBalance = ethers.utils.formatUnits(balance, decimals);
+
+                resultDiv.innerHTML = `
+                    Network Chain ID: ${chainId}<br>
+                    Wallet: ${walletAddress}<br>
+                    Token: ${name} (${symbol})<br>
+                    Token Address: ${tokenAddress}<br>
+                    Balance: ${formattedBalance}
+                `;
+
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

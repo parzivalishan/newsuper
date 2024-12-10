@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wallet Balance Checker</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .network-info {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>EVM Wallet Balance Checker</h1>
+    <div class="network-info">
+        Common Chain IDs:
+        <br>Ethereum Mainnet: 1
+        <br>Polygon: 137
+        <br>Binance Smart Chain: 56
+        <br>Avalanche: 43114
+    </div>
+    <input type="text" id="chainIdInput" placeholder="Enter Chain ID (decimal)">
+    <input type="text" id="addressInput" placeholder="Enter Wallet Address">
+    <button onclick="checkBalance()">Check Balance</button>
+    <div id="result"></div>
+
+    <script>
+        async function checkBalance() {
+            // Check if MetaMask is installed
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    // Request account access
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    
+                    // Get the input address and chain ID
+                    const address = document.getElementById('addressInput').value;
+                    const chainId = document.getElementById('chainIdInput').value;
+                    
+                    // Validate address
+                    if (!Web3.utils.isAddress(address)) {
+                        throw new Error('Invalid Ethereum address');
+                    }
+
+                    // Validate chain ID
+                    if (!chainId || isNaN(chainId)) {
+                        throw new Error('Invalid Chain ID');
+                    }
+
+                    // Convert chain ID to hex
+                    const chainIdHex = '0x' + parseInt(chainId).toString(16);
+
+                    // Try to switch network
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: chainIdHex }],
+                        });
+                    } catch (switchError) {
+                        // This error code indicates that the chain has not been added to MetaMask
+                        if (switchError.code === 4902) {
+                            throw new Error('Please add this network to MetaMask first');
+                        }
+                    }
+
+                    // Create Web3 instance
+                    const web3 = new Web3(window.ethereum);
+                    
+                    // Get balance
+                    const balanceWei = await web3.eth.getBalance(address);
+                    
+                    // Convert to Ether
+                    const balanceEth = web3.utils.fromWei(balanceWei, 'ether');
+                    
+                    // Display result
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = `
+                        Address: ${address}<br>
+                        Network ID: ${chainId}<br>
+                        Balance: ${balanceEth} ETH
+                    `;
+                } catch (error) {
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = `Error: ${error.message}`;
+                }
+            } else {
+                alert('Please install MetaMask to use this feature');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #0F1112; /* SpaceX Chinese Black */
+            color: #FFFFFF; /* White text for contrast */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            display: none; /* Hidden by default */
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #005288; /* SpaceX Blue */
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #003d5b; /* Darker blue on hover */
+        }
+        .arrow-button {
+            font-size: 20px;
+            padding: 0;
+            width: 40px;
+        }
+        .price {
+            font-size: 2em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button id="toggle-input" class="arrow-button">➡️</button>
+    <input type="text" id="coin-input" autocomplete="off" placeholder="" />
+    <button id="fetch-price" class="arrow-button">⬇️</button>
+    <div class="price" id="coin-price"></div>
+
+    <script>
+        let sockets = [];
+        let prices = {};
+        let symbolsOrder = [];
+        let futurePriceIntervals = {};
+
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+            document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+        }
+
+        function getCookie(name) {
+            const cookieArr = document.cookie.split(';');
+            for (let cookie of cookieArr) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    return cookie.substring(name.length + 1);
+                }
+            }
+            return null;
+        }
+
+        function fetchSpotPrice(symbol) {
+            const formattedSymbol = symbol.toUpperCase() + 'USDT';
+            const socket = new WebSocket(`wss://stream.binance.com:9443/ws/${formattedSymbol.toLowerCase()}@ticker`);
+
+            socket.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                const price = parseFloat(data.c).toFixed(2);
+                prices[symbol] = price;
+                updatePriceDisplay();
+            };
+
+            socket.onerror = function (error) {
+                console.error('WebSocket error:', error);
+                prices[symbol] = 'Error';
+                updatePriceDisplay();
+            };
+
+            sockets.push(socket);
+        }
+
+        function fetchFuturePrice(symbol) {
+            const formattedSymbol = symbol.slice(0, -2).toUpperCase() + 'USDT';
+            const url = `https://fapi.binance.com/fapi/v1/ticker/price?symbol=${formattedSymbol}`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.price) {
+                        const price = parseFloat(data.price).toFixed(2);
+                        prices[symbol] = price;
+                    } else {
+                        prices[symbol] = 'N/A';
+                    }
+                    updatePriceDisplay();
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    prices[symbol] = 'Error';
+                    updatePriceDisplay();
+                });
+        }
+
+        function startFuturePriceUpdates(symbol) {
+            if (futurePriceIntervals[symbol]) {
+                clearInterval(futurePriceIntervals[symbol]);
+            }
+
+            futurePriceIntervals[symbol] = setInterval(() => {
+                fetchFuturePrice(symbol);
+            }, 500);
+        }
+
+        function updatePriceDisplay() {
+            const priceDisplay = symbolsOrder
+                .map(symbol => `${prices[symbol] || 'N/A'}`)
+                .join('<br>');
+            document.getElementById('coin-price').innerHTML = priceDisplay;
+        }
+
+        function handleFetch() {
+            const inputField = document.getElementById('coin-input');
+            const input = inputField.value;
+            setCookie('lastInput', input, 7);
+
+            const symbols = input.split(',').map(symbol => symbol.trim()).filter(symbol => symbol);
+
+            document.getElementById('coin-price').innerHTML = '';
+            sockets.forEach(socket => socket.close());
+            sockets = [];
+            prices = {};
+            symbolsOrder = symbols;
+
+            // Hide input values by replacing them with asterisks
+            inputField.value = '*'.repeat(input.length);
+
+            symbols.forEach(symbol => {
+                if (symbol.endsWith('.p')) {
+                    fetchFuturePrice(symbol);
+                    startFuturePriceUpdates(symbol);
+                } else {
+                    fetchSpotPrice(symbol);
+                }
+            });
+        }
+
+        document.getElementById('fetch-price').addEventListener('click', handleFetch);
+
+        document.getElementById('toggle-input').addEventListener('click', () => {
+            const inputBox = document.getElementById('coin-input');
+            if (inputBox.style.display === 'none' || inputBox.style.display === '') {
+                inputBox.style.display = 'inline-block';
+                inputBox.focus();
+            } else {
+                inputBox.style.display = 'none';
+                document.getElementById('coin-price').innerHTML = '';
+                sockets.forEach(socket => socket.close());
+                sockets = [];
+                prices = {};
+                symbolsOrder = [];
+                Object.values(futurePriceIntervals).forEach(clearInterval);
+                futurePriceIntervals = {};
+            }
+        });
+
+        window.onload = () => {
+            const lastInput = getCookie('lastInput');
+            if (lastInput) {
+                const inputBox = document.getElementById('coin-input');
+                inputBox.style.display = 'inline-block';
+                inputBox.value = lastInput;
+                handleFetch(); // Automatically fetch prices on page load
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Chat Button with Tawk.to</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0B0C0E; /* Dark black background */
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .outer-box {
+            display: inline-block;
+            padding: 15px;
+            border-radius: 12px;
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .inner-box {
+            display: flex;
+            align-items: center; /* Vertically align the text and icon */
+            padding: 10px;
+            background-color: black;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            position: relative;
+            cursor: pointer;
+            width: 150px; /* Set the width to accommodate both the text and the icon */
+        }
+
+        .inner-box span {
+            color: #333; /* Text color */
+            font-size: 12px; /* Smaller text compared to the SVG */
+            font-weight: 600; /* Bold text */
+            white-space: nowrap; /* Prevent text from wrapping */
+            display: inline-block;
+            line-height: 1; /* Align text vertically with the icon */
+            margin-right: 8px; /* Small margin between the text and the icon */
+        }
+
+        .inner-box svg {
+            width: 30px;
+            height: auto;
+            color: #333; /* Icon color */
+        }
+
+        .gradient-border {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background-image: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet, red);
+            background-size: 400%;
+            border-radius: 12px;
+            animation: move-gradient 8s linear infinite;
+        }
+
+        @keyframes move-gradient {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .footer-container {
+      
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            background-color: rgba(11, 12, 14, 0.9);
+            height: 150px;
+            border-top: 1px solid #333;
+        }
+
+        .footer-top-line {
+            position: fixed;
+            bottom: 320px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-image: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet, red);
+            background-size: 400%;
+            animation: move-gradient 8s linear infinite;
+            z-index: 1;
+        }
+
+        .product-info {
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .product-item {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .product-item:hover {
+            color: #fff;
+        }
+
+        .separator {
+            color: #444;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            position: absolute;
+            right: 65px;
+            bottom: 15px;
+        }
+
+        .social-icons svg {
+            width: 24px;
+            height: 24px;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .social-icons svg:hover {
+            color: #fff;
+        }
+
+        .footer-line {
+            bottom: 0;
+        }
+
+        .made-by {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .footer-container {
+            height: 150px; /* Slightly more breathing room */
+            padding: 15px 20px;
+        }
+
+        .product-info {
+            margin-top: 30px; /* Move products down a bit from top border */
+        }
+
+        .product-item {
+            padding: 5px 10px; /* Add padding for better clickable area */
+            border-radius: 4px; /* Optional: subtle radius for hover effect */
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover */
+            color: #fff;
+        }
+
+        @media screen and (max-width: 768px) {
+            .footer-container {
+                height: 180px;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding-bottom: 20px;
+            }
+
+            .product-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                position: absolute;
+                left: 0;
+                bottom: 60px;
+                padding-left: 20px;
+                width: auto;
+            }
+
+            .product-item {
+                display: block;
+                width: 100%;
+                padding: 8px 20px;
+            }
+
+            .separator {
+                display: none;
+            }
+
+            .social-icons {
+                position: absolute;
+                right: 65px;
+                bottom: 20px;
+            }
+
+            .made-by {
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+            }
+        }
+
+        /* For even smaller screens */
+        @media screen and (max-width: 480px) {
+            .footer-container {
+                height: 200px;
+            }
+        }
+
+        .product-item {
+            text-decoration: none; /* Remove default link underline */
+            color: inherit; /* Inherit color from parent */
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(11, 12, 14, 0.9);
+            border-bottom: 1px solid #333;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-container {
+            max-width: 100%; /* Use full width */
+            margin: 0;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-right: auto; /* Pushes the right section to the far right */
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-left: auto; /* Ensures the right section is at the far right */
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            margin-right: 2rem;
+        }
+
+        .nav-item {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-toggle::after {
+            content: '▼';
+            font-size: 0.8em;
+            margin-left: 0.5rem;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #1a1b1e;
+            min-width: 180px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: #666;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .connect-wallet-btn {
+            background: linear-gradient(90deg, #ff0000, #ff8c00);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px; /* Added to maintain button size when showing address */
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .connect-wallet-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* Add padding to body to account for fixed header */
+        body {
+            padding-top: 70px;
+        }
+
+        /* Mobile responsiveness */
+        @media screen and (max-width: 768px) {
+            .nav-container {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-left, .nav-right {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+            }
+
+            .dropdown-content {
+                width: 100%;
+                position: static;
+                box-shadow: none;
+                border: none;
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+
+            .nav-item, .connect-wallet-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            body {
+                padding-top: 140px;
+            }
+        }
+
+        .dropdown-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-content img, .network-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-toggle::after {
+            margin-left: auto;
+        }
+
+        .dropdown-content {
+            min-width: 200px; /* Increased to accommodate icons */
+        }
+
+        /* Optional: Add a subtle hover effect for network items */
+        .dropdown-content a:hover img {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
+        }
+    </style>
+    <script type="module">
+        import '@rainbow-me/rainbowkit/styles.css';
+        import {
+            getDefaultWallets,
+            RainbowKitProvider,
+        } from '@rainbow-me/rainbowkit';
+        import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+        import {
+            mainnet,
+            polygon,
+            optimism,
+            arbitrum,
+            base,
+            fantom,
+            avalanche,
+            linea,
+            bsc
+        } from 'wagmi/chains';
+        import { publicProvider } from 'wagmi/providers/public';
+    </script>
+    <link rel="stylesheet" href="https://unpkg.com/@rainbow-me/rainbowkit@1.3.6/dist/index.css" />
+    <script src="https://unpkg.com/@web3modal/ethereum@2.7.1"></script>
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script src="https://unpkg.com/web3modal@1.9.0/dist/index.js"></script>
+    <script src="https://unpkg.com/evm-chains@0.2.0/dist/umd/index.min.js"></script>
+</head>
+<body>
+
+<header class="header">
+    <nav class="nav-container">
+        <div class="nav-left">
+            <a href="index.html" class="nav-logo">Superchain</a>
+            <div class="dropdown">
+                <button class="nav-item dropdown-toggle">Products</button>
+                <div class="dropdown-content">
+                    <a href="index.html">Launchpad</a>
+                    <a href="disperse.html">Multisender</a>
+                    <a href="predictionmarket.html">Prediction Markets</a>
+                </div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="dropdown">
+                <button class="nav-item dropdown-toggle">
+                    <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/5f9711105cc92983d0ea9f3d0066c8a3fb30be3a/assets/eth-logo.svg" alt="Network" class="network-icon">
+                    Ethereum
+                </button>
+                <div class="dropdown-content">
+                    <a href="#" data-network="1">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/5f9711105cc92983d0ea9f3d0066c8a3fb30be3a/assets/eth-logo.svg" alt="Ethereum">
+                        Ethereum
+                    </a>
+                    <a href="#" data-network="10">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/714fdfda84430012682169827e5cb06ac124eba6/assets/op%20logo.svg" alt="Optimism">
+                        Optimism
+                    </a>
+                    <a href="#" data-network="250">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/fantom.svg" alt="Fantom">
+                        Fantom
+                    </a>
+                    <a href="#" data-network="43114">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/avax.svg" alt="Avalanche">
+                        Avalanche
+                    </a>
+                    <a href="#" data-network="42161">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/arbitrum.svg" alt="Arbitrum">
+                        Arbitrum
+                    </a>
+                    <a href="#" data-network="59144">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/linea.svg" alt="Linea">
+                        Linea
+                    </a>
+                    <a href="#" data-network="137">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/8741471af8414a11cb32a0837393761996025f52/assets/polygon.svg" alt="Polygon">
+                        Polygon
+                    </a>
+                    <a href="#" data-network="8453">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/768301f881385983abf3919217644ccdb1e50270/assets/BASE.SVG" alt="Base">
+                        Base
+                    </a>
+                    <a href="#" data-network="56">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/6cf6796774d62d6dda068ce991230665cb2e78a6/assets/bnb.svg" alt="BNB Chain">
+                        BNB Chain
+                    </a>
+                    <a href="#" data-network="1946">
+                        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/minato3.svg" alt="Minato">
+                        Minato
+                    </a>
+                </div>
+            </div>
+            <button class="connect-wallet-btn">Connect Wallet</button>
+        </div>
+    </nav>
+</header>
+
+<div class="outer-box">
+    <div class="gradient-border"></div>
+    <div id="custom-chat-icon-wrapper" class="inner-box" onclick="openNewTab()">
+        <!-- Text comes first -->
+        <span>Help and Support</span> <!-- Changed to "Help and Support" -->
+        
+        <!-- SVG logo comes second -->
+        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="size-4" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.5 10c3.038 0 5.5 2.015 5.5 4.5c0 1.397 -.778 2.645 -2 3.47l0 2.03l-1.964 -1.178a6.649 6.649 0 0 1 -1.536 .178c-3.038 0 -5.5 -2.015 -5.5 -4.5s2.462 -4.5 5.5 -4.5z"></path>
+            <path d="M11.197 15.698c-.69 .196 -1.43 .302 -2.197 .302a8.008 8.008 0 0 1 -2.612 -.432l-2.388 1.432v-2.801c-1.237 -1.082 -2 -2.564 -2 -4.199c0 -3.314 3.134 -6 7 -6c3.782 0 6.863 2.57 7 5.785l0 .233"></path>
+            <path d="M10 8h.01"></path>
+            <path d="M7 8h.01"></path>
+            <path d="M15 14h.01"></path>
+            <path d="M18 14h.01"></path>
+        </svg>
+    </div>
+</div>
+
+
+<section style="padding: 4rem 2rem; text-align: center; color: white; background: linear-gradient(45deg, #1a1b1e, #2d2e32);">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem; background: linear-gradient(90deg, #ff0000, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Superchain Launchpad</h1>
+    <p style="font-size: 1.2rem; color: #888; margin-bottom: 2rem;">Launch your project across multiple chains with advanced features and maximum security</p>
+    <button style="background: linear-gradient(90deg, #ff0000, #ff8c00); color: white; border: none; padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease;">Launch Your Project</button>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 4rem 2rem; max-width: 1200px; margin: 0 auto;">
+    <div style="background: #1a1b1e; border: 1px solid #333; border-radius: 12px; padding: 2rem; transition: transform 0.3s ease;">
+        <h3 style="color: white; font-size: 1.5rem; margin-bottom: 1rem;">Multi-Chain Support</h3>
+        <p style="color: #888; line-height: 1.6;">Launch your token simultaneously across Ethereum, Arbitrum, Optimism, Base, and more. Reach a wider audience from day one.</p>
+    </div>
+    <div style="background: #1a1b1e; border: 1px solid #333; border-radius: 12px; padding: 2rem; transition: transform 0.3s ease;">
+        <h3 style="color: white; font-size: 1.5rem; margin-bottom: 1rem;">Advanced Security</h3>
+        <p style="color: #888; line-height: 1.6;">Built-in contract auditing, KYC verification, and multi-signature protection ensure maximum security for projects and investors.</p>
+    </div>
+    <div style="background: #1a1b1e; border: 1px solid #333; border-radius: 12px; padding: 2rem; transition: transform 0.3s ease;">
+        <h3 style="color: white; font-size: 1.5rem; margin-bottom: 1rem;">Flexible Tokenomics</h3>
+        <p style="color: #888; line-height: 1.6;">Customize your token distribution with fair launch, private sale, or multi-round offerings. Support for vesting schedules and lock periods.</p>
+    </div>
+</section>
+
+<section style="background: #1a1b1e; padding: 4rem 2rem; text-align: center;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto;">
+        <div style="padding: 1.5rem;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: white; margin-bottom: 0.5rem; background: linear-gradient(90deg, #ff0000, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">$50M+</div>
+            <div style="color: #888; font-size: 1.1rem;">Total Raised</div>
+        </div>
+        <div style="padding: 1.5rem;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: white; margin-bottom: 0.5rem; background: linear-gradient(90deg, #ff0000, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">100+</div>
+            <div style="color: #888; font-size: 1.1rem;">Projects Launched</div>
+        </div>
+        <div style="padding: 1.5rem;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: white; margin-bottom: 0.5rem; background: linear-gradient(90deg, #ff0000, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">50,000+</div>
+            <div style="color: #888; font-size: 1.1rem;">Active Users</div>
+        </div>
+        <div style="padding: 1.5rem;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: white; margin-bottom: 0.5rem; background: linear-gradient(90deg, #ff0000, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">9</div>
+            <div style="color: #888; font-size: 1.1rem;">Supported Chains</div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Replace the existing footer line with this new structure -->
+<div class="footer-container">
+    <div class="product-info">
+        <a href="index.html" class="product-item">Launchpad</a>
+        <span class="separator">|</span>
+        <a href="disperse.html" class="product-item">Multisender/Disperse</a>
+        <span class="separator">|</span>
+        <a href="predictionmarket.html" class="product-item">Prediction Markets</a>
+    </div>
+    <div class="made-by">
+        Superchain Exchange Inc. ©
+    </div>
+    <div class="social-icons">
+        <!-- X (Twitter) Icon with link -->
+        <a href="https://x.com/superchainexch" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+        </a>
+        <!-- Telegram Icon with link -->
+        <a href="https://t.me/superchainexchange" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
+        </a>
+    </div>
+</div>
+<div class="footer-line"></div>
+
+<!-- Tawk.to Widget Script -->
+<script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function() {
+        var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+        s1.async = true;
+        s1.src = 'https://embed.tawk.to/6740e2252480f5b4f5a2938f/default'; // Your Tawk.to widget source
+        s1.charset = 'UTF-8';
+        s1.setAttribute('crossorigin', '*');
+        s0.parentNode.insertBefore(s1, s0);
+    })();
+
+    window.addEventListener("load", function() {
+        var checkAPI = setInterval(function() {
+            if (typeof Tawk_API !== "undefined" && Tawk_API.toggle) {
+                clearInterval(checkAPI);
+                console.log("Tawk API loaded successfully");
+                Tawk_API.hideWidget();
+            } else {
+                console.log("Tawk API is not yet loaded");
+            }
+        }, 500);
+    });
+
+    function openNewTab() {
+        window.open('https://tawk.to/chat/6740e2252480f5b4f5a2938f/1idan6pi8', '_blank');
+    }
+</script>
+
+<script>
+    const connectBtn = document.querySelector('.connect-wallet-btn');
+    
+    async function connectWallet() {
+        try {
+            if (typeof window.ethereum === 'undefined') {
+                alert('Please install MetaMask to connect your wallet!');
+                return;
+            }
+
+            console.log("Requesting MetaMask connection...");
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+            // Get the connected account
+            const signer = provider.getSigner();
+            const account = await signer.getAddress();
+            
+            // Update button text with shortened address
+            connectBtn.textContent = `${account.slice(0,6)}...${account.slice(-4)}`;
+
+            // Handle account changes
+            window.ethereum.on('accountsChanged', async (accounts) => {
+                if (accounts.length === 0) {
+                    connectBtn.textContent = "Connect Wallet";
+                } else {
+                    connectBtn.textContent = `${accounts[0].slice(0,6)}...${accounts[0].slice(-4)}`;
+                }
+            });
+
+        } catch (error) {
+            console.error("Connection error:", error);
+            connectBtn.textContent = "Connect Wallet";
+        }
+    }
+
+    // Add click event listener to the connect button
+    connectBtn.addEventListener('click', connectWallet);
+</script>
+
+</body>
+</html>

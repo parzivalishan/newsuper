@@ -319,6 +319,7 @@ header {
             <p id="modalMessage"></p>
             <button onclick="closeModal()">OK</button>
         </div>
+        
     </div>
 
     <script>
@@ -419,6 +420,7 @@ const MINATO_NETWORK_PARAMS = {
     blockExplorerUrls: ['https://explorer.minato.soneium.org/'], // Use a valid explorer URL if available
 };
 
+// Function to connect wallet
 document.getElementById('connectWallet').onclick = async () => {
     try {
         // Check the current chain ID
@@ -433,31 +435,80 @@ document.getElementById('connectWallet').onclick = async () => {
             });
         }
 
-        // Now, request the accounts
+        // Request the accounts
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         const connectedAccount = accounts[0]; // Store the connected account
 
-        // Update the button text with sliced wallet address
-        const shortAddress = `${connectedAccount.slice(0, 10)}...${connectedAccount.slice(-8)}`;
-        const connectButton = document.getElementById('connectWallet');
-        connectButton.textContent = shortAddress; // Replace button text with short address
+        // Save the connected account to localStorage
+        localStorage.setItem('connectedAccount', connectedAccount);
 
-        // Optionally, disable the button or change its appearance
-        connectButton.disabled = true; // Disable button after connecting
-
-        document.getElementById('walletAddress').textContent = `Connected: ${connectedAccount}`; // Use connectedAccount here
-
-        // Fetch the wallet balance in parallel using Promise.all
-        const balance = await web3.eth.getBalance(connectedAccount); // Use connectedAccount to fetch balance
-        const etherBalance = web3.utils.fromWei(balance, 'ether'); // Convert balance from Wei to Ether
-        document.getElementById('balanceDisplay').textContent = `ETH: ${etherBalance}`;
+        // Update the UI
+        updateUI(connectedAccount);
 
     } catch (error) {
         console.error("Error connecting to wallet:", error);
-        alert("An error occurred. Please check the console for details.");
+        openModal("Error", "Failed to connect to wallet. Please try again.", "error");
     }
 };
 
+// Function to update the UI with wallet details
+const updateUI = async (connectedAccount) => {
+    // Update the button text with sliced wallet address
+    const shortAddress = `${connectedAccount.slice(0, 10)}...${connectedAccount.slice(-8)}`;
+    const connectButton = document.getElementById('connectWallet');
+    connectButton.textContent = shortAddress; // Replace button text with short address
+
+    // Optionally, disable the button or change its appearance
+    connectButton.disabled = true; // Disable button after connecting
+
+    // Display the connected wallet address
+    document.getElementById('walletAddress').textContent = `Connected: ${connectedAccount}`;
+
+    // Fetch and display the wallet balance
+    const balance = await web3.eth.getBalance(connectedAccount); // Use connectedAccount to fetch balance
+    const etherBalance = web3.utils.fromWei(balance, 'ether'); // Convert balance from Wei to Ether
+    document.getElementById('balanceDisplay').textContent = `ETH: ${etherBalance}`;
+};
+
+// Check if a wallet is already connected on page load
+window.addEventListener('load', async () => {
+    const connectedAccount = localStorage.getItem('connectedAccount');
+
+    if (connectedAccount) {
+        // Check if the wallet is still connected
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+        if (accounts.length > 0 && accounts[0] === connectedAccount) {
+            // Wallet is still connected, update the UI
+            updateUI(connectedAccount);
+        } else {
+            // Wallet is not connected, clear the stored account
+            localStorage.removeItem('connectedAccount');
+        }
+    }
+});
+
+// Handle account or chain changes
+ethereum.on('accountsChanged', (accounts) => {
+    if (accounts.length === 0) {
+        // Wallet disconnected
+        localStorage.removeItem('connectedAccount');
+        document.getElementById('connectWallet').textContent = 'Connect Wallet';
+        document.getElementById('connectWallet').disabled = false;
+        document.getElementById('walletAddress').textContent = 'Not Connected';
+        document.getElementById('balanceDisplay').textContent = 'ETH: 0';
+    } else {
+        // Wallet switched, update the UI
+        const connectedAccount = accounts[0];
+        localStorage.setItem('connectedAccount', connectedAccount);
+        updateUI(connectedAccount);
+    }
+});
+
+ethereum.on('chainChanged', (chainId) => {
+    // Reload the page when the chain changes
+    window.location.reload();
+});
 
 
 

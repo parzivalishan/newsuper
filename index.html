@@ -1142,7 +1142,7 @@ input:hover {
 
 /* Modal styles */
 .modal {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -1150,23 +1150,33 @@ input:hover {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.7); /* Darker background with opacity */
-    backdrop-filter: blur(5px); /* Blur effect for the background */
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
 }
 
 .modal-content {
-    background-color:burlywood; /* Charcoal */
-    margin: 10% auto; /* Centered with less margin */
-    padding: 20px; /* Increased padding */
-    border-radius: 15px; /* More rounded corners */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Deeper shadow for depth */
-    width: 90%; /* Responsive width */
-    max-width: 500px; /* Maximum width for larger screens */
-    animation: fadeIn 0.3s; /* Animation for opening */
-    
-    word-wrap: break-word; /* Allow long words to break and wrap onto the next line */
-    overflow-wrap: break-word; /* Breaks long words if necessary */
-    white-space: normal; /* Allows text to wrap normally */
+    background-color: #5c3198;
+    position: fixed;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    margin: 0;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    opacity: 1; /* Make it visible */
+    transition: all 0.3s ease;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    text-align: center; /* Center text and loader */
+    color: white; /* Ensure text is visible on the dark background */
+}
+
+.modal-content.active {
+    transform: translate(-50%, -50%); /* Keep it centered when active */
+    opacity: 1;
 }
 
 /* Animation for modal appearance */
@@ -1287,20 +1297,18 @@ button:hover {
     border: 2px solid transparent;         /* No border for inactive tabs */
 }
 
-/* General styles for #app2 container */
 #app2 {
     font-family: Arial, sans-serif;
-    color: #333;
+    color: #c9d1d9;                        /* Light gray text for better contrast */
     text-align: center;
-    background: linear-gradient(135deg, rgba(255, 94, 77, 1) 0%, rgba(255, 209, 102, 1) 100%);
-    padding: 40px;                         /* Spacing within the container */
-    border-radius: 25px;                   /* Rounded corners for the container */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    max-width: 1950px;                     /* Max width for larger screens */
-    width: calc(100% - 20px);              /* Full width minus margins */
-    margin: 60px auto;                     /* Centered layout with top margin */
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);  /* Darker GitHub-style gradient */
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);  /* Darker shadow for depth */
+    max-width: 1950px;
+    width: calc(100% - 20px);
+    margin: 60px auto;
 }
-
 /* Header styles within #app2 container */
 #app2 h1 {
     font-size: 2.5em;
@@ -1835,35 +1843,85 @@ button:hover {
 
 /* Loader Animation */
 .loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 64px; /* Slightly smaller for a more modern look */
+    height: 64px;
+    border: 4px solid rgba(255, 255, 255, 0.1); /* Semi-transparent border */
+    border-top: 4px solid #3B82F6; /* Vibrant blue for the animation */
+    border-radius: 50%; /* Circular shape */
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* Smoother animation */
+    margin: 20px auto; /* Center the loader */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    position: relative; /* For pseudo-elements */
 }
 
+/* Optional: Add a glowing effect */
+.loader::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top-color: rgba(59, 130, 246, 0.2); /* Lighter blue glow */
+    animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+/* Spin Animation */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-.disabled {
-    color: gray; /* Change text color to gray */
-    pointer-events: none; /* Prevent clicks */
-    opacity: 0.5; /* Faded appearance */
+/* Optional: Add a fade-in effect for smoother appearance */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
-.info-container {
-    display: flex; /* Use flexbox for alignment */
-    justify-content: center; /* Center items horizontally */
-    align-items: center; /* Align items vertically */
+.loader {
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite, fadeIn 0.5s ease-in-out;
 }
 
+/* Optional: Add a background overlay for better focus */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top */
+}
+
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background overlay */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: 1000; /* Ensure it's on top */
+}
+
+/* Modal Content Styling */
+.modal-content {
+    background-color: #5c3198;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center; /* Center text and loader */
+    color: white; /* Ensure text is visible on the dark background */
+}
 
 
 
@@ -3427,25 +3485,24 @@ setTimeout(() => {
                 <button onclick="closeModal()">OK</button>
             </div>
         </div>
+<!-- Processing Modal -->
+<div id="processingModal" class="modal">
+    <div class="modal-content">
+        <h2>Processing...</h2>
+        <p>Please confirm the transaction in your MetaMask</p>
+        <div class="loader"></div> <!-- Centered and properly sized loader -->
+    </div>
+</div>
 
-        <!-- Processing Modal -->
-        <div id="processingModal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <h2>Processing...</h2>
-                <p>Please confirm the transaction in your metamask</p>
-                <div class="loader"></div> <!-- Optional loading spinner -->
-            </div>
-        </div>
-
-        <!-- Modal Structure -->
-        <div id="errorModal" class="modal">
-            <div class="modal-content">
-                <span class="close-button">&times;</span>
-                <h2>Error</h2>
-                <p id="errorMessage"></p>
-                <button id="okButton">OK</button> <!-- OK Button -->
-            </div>
-        </div>
+<!-- Modal Structure -->
+<div id="errorModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span> <!-- Close button -->
+        <h2>Error</h2>
+        <p id="errorMessage"></p>
+        <button id="okButton">OK</button> <!-- OK Button -->
+    </div>
+</div>
 
         <h2></h2>
         <p id="ethPriceContainer">Current Price ETH: <span id="ethPrice">Fetching...</span></p>
@@ -4047,28 +4104,51 @@ async function fetchETHPrice() {
 }
 
 function openModal(title, message) {
+    const modal = document.getElementById('customAlert');
+    const modalContent = modal.querySelector('.modal-content');
+    
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalMessage').innerHTML = message; // Use innerHTML to allow HTML content
-    document.getElementById('customAlert').style.display = 'block';
+    
+    modal.style.display = 'block';
+    setTimeout(() => {
+        modalContent.classList.add('active'); // Add active class for slide-in
+    }, 10);
 }
 
 function closeModal() {
     const modal = document.getElementById('customAlert');
-    modal.style.opacity = '0'; // Fade out effect
-    setTimeout(() => {
-        modal.style.display = 'none';
-        modal.style.opacity = '1'; // Reset opacity for next open
-    }, 300); // Match the duration of the fade-in animation
+    
+    // Check if the modal exists
+    if (!modal) {
+        console.error("Modal not found!"); // Debugging
+        return;
+    }
+
+    // Hide the modal immediately
+    modal.style.display = 'none';
 }
 
+
 function showProcessingModal() {
-    document.getElementById('processingModal').style.display = 'block';
+    const modal = document.getElementById('processingModal');
+    const modalContent = modal.querySelector('.modal-content');
+    
+    modal.style.display = 'block';
+    setTimeout(() => {
+        modalContent.classList.add('active');
+    }, 10);
 }
 
 function hideProcessingModal() {
-    document.getElementById('processingModal').style.display = 'none';
+    const modal = document.getElementById('processingModal');
+    const modalContent = modal.querySelector('.modal-content');
+    
+    modalContent.classList.remove('active');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
 }
-
 // Function to update the raised amount in USD based on current ETH price
 async function updateRaisedAmountAndProgress() {
     const targetAddress = '0xad3a5DdCe484251f8839f185896b14605b8dd340'; // Target address

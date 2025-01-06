@@ -4607,6 +4607,11 @@ async function getChainId() {
                         method: 'wallet_switchEthereumChain',
                         params: [{ chainId: `0x${parseInt(newChainId).toString(16)}` }],
                     });
+                    
+                    // Refresh the page after a successful network switch
+                    window.location.reload();
+
+
                 } catch (switchError) {
                     // This error code indicates that the chain has not been added to MetaMask
                     if (switchError.code === 4902) {

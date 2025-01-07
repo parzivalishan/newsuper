@@ -71,7 +71,7 @@ body::before {
    
    /* Mobile and smaller screen responsiveness */
    width: 100%;
-   max-width: 300px;
+   max-width: 330px;
    box-sizing: border-box;
    touch-action: manipulation;
    -webkit-tap-highlight-color: transparent;
@@ -289,28 +289,40 @@ body::before {
       cursor: pointer;
     }
 
+
     .right-buttons-container {
    display: flex;
    align-items: center;
-   gap: 10px;
+   gap: 0px;
    position: relative;
+   border: 1px solid #4a4a4a;
+   padding: 5px;
+   border-radius: 5px;
+   background-color: #0a0a0a;
+   box-sizing: border-box;
+   width: 50%; /* Adjust this value as needed */
+   max-width: 490px; /* Add max-width to limit the container's width */
 }
 
-/* Media query for mobile devices */
+.right-buttons-container > * {
+   box-sizing: border-box;
+}
+
 @media (max-width: 768px) {
    .right-buttons-container {
-      gap: 5px; /* Reduce the space between items */
-      font-size: 0.875rem; /* Reduce the font size */
-      padding: 5px; /* Reduce padding */
+      flex-direction: column;
+      gap: 5px;
+      font-size: 0.875rem;
+      padding: 5px;
+      width: 100%; /* Full width on mobile */
+      max-width: none; /* Remove max-width on smaller screens */
    }
 
    .right-buttons-container > * {
-      transform: scale(0.9); /* Scale down the children elements */
+      transform: scale(0.9);
+      width: 100%;
    }
 }
-
-
-
 
     .home-button, .product-button {
       display: flex;
@@ -2251,7 +2263,8 @@ footer {
         }
 
         .network-option:hover {
-            background-color: #333;
+         color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .network-option img {
@@ -2574,20 +2587,25 @@ document.addEventListener('DOMContentLoaded', () => {
             id="connectWalletBtn" 
             class="connectwalletbtn" 
             style="
-                background-color: #0a0a0a;
-                color: white;
-                width: 100%;
-                max-width: 250px;
-                padding: 15px 20px;
-                box-sizing: border-box;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border: 1px solid #4a4a4a;
-                cursor: pointer;
-                border-radius: 4px;
-                transition: background-color 0.3s ease, border-color 0.3s ease;
-                box-shadow: 0 0 8px rgba(74, 74, 74, 0.3);
+                   background: linear-gradient(90deg, #ff0000, #ff8c00);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px; /* Added to maintain button size when showing address */
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
                 
                 /* Mobile and smaller screen responsiveness */
                 font-size: 14px;
@@ -2703,7 +2721,7 @@ document.addEventListener('DOMContentLoaded', () => {
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: transparent;
+      background: transparent; /* Default background */
       border: 1px solid #424242;
       border-radius: 8px;
       color: white;
@@ -2799,6 +2817,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .network-button {
             font-size: 14px;
             padding: 6px 12px;
+            background: #1a1a1a; /* Solid background for small screens */
         }
 
         .mini-page {
@@ -2843,6 +2862,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .network-button {
             font-size: 12px;
             padding: 4px 10px;
+            background: #1a1a1a; /* Solid background for extra small screens */
         }
 
         .mini-page {
@@ -4702,9 +4722,15 @@ async function getChainId() {
                 min-width: 180px;
             }
 
-            .network-dropdown.show {
-                display: block;
-            }
+.network-dropdown.show {
+    display: block !important;
+    background: #1a1a1a !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    z-index: 1000 !important;
+    margin-top: 8px !important;
+}
 
             .network-option {
                 display: flex;

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrolling while modal is visible */
+        }
+
+        #main-content {
+            padding: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+            display: flex;
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+        }
+
+        .modal-content {
+            background-color: #1a1a1a; /* Dark background */
+            color: #fff; /* White text */
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            margin: 0; /* Remove default margin, let flexbox center */
+        }
+
+        .modal-scrollable {
+            max-height: 400px; /* Set the max height for scroll */
+            overflow-y: auto; /* Enable scroll when content overflows */
+            padding-right: 10px; /* Prevent content from touching scrollbar */
+        }
+
+        .modal-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .modal-buttons button {
+            background-color: #555; /* Darker button color */
+            color: white;
+            padding: 10px 15px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-buttons button:hover {
+            background-color: #777;
+        }
+
+        .modal-buttons #accept-btn {
+            background-color: #4CAF50;
+        }
+
+        .modal-buttons #accept-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+        <!-- This is where your website content goes -->
+        <h1>Welcome to My Website!</h1>
+        <p>This is the main content of the website.</p>
+    </div>
+
+    <div id="terms-modal" class="modal">
+        <div class="modal-content">
+            <h2>Terms and Conditions</h2>
+            <div class="modal-scrollable">
+                <p>
+                    <strong>1. Acceptance of Terms:</strong> By accessing and using this website, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use this website.
+                  </p>
+                  <p>
+                    <strong>2. User Conduct:</strong> You agree to use this website for lawful purposes only. You must not engage in any activity that may disrupt, damage, or interfere with the operation of this website.
+                  </p>
+                  <p>
+                    <strong>3. Intellectual Property:</strong> All content on this website, including but not limited to text, graphics, logos, and images, is the property of [Your Company Name] and is protected by copyright laws. You must not reproduce, distribute, or modify any content from this website without prior written consent.
+                  </p>
+                    <p>
+                        <strong>4. Disclaimer of Warranties:</strong> This website and its content are provided on an "as is" and "as available" basis. [Your Company Name] makes no warranties, express or implied, regarding the accuracy, completeness, or suitability of this website for any particular purpose.
+                    </p>
+                    <p>
+                        <strong>5. Limitation of Liability:</strong> In no event shall [Your Company Name] be liable for any direct, indirect, incidental, special, or consequential damages arising from or related to your use of this website, including but not limited to loss of profits, data, or business interruption.
+                    </p>
+                    <p>
+                      <strong>6. Governing Law:</strong> These Terms and Conditions shall be governed by and construed in accordance with the laws of [Your Country/State]. Any disputes arising from or related to these terms shall be subject to the exclusive jurisdiction of the courts in [Your Country/State].
+                    </p>
+                    <p>
+                       <strong>7. Changes to Terms:</strong> We reserve the right to update or modify these Terms and Conditions at any time without prior notice. Your continued use of this website following any changes constitutes your acceptance of the updated Terms and Conditions.
+                    </p>
+    
+                   <p>
+                      <strong>8. Contact Information:</strong> If you have any questions or concerns regarding these Terms and Conditions, please contact us at [Your Contact Information].
+                   </p>
+                   <p>
+                    <strong>9. Acceptance of Terms:</strong> By accessing and using this website, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use this website.
+                   </p>
+                   <p>
+                     <strong>10. User Conduct:</strong> You agree to use this website for lawful purposes only. You must not engage in any activity that may disrupt, damage, or interfere with the operation of this website.
+                  </p>
+                  <p>
+                   <strong>11. Intellectual Property:</strong> All content on this website, including but not limited to text, graphics, logos, and images, is the property of [Your Company Name] and is protected by copyright laws. You must not reproduce, distribute, or modify any content from this website without prior written consent.
+                  </p>
+            </div>
+            <div class="modal-buttons">
+                <button id="decline-btn">Do Not Accept</button>
+                <button id="accept-btn">Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const modal = document.getElementById('terms-modal');
+          const mainContent = document.getElementById('main-content');
+          const acceptBtn = document.getElementById('accept-btn');
+          const declineBtn = document.getElementById('decline-btn');
+          const body = document.body;
+
+          // Function to set a cookie
+          function setCookie(name, value, days) {
+              let expires = "";
+              if (days) {
+                  const date = new Date();
+                  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                  expires = "; expires=" + date.toUTCString();
+              }
+              document.cookie = name + "=" + (value || "") + expires + "; path=/";
+          }
+      
+          // Function to get a cookie
+          function getCookie(name) {
+              const nameEQ = name + "=";
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  let cookie = cookies[i];
+                  while (cookie.charAt(0) === ' ') {
+                      cookie = cookie.substring(1, cookie.length);
+                  }
+                  if (cookie.indexOf(nameEQ) === 0) {
+                      return cookie.substring(nameEQ.length, cookie.length);
+                  }
+              }
+              return null;
+          }
+      
+          function showTermsModal() {
+              modal.style.display = 'flex';
+              body.style.overflow = 'hidden'; // Disable scrolling on body
+          }
+      
+          function hideTermsModal(){
+            modal.style.display = 'none';
+            body.style.overflow = 'auto'; // Enable scrolling on body
+          }
+          function showMainContent(){
+            mainContent.style.display = 'block';
+          }
+      
+          function hideMainContent(){
+             mainContent.style.display = 'none';
+          }
+
+            const termsAccepted = getCookie('terms_accepted');
+    
+          if(termsAccepted === 'true'){
+              hideTermsModal();
+              showMainContent();
+              body.style.overflow = 'auto';
+
+            } else {
+                showTermsModal();
+                 mainContent.style.display = 'none';
+            }
+
+        acceptBtn.addEventListener('click', function() {
+                setCookie('terms_accepted', 'true', 365)
+                hideTermsModal();
+                showMainContent();
+                body.style.overflow = 'auto';
+
+
+            });
+
+            declineBtn.addEventListener('click', function(event) {
+              event.preventDefault();
+                setCookie('terms_accepted','false',365);
+                hideTermsModal();
+                hideMainContent();
+                body.style.overflow = 'hidden';
+                alert("You must accept terms and condition to view the website");
+                window.location.reload();
+
+
+          });
+        });
+      </script>
+</body>
+</html>

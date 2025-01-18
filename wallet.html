@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Wallet</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/qrcode.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@gh-pages/qrcode.min.js"></script>
+   
+   <style>
+        /* SpaceX Black Color Theme */
+        :root {
+            --primary-bg: #000000; /* SpaceX Black */
+            --secondary-bg: #1a1a1a; /* Dark Gray */
+            --text-color: #ffffff; /* White */
+            --accent-color: #00ff00; /* Bright Green for highlights */
+            --border-color: rgba(255, 255, 255, 0.08); /* Light border */
+        }
+
+        /* Basic Reset & Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            transition: background-color 0.3s, color 0.3s; /* Smooth transitions */
+        }
+        body {
+            background: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar-container {
+            position: relative;
+            width: 350px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            border-right: 1px solid var(--border-color);
+            overflow-y: hidden;
+        }
+        .sidebar {
+            width: 100%;
+            height: 100%;
+            background: var(--secondary-bg);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Wallet Info Styles */
+        .wallet-info {
+            background: #2a2a2a; /* slightly less dark bg*/
+             padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+         .balance {
+             font-size: 28px;
+            margin: 15px 0;
+            display: flex;
+             align-items: center;
+             justify-content: space-between;
+        }
+         /* Address Container Styles */
+         .address-container {
+            background: #333333;
+             padding: 10px;
+           border-radius: 8px;
+           margin: 10px 0;
+            word-break: break-all;
+             border: 1px solid var(--border-color);
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-color);
+             color: var(--primary-bg);
+             border: none;
+             border-radius: 10px;
+            cursor: pointer;
+           transition: background-color 0.3s;
+             margin: 5px 0;
+           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+         button:hover {
+           background: #00cc00;
+        }
+
+        /* Network Badge Styles */
+        .network-badge {
+             background: #333;
+             padding: 5px 10px;
+            border-radius: 15px;
+             font-size: 13px;
+            display: inline-block;
+           border: 1px solid var(--border-color);
+        }
+
+        /* Transaction History Styles */
+        .transaction-history {
+            margin-top: 20px;
+        }
+       .transaction {
+           background: #333;
+             padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+             border: 1px solid var(--border-color);
+            overflow: hidden; /* Ensure content doesn't break out */
+        }
+         .gas-info {
+           font-size: 13px;
+            color: #ccc;
+             margin-top: 10px;
+        }
+
+        /* Token List Styles */
+        .token-list {
+             margin-top: 20px;
+         }
+         .token-item {
+             display: flex;
+            justify-content: space-between;
+             padding: 10px;
+             background: #333;
+             border-radius: 8px;
+            margin: 5px 0;
+            border: 1px solid var(--border-color);
+        }
+         /* Tabs Styles */
+        .tabs {
+            display: flex;
+             margin-bottom: 20px;
+            background: #2a2a2a; /* Darker Tab Background */
+            border-radius: 10px;
+            padding: 5px;
+            border: 1px solid var(--border-color);
+        }
+         .tab {
+             flex: 1;
+            padding: 12px;
+            text-align: center;
+           cursor: pointer;
+             border-radius: 8px;
+             transition: background-color 0.3s;
+            border: 1px solid var(--border-color);
+        }
+         .tab.active {
+           background: #444;
+       }
+
+        /* Modal Styles */
+        .modal {
+           display: none;
+            position: fixed;
+            z-index: 1000;
+             left: 0;
+            top: 0;
+             width: 100%;
+           height: 100%;
+             overflow: auto;
+            background: rgba(0, 0, 0, 0.7);
+           justify-content: center;
+             align-items: center;
+        }
+        .modal-content {
+           background: #2a2a2a; /* Darker Modal background */
+           padding: 20px;
+             border: 1px solid var(--border-color);
+            width: 80%;
+             max-width: 500px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            max-height: 90%;
+            overflow-y: auto;
+        }
+         /* Modal Styles for Login */
+          .login-modal {
+            position: absolute;
+            top: 20px;
+             left: 20px;
+             z-index: 1001;
+           background: #2a2a2a;
+             padding: 20px;
+             border: 1px solid var(--border-color);
+            border-radius: 12px;
+             text-align: center;
+           box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Modal Close Button */
+         .close-button {
+             color: #aaa;
+             float: right;
+            font-size: 28px;
+             font-weight: bold;
+             cursor: pointer;
+        }
+         .close-button:hover,
+         .close-button:focus {
+             color: white;
+             text-decoration: none;
+           cursor: pointer;
+        }
+        /* Form Styles inside Modals */
+        .modal-content label,
+          .modal-content input,
+         .modal-content select {
+           display: block;
+            margin-bottom: 10px;
+             width: 100%;
+             box-sizing: border-box;
+        }
+        .modal-content input,
+        .modal-content select {
+           padding: 12px;
+             border: 1px solid var(--border-color);
+            background: #444;
+            color: white;
+            border-radius: 10px;
+        }
+        .qr-code-container {
+            margin-top: 10px;
+             display: flex;
+           flex-direction: column;
+            align-items: center;
+        }
+         .qr-code {
+           margin-top: 10px;
+            width: 300px;
+             height: 300px;
+        }
+       /* Custom Scrollbar */
+       ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+           background: #333;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+           border-radius: 4px;
+        }
+         ::-webkit-scrollbar-thumb:hover {
+           background: #777;
+        }
+         .form-group {
+            margin-bottom: 15px;
+         }
+        .form-group label {
+           display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+             text-align: left;
+        }
+        .form-group input,
+         .form-group select {
+             padding: 12px;
+            border: 1px solid var(--border-color);
+            background: #444;
+            color: white;
+           border-radius: 10px;
+            width: 100%;
+           box-sizing: border-box;
+        }
+       .confirmation-modal {
+          display: none;
+            position: fixed;
+            z-index: 1002; /* Higher z-index for confirmation modal */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+           overflow: auto;
+            background: rgba(0, 0, 0, 0.7); /* Darker overlay */
+            justify-content: center;
+           align-items: center;
+       }
+         .confirmation-content {
+            background: #2a2a2a;
+            margin: 5% auto;
+            padding: 20px;
+             border: 1px solid var(--border-color);
+            width: 80%;
+             max-width: 400px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        #confirmationInput {
+           width: 100%;
+           padding: 12px;
+            background: #444;
+             border: 1px solid var(--border-color);
+            color: white;
+             border-radius: 10px;
+             margin-top: 10px;
+            margin-bottom: 10px;
+           box-sizing: border-box;
+         }
+        #cancelButton{
+           background-color: #ff4d4d;
+         }
+        .loading-overlay {
+            display: none;
+           position: fixed;
+             z-index: 1003;
+            left: 0;
+            top: 0;
+             width: 100%;
+             height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+           color: #ffffff;
+            font-size: 20px;
+        }
+       .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--accent-color);
+             border-radius: 50%;
+           width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+             margin-bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            color: #ff4d4d;
+             margin-top: 10px;
+             font-size: 14px;
+        }
+       .transaction-hash {
+            margin-top: 10px;
+             text-align: center;
+             font-size: 14px;
+        }
+        .transaction-hash a {
+             color: #6dd5ed;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .transaction-hash a:hover {
+             color: #45b6e8;
+        }
+        #cancelTransactionButton {
+            background-color: #ff4d4d;
+            color: white;
+           border: none;
+            padding: 10px 15px;
+             border-radius: 5px;
+           cursor: pointer;
+            margin-top: 10px;
+            display: none;
+       }
+      .main-content {
+           flex: 1;
+            display: flex;
+             flex-direction: column;
+            padding: 20px;
+             overflow-y: auto;
+        }
+         .transaction-details {
+            font-size: 12px;
+           color: #ccc;
+            margin-top: 5px;
+        }
+         .transaction-status {
+            font-style: italic;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        Loading...
+    </div>
+     <div id="confirmationModal" class="confirmation-modal">
+        <div class="confirmation-content">
+            <p>Type "confirm" to proceed with the transaction:</p>
+            <input type="text" id="confirmationInput" placeholder="Type 'confirm'">
+             <button id="confirmTransactionButton">Confirm</button>
+            <button id="cancelButton" onclick="closeConfirmationModal()">Cancel</button>
+            <button id="cancelTransactionButton" onclick="cancelTransaction()" style="display: none;">Cancel Transaction</button>
+       </div>
+    </div>
+    <div class="sidebar-container">
+        <div id="login-modal" class="login-modal">
+            <h2>Connect Wallet</h2>
+              <div id="private-input">
+                    <input
+                       type="password"
+                        placeholder="Enter your private key"
+                       style="width: 100%; padding: 12px; background: #333; border: 1px solid var(--border-color); border-radius: 10px; color: white; margin: 10px 0;"
+                    >
+              </div>
+             <button onclick="connectWallet()">Connect Wallet</button>
+            <div id="error-message" class="error-message hidden"></div>
+        </div>
+        <div class="sidebar" id="wallet-section" class="hidden">
+             <div class="wallet-info">
+                <div class="network-badge">Optimism Sepolia</div>
+                 <div class="balance">
+                     <span>Balance</span>
+                   <span id="wallet-balance">0.00 ETH</span>
+                </div>
+                <div class="address-container">
+                    <small>Wallet Address:</small>
+                   <div id="wallet-address"></div>
+               </div>
+               <div class="gas-info">
+                    Gas Price: <span id="gas-price">Loading...</span>
+               </div>
+           </div>
+           <button onclick="showSendModal()">Send</button>
+            <button onclick="showReceiveModal()">Receive</button>
+            <div class="token-list">
+                <h3>Tokens</h3>
+                 <div class="token-item">
+                   <span>ETH</span>
+                   <span id="eth-balance">0.00</span>
+               </div>
+             </div>
+            <div class="transaction-history">
+                <h3>Recent Transactions</h3>
+                <div id="transaction-list">
+               </div>
+           </div>
+        </div>
+    </div>
+   <div class="main-content">
+    </div>
+    <div id="receiveModal" class="modal">
+         <div class="modal-content">
+            <span class="close-button" onclick="closeModal('receiveModal')">×</span>
+            <h2>Receive</h2>
+           <div class="qr-code-container">
+                 <p>Your Wallet Address:</p>
+                <div id="receive-address-display"></div>
+                <div id="qr-code" class="qr-code"></div>
+                <button onclick="copyAddress()">Copy Address</button>
+           </div>
+        </div>
+    </div>
+    <div id="sendModal" class="modal">
+       <div class="modal-content">
+            <span class="close-button" onclick="closeModal('sendModal')">×</span>
+             <h2>Send</h2>
+           <div class="form-group">
+                 <label for="sendType">Send:</label>
+                <select id="sendType" onchange="toggleTokenInput()">
+                    <option value="eth">ETH</option>
+                     <option value="token">Token Contract</option>
+                </select>
+            </div>
+           <div class="form-group" id="tokenContractGroup" style="display: none;">
+                <label for="tokenContract">Token Contract Address:</label>
+                <input type="text" id="tokenContract" placeholder="Enter token contract address">
+           </div>
+             <div class="form-group">
+                 <label for="recipientAddress">Recipient Address:</label>
+                <input type="text" id="recipientAddress" placeholder="Enter recipient address">
+           </div>
+           <div class="form-group">
+                <label for="amount">Amount:</label>
+               <input type="number" id="amount" placeholder="Enter amount">
+           </div>
+             <button onclick="showConfirmationModal()">Send</button>
+        </div>
+    </div>
+    <div id="transactionModal" class="modal">
+       <div class="modal-content">
+           <span class="close-button" onclick="closeModal('transactionModal')">×</span>
+            <h2>Transaction Details</h2>
+           <div class="transaction-hash">
+                <p id="transaction-message"></p>
+           </div>
+      </div>
+    </div>
+
+    <script>
+         let provider;
+         let wallet;
+          let currentNetwork = 'optimism';
+         const networkEndpoints = {
+            'optimism': 'https://sepolia.optimism.io',
+        };
+        const networkChainIds = {
+            'optimism': 11155420,
+       };
+       const explorerUrls = {
+          'optimism': 'https://sepolia.optimism.io/tx/',
+       };
+      const blockscoutApiUrls = {
+            'optimism': 'https://optimism-sepolia.blockscout.com/api/v2',
+      }
+    let qrcode; // Declare qrcode in a higher scope
+
+   try{
+      qrcode = new QRCode("qr-code", {
+         colorDark: "#ffffff",
+           colorLight: "#2d2d2d",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+    }catch(error){
+      console.error("Failed to initialize QR Code:", error);
+     alert("Failed to initialize QR code library");
+    }
+
+
+         async function initializeProvider() {
+            try {
+                provider = new ethers.JsonRpcProvider(networkEndpoints[currentNetwork]);
+                await updateGasPrice();
+                setInterval(updateGasPrice, 15000);
+            } catch (error) {
+                console.error('Failed to initialize provider:', error);
+                alert('Failed to initialize provider. See console for details.');
+            }
+        }
+
+        async function updateGasPrice() {
+           if(!provider){
+             console.error("Provider not initialized");
+             document.getElementById('gas-price').textContent = 'Error loading gas price';
+             return;
+           }
+            try {
+                const gasPrice = await provider.getGasPrice();
+                const gasPriceGwei = ethers.formatUnits(gasPrice, "gwei");
+                document.getElementById('gas-price').textContent = `${parseFloat(gasPriceGwei).toFixed(2)} Gwei`;
+           } catch (error) {
+                 console.error('Error updating gas price:', error);
+                document.getElementById('gas-price').textContent = 'Error loading gas price';
+            }
+        }
+        function setCookie(name, value, days) {
+           let expires = "";
+            if (days) {
+                const date = new Date();
+                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+         function getCookie(name) {
+             const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                 let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+         }
+         async function connectWallet() {
+             const errorMessageDiv = document.getElementById('error-message');
+            errorMessageDiv.classList.add('hidden');
+             try {
+                 if (!provider) {
+                    await initializeProvider();
+                    if(!provider) throw new Error("Provider was not properly initialized");
+                }
+                const privateKey = document.querySelector('#private-input input').value.trim();
+                if (!privateKey) throw new Error('Please enter a private key');
+                const walletData = { type: 'private', value: privateKey };
+                setCookie('walletData', JSON.stringify(walletData), 30);
+                wallet = new ethers.Wallet(privateKey, provider);
+                document.getElementById('login-modal').style.display = "none";
+                document.getElementById('wallet-section').classList.remove('hidden');
+                const address = await wallet.getAddress();
+                document.getElementById('wallet-address').textContent = address;
+                 await updateWalletInfo();
+                 await loadTransactions();
+                 await loadAllTokenBalances();
+            }
+             catch (error) {
+                console.error('Error connecting wallet:', error);
+                 errorMessageDiv.textContent = 'Error connecting wallet: ' + error.message;
+                errorMessageDiv.classList.remove('hidden');
+            }
+        }
+         async function updateWalletInfo() {
+             if(!wallet){
+               console.error("Wallet is not properly initialized");
+               return;
+             }
+             try {
+                const balance = await provider.getBalance(wallet.address);
+                 const balanceInEth = ethers.formatEther(balance);
+                document.getElementById('wallet-balance').textContent = `${parseFloat(balanceInEth).toFixed(4)} ETH`;
+                 document.getElementById('eth-balance').textContent = parseFloat(balanceInEth).toFixed(4);
+            }
+            catch (error) {
+                console.error('Error updating wallet info:', error);
+            }
+        }
+          async function loadTransactions() {
+            if(!wallet){
+                console.error("Wallet is not properly initialized");
+                document.getElementById('transaction-list').innerHTML = '<div class="transaction" style="color: red;">Wallet not initialized.</div>';
+                return;
+              }
+            try {
+                const address = await wallet.getAddress();
+                const apiUrl = `${blockscoutApiUrls[currentNetwork]}/address/${address}/transactions?items=5`;
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (!data || !data.items) {
+                   console.error("Failed to fetch transactions from Blockscout API", data);
+                    document.getElementById('transaction-list').innerHTML = '<div class="transaction" style="color: red;">Failed to load transactions.</div>';
+                    return;
+                }
+
+               const transactionsHTML = data.items.map(tx => {
+                   const timestamp = new Date(tx.timestamp * 1000).toLocaleString();
+                    return `
+                        <div class="transaction">
+                            <div>${tx.hash.slice(0, 6)}...${tx.hash.slice(-4)}</div>
+                            <div>${tx.from === address ? 'Sent' : 'Received'}</div>
+                            <div>${ethers.formatEther(tx.value)} ETH</div>
+                            <div class="transaction-details">
+                                <div>Block: ${tx.block_number}</div>
+                              <div>Timestamp: ${timestamp}</div>
+                                <div>Gas Used: ${tx.gas_used}</div>
+                                <div class="transaction-hash" id="transaction-${tx.hash}"></div>
+                           </div>
+                        </div>
+                    `;
+               }).join('');
+
+                document.getElementById('transaction-list').innerHTML = transactionsHTML;
+               data.items.forEach(tx => {
+                    const txHashLinkDiv = document.getElementById(`transaction-${tx.hash}`);
+                   if (txHashLinkDiv) {
+                       txHashLinkDiv.innerHTML = `<a href="${explorerUrls[currentNetwork]}${tx.hash}" target="_blank" onclick="showTransactionDetails('${tx.hash}')">View on Explorer</a>`;
+                   }
+                });
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                document.getElementById('transaction-list').innerHTML = '<div class="transaction" style="color: red;">Failed to load transactions.</div>';
+            }
+        }
+       async function loadAllTokenBalances() {
+            if(!wallet){
+                 console.error("Wallet is not properly initialized");
+                 return;
+              }
+        try {
+            const address = await wallet.getAddress();
+            const apiUrl = `${blockscoutApiUrls[currentNetwork]}/address/${address}/tokens?items=10`;
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+             if (!data || !data.items) {
+                 console.error("Failed to fetch token balances from Blockscout API", data);
+               return;
+           }
+
+           const tokenListDiv = document.querySelector('.token-list');
+            tokenListDiv.innerHTML = `<h3>Tokens</h3>
+               <div class="token-item">
+                  <span>ETH</span>
+                  <span id="eth-balance">0.00</span>
+               </div>`;
+           for (const token of data.items) {
+              if(token.contract.name === "Ether"){
+                  continue;
+              }
+               try {
+                   const formattedBalance = parseFloat(ethers.formatUnits(token.balance, token.contract.decimals)).toFixed(4);
+                     tokenListDiv.innerHTML += `
+                   <div class="token-item">
+                      <span>${token.contract.symbol || token.contract_address.slice(0, 6) + "..." + token.contract_address.slice(-4)}</span>
+                       <span>${formattedBalance}</span>
+                   </div>`;
+                } catch (error) {
+                   console.error('Error fetching token info:', token.contract_address, error);
+                }
+           }
+        } catch (error) {
+            console.error("Failed to load all tokens:", error);
+        }
+    }
+          // Modal functions
+        function showSendModal() {
+            closeAllModals();
+             document.getElementById('sendModal').style.display = 'flex';
+         }
+         function showReceiveModal() {
+             closeAllModals();
+             document.getElementById('receiveModal').style.display = 'flex';
+             const walletAddress = document.getElementById('wallet-address').textContent;
+            if(walletAddress){
+              document.getElementById('receive-address-display').textContent = walletAddress;
+               generateQRCode(walletAddress);
+            }else{
+               console.error("Wallet address is not loaded properly");
+               alert("Wallet address could not be loaded")
+            }
+         }
+        function showTransactionDetails(txHash) {
+             closeAllModals();
+             document.getElementById('transactionModal').style.display = 'flex';
+            const message = `Transaction Hash: <br> <a href="${explorerUrls[currentNetwork]}${txHash}" target="_blank">${txHash}</a>`;
+           document.getElementById('transaction-message').innerHTML = message;
+         }
+       function generateQRCode(address) {
+        if(!qrcode){
+             console.error("QR code library was not initialized properly");
+            return;
+        }
+          try{
+            qrcode.makeCode(address);
+           }catch(error){
+               console.error("Failed to generate qr code : ", error);
+               alert("Failed to generate QR code");
+           }
+        }
+          function closeModal(modalId) {
+             document.getElementById(modalId).style.display = 'none';
+         }
+         function closeAllModals() {
+           const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => modal.style.display = 'none');
+        }
+        function copyAddress() {
+            const address = document.getElementById('receive-address-display').textContent;
+           if(!address) {
+               console.error("Address is not available to copy");
+               alert("Could not copy address")
+               return;
+           }
+            navigator.clipboard.writeText(address).then(() => {
+                alert('Address copied to clipboard!');
+            }, (err) => {
+               console.error('Could not copy text: ', err);
+               alert('Failed to copy address.');
+           });
+        }
+        function toggleTokenInput() {
+           const sendType = document.getElementById('sendType').value;
+            const tokenContractGroup = document.getElementById('tokenContractGroup');
+             tokenContractGroup.style.display = sendType === 'token' ? 'block' : 'none';
+        }
+       function showConfirmationModal() {
+           closeAllModals();
+           document.getElementById('confirmationModal').style.display = 'flex';
+        }
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+        let transactionTimeout;
+       let cancelClicked = false;
+
+        function startTransactionWithDelay(transactionFunction) {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'flex';
+            const cancelButton = document.getElementById('cancelTransactionButton');
+            cancelButton.style.display = 'inline-block';
+            cancelClicked = false;
+            transactionTimeout = setTimeout(async () => {
+                if (!cancelClicked) {
+                     await transactionFunction();
+               }
+                loadingOverlay.style.display = 'none';
+                cancelButton.style.display = 'none';
+            }, 5000);
+        }
+        async function sendTransaction() {
+            const sendType = document.getElementById('sendType').value;
+            const recipientAddress = document.getElementById('recipientAddress').value;
+            const amount = document.getElementById('amount').value;
+            let tokenContractAddress = null;
+            if (!ethers.isAddress(recipientAddress)) {
+                 alert('Invalid recipient address.');
+                return;
+            }
+           if (isNaN(amount) || parseFloat(amount) <= 0) {
+               alert('Invalid amount.');
+               return;
+           }
+           if (sendType === 'token') {
+                tokenContractAddress = document.getElementById('tokenContract').value;
+                if (!ethers.isAddress(tokenContractAddress)) {
+                   alert('Invalid token contract address.');
+                   return;
+                }
+          }
+           try {
+                const parsedAmount = ethers.parseEther(amount);
+                let tx;
+
+                 if (sendType === 'eth') {
+                    // Send ETH transaction
+                    tx = {
+                       to: recipientAddress,
+                        value: parsedAmount,
+                   };
+                   const transaction = await wallet.sendTransaction(tx);
+                    showTransactionModal(`Transaction sent! <br> Hash: <a href="${explorerUrls[currentNetwork]}${transaction.hash}" target="_blank">${transaction.hash.slice(0, 6)}...${transaction.hash.slice(-4)}</a>`);
+                     loadTransactions();
+                 } else {
+                    // Send token transaction
+                   const tokenContract = new ethers.Contract(tokenContractAddress, [
+                       "function transfer(address to, uint256 value) external returns (bool)"
+                    ], wallet);
+                   const transfer = await tokenContract.transfer(recipientAddress, parsedAmount);
+                    await transfer.wait();
+                    // Show transaction hash for token transfer
+                   showTransactionModal(`Token transferred! <br> Hash: <a href="${explorerUrls[currentNetwork]}${transfer.hash}" target="_blank">${transfer.hash.slice(0, 6)}...${transfer.hash.slice(-4)}</a>`);
+                     loadTransactions();
+                }
+
+                closeModal('sendModal');
+            } catch (error) {
+               console.error('Error sending transaction:', error);
+                 showTransactionModal(`Transaction failed: ${error.message}`);
+           }
+        }
+        function showTransactionModal(message) {
+             document.getElementById('transaction-message').innerHTML = message;
+            document.getElementById('transactionModal').style.display = 'flex';
+        }
+       document.getElementById('confirmTransactionButton').addEventListener('click', async () => {
+           const confirmationInput = document.getElementById('confirmationInput').value;
+            if (confirmationInput.toLowerCase() === 'confirm') {
+               closeConfirmationModal();
+                startTransactionWithDelay(sendTransaction);
+            } else {
+                alert("Confirmation failed. Please type 'confirm' to proceed.");
+           }
+       });
+       function loadWalletFromCookie() {
+             const walletDataCookie = getCookie('walletData');
+             if (walletDataCookie) {
+               try {
+                    const walletData = JSON.parse(walletDataCookie);
+                     if (walletData && walletData.type === 'private' && walletData.value) {
+                       document.querySelector('#private-input input').value = walletData.value;
+                         connectWallet();
+                         return;
+                   }
+                } catch (error) {
+                   console.error("Error parsing wallet cookie:", error);
+                }
+           }
+           document.getElementById('login-modal').style.display="block";
+            document.getElementById('wallet-section').classList.add('hidden');
+        }
+        // Initialize
+        initializeProvider();
+         loadWalletFromCookie();
+   </script>
+</body>
+</html>

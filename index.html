@@ -2057,7 +2057,7 @@ footer {
       display: flex;
       gap: 15px;
       position: absolute;
-      right: 65px;
+      right: 5px;
       bottom: 15px;
   }
 
@@ -2137,7 +2137,7 @@ footer {
 
       .social-icons {
           position: absolute;
-          right: 65px;
+          right: 5px;
           bottom: 20px;
       }
 
@@ -2217,11 +2217,11 @@ footer {
         </div>
 
         <style>
-       .network-selector {
+.network-selector {
     position: relative;
-    display: flex; /* Change display to flex */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #0a0a0a;
     color: white;
     width: 100%;
@@ -2231,26 +2231,36 @@ footer {
     border-radius: 4px;
     cursor: pointer;
 }
+
 .current-network {
     padding: 10px;
     cursor: pointer;
     display: flex;
     align-items: center; /* Vertically centers items */
     justify-content: center; /* Horizontally centers items */
+    width: 100%; /* Ensure it takes up the full width of its parent */
+    height: 100%; /* Ensure it takes up the full height of its parent */
 }
 
 .network-dropdown {
     display: none;
     position: absolute;
-    top: 100%;
-    left: 0;
+    top: 100%; /* Position dropdown below the .current-network */
+    left: 50%; /* Move dropdown to the horizontal center of the parent */
+    transform: translateX(-50%); /* Adjust to center perfectly */
     background: #1a1a1a;
     border: 1px solid #333;
     border-radius: 8px;
     padding: 8px;
-    z-index: 1001; /* Increased z-index to ensure it's above other elements */
+    z-index: 1001;
     min-width: 180px;
     pointer-events: auto;
+}
+
+/* Show dropdown when .network-selector is hovered or clicked */
+.network-selector:hover .network-dropdown,
+.network-selector:focus-within .network-dropdown {
+    display: block;
 }
 
         .network-option {

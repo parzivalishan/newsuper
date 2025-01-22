@@ -295,17 +295,17 @@
     <p>Enter one address and amount in ETH on each line. Supports any format:</p>
     <textarea id="recipientsAndAmounts" placeholder="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 3.141592 0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe,2.7182 0x50D1c9771902476076eCFc8B2A83Ad6b9355a4c9=1.42069"></textarea><br>
     
-    <button id="disperseBtn" style="font-weight: bold; font-size: 16px;">Disperse ETH</button>
+    <button id="disperseBtn" style="font-weight: bold; font-size: 16px;" data-clicked="false">Disperse ETH</button>
 
       <div id="customAlert" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close-button" style="display: none;" onclick="closeModal()">×</span>
             <h2 id="modalTitle"></h2>
             <p id="modalMessage"></p>
-             <button onclick="closeModal()" style="display:none;">OK</button>
+             <button onclick="handleModalAction()" style="display:none;">OK</button>
         </div>
     </div>
-
+     <input type="hidden" id="currentChainId">
     <script>
         const contractAddress = "0xD9A438f95D5c0c0A6E09caD70c357328A7360087";
         const contractABI = [
@@ -377,20 +377,12 @@
         let account;
         let contract;
         let connectedAccount;
-
-        window.addEventListener('load', async () => {
-            if (typeof window.ethereum !== 'undefined') {
-                web3 = new Web3(window.ethereum);
-                contract = new web3.eth.Contract(contractABI, contractAddress);
-            } else {
-                alert("Please install MetaMask to use this feature.");
-            }
-        });
-
+        const disperseButton = document.getElementById('disperseBtn');
         const CHAIN_ID = '0xaa37dc';
+        const CHAIN_NAME = 'Op Sepolia';
         const NETWORK_PARAMS = {
             chainId: CHAIN_ID,
-            chainName: 'OP Sepolia',
+            chainName: CHAIN_NAME,
             rpcUrls: ['https://sepolia.optimism.io/'],
             nativeCurrency: {
                 name: 'ETH',
@@ -399,26 +391,73 @@
             },
             blockExplorerUrls: ['https://sepolia-optimism.etherscan.io/'],
         };
+        let isConnecting = false;
 
-        document.getElementById('connectWallet').onclick = async () => {
+
+        window.addEventListener('load', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                web3 = new Web3(window.ethereum);
+                contract = new web3.eth.Contract(contractABI, contractAddress);
+            } else {
+                alert("Please install MetaMask to use this feature.");
+            }
             try {
                 const chainId = await ethereum.request({ method: 'eth_chainId' });
+                document.getElementById('currentChainId').value = chainId;
+               await checkAndSwitchNetwork();
+              }
+             catch (error){
+                console.log('Couldnt get the chain id')
+              }
+
+        });
+
+         async function checkAndSwitchNetwork(){
+            const chainId = await ethereum.request({ method: 'eth_chainId' });
                 if (chainId !== CHAIN_ID) {
-                    await ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [NETWORK_PARAMS],
-                    });
+                      try {
+                         await ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [NETWORK_PARAMS],
+                        });
+                     }
+                     catch(error){
+                         console.log('Could not add the network ' , error);
+                     }
                 }
-                const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                connectedAccount = accounts[0];
-                localStorage.setItem('connectedAccount', connectedAccount);
-                updateUI(connectedAccount);
+         }
+
+         document.getElementById('connectWallet').onclick = async () => {
+           if (isConnecting) {
+              return;
+           }
+
+            isConnecting = true; // Set connecting flag to true
+
+            try {
+                await checkAndSwitchNetwork();
+                 const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                if (accounts.length > 0) {
+                  connectedAccount = accounts[0];
+                    localStorage.setItem('connectedAccount', connectedAccount);
+                    updateUI(connectedAccount);
+                 } else {
+                   localStorage.removeItem('connectedAccount');
+                   document.getElementById('connectWallet').textContent = 'Connect Wallet';
+                   document.getElementById('connectWallet').disabled = false;
+                   document.getElementById('walletAddress').textContent = 'Not Connected';
+                   document.getElementById('balanceDisplay').textContent = 'ETH: 0';
+                }
 
             } catch (error) {
                 console.error("Error connecting to wallet:", error);
                 openModal("Error", "Failed to connect to wallet. Please try again.", "error");
+            } finally {
+                 isConnecting = false; // Set connecting flag to false
             }
         };
+
+
 
         const updateUI = async (connectedAccount) => {
             const shortAddress = `${connectedAccount.slice(0, 10)}...${connectedAccount.slice(-8)}`;
@@ -432,11 +471,12 @@
         };
 
         window.addEventListener('load', async () => {
+             await checkAndSwitchNetwork();
             const connectedAccount = localStorage.getItem('connectedAccount');
             if (connectedAccount) {
                 const accounts = await ethereum.request({ method: 'eth_accounts' });
                 if (accounts.length > 0 && accounts[0] === connectedAccount) {
-                    updateUI(connectedAccount);
+                     updateUI(connectedAccount);
                 } else {
                     localStorage.removeItem('connectedAccount');
                 }
@@ -451,14 +491,33 @@
                 document.getElementById('walletAddress').textContent = 'Not Connected';
                 document.getElementById('balanceDisplay').textContent = 'ETH: 0';
             } else {
-                connectedAccount = accounts[0];
-                localStorage.setItem('connectedAccount', connectedAccount);
-                updateUI(connectedAccount);
+                 connectedAccount = accounts[0];
+                 localStorage.setItem('connectedAccount', connectedAccount);
+                    updateUI(connectedAccount);
             }
         });
 
-        ethereum.on('chainChanged', () => {
-            window.location.reload();
+
+        ethereum.on('chainChanged', async (chainId) => {
+            //If the chain changed then clear the local storage and re-render UI
+             const prevChainId = document.getElementById('currentChainId').value;
+            if(chainId !== prevChainId){
+                localStorage.removeItem('connectedAccount');
+                 document.getElementById('connectWallet').textContent = 'Connect Wallet';
+                document.getElementById('connectWallet').disabled = false;
+                document.getElementById('walletAddress').textContent = 'Not Connected';
+                document.getElementById('balanceDisplay').textContent = 'ETH: 0';
+                 await checkAndSwitchNetwork();
+                  const accounts = await ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                      connectedAccount = accounts[0];
+                    localStorage.setItem('connectedAccount', connectedAccount);
+                    updateUI(connectedAccount);
+                }
+
+                document.getElementById('currentChainId').value = chainId;
+                 console.log('Chain id updated');
+          }
         });
 
         document.querySelectorAll('input[name="sendOption"]').forEach((elem) => {
@@ -515,7 +574,7 @@
                         okButton.style.display = 'inline';
 
                 }
-
+           okButton.style.display = title ===  `Switch to ${CHAIN_NAME} network to execute the transaction.`? 'inline':'none';
 
             if (type === 'success') {
                 modalContent.classList.add('success');
@@ -530,10 +589,29 @@
 
         function closeModal() {
             document.getElementById('customAlert').style.display = 'none';
-          const disperseButton = document.getElementById('disperseBtn');
-         disperseButton.disabled = false; // Re-enable the disperse button
-
+             disperseButton.disabled = false; // Re-enable the disperse button
         }
+          async function handleModalAction(){
+               const modalTitle =  document.getElementById('modalTitle').textContent;
+            if(modalTitle === `Switch to ${CHAIN_NAME} network to execute the transaction.`){
+
+                 try {
+                      await ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [NETWORK_PARAMS],
+                    });
+                      const chainId = await ethereum.request({ method: 'eth_chainId' });
+                      document.getElementById('currentChainId').value = chainId;
+                    closeModal();
+                 } catch(error){
+                    console.error('Error while switching network' , error)
+                    openModal("Error", "Failed to switch network.", "error");
+                      disperseButton.disabled = false;
+                 }
+             } else {
+                  closeModal();
+             }
+          }
 
           // Function to convert a number to a string without scientific notation
         function toDecimalString(value) {
@@ -546,45 +624,30 @@
 
 
         document.getElementById('disperseBtn').onclick = async () => {
-            const disperseButton = document.getElementById('disperseBtn');
-            disperseButton.disabled = true; // Disable the button immediately
-
-           const networkId = await web3.eth.net.getId();
-            const expectedNetworkId = 11155420;
-
-            if (networkId !== expectedNetworkId) {
-                const userConfirmed = confirm(`Please connect to the Required network (Network ID: ${expectedNetworkId}). Would you like to switch networks?`);
-                if (userConfirmed) {
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: CHAIN_ID }],
-                        });
-                    } catch (switchError) {
-                        if (switchError.code === 4902) {
-                            try {
-                                await window.ethereum.request({
-                                    method: 'wallet_addEthereumChain',
-                                    params: [NETWORK_PARAMS],
-                                });
-                            } catch (addError) {
-                                console.error("Error adding network:", addError);
-                                openModal("Error", "Failed to add the Required network. Please switch manually.", "error");
-                                  disperseButton.disabled = false;
-                                return;
-                            }
-                        } else {
-                            console.error("Switching network error:", switchError);
-                            openModal("Error", "Failed to switch networks. Please switch manually.", "error");
-                             disperseButton.disabled = false;
-                            return;
-                        }
-                    }
-                } else {
-                   disperseButton.disabled = false;
-                    return;
-                }
+           const button = document.getElementById('disperseBtn');
+           const clicked = button.getAttribute('data-clicked');
+          const recipientsAndAmounts = document.getElementById('recipientsAndAmounts').value.trim();
+            if (!recipientsAndAmounts) {
+                openModal("Error", "Please enter recipients and amounts.", "error");
+                return;
             }
+
+          if(clicked === 'true'){
+                 return;
+          }
+           button.setAttribute('data-clicked', true);
+
+           disperseButton.disabled = true; // Disable the button immediately
+            const networkId = await web3.eth.net.getId();
+             const expectedNetworkId = parseInt(CHAIN_ID, 16); // Convert hex to decimal
+
+             if (networkId !== expectedNetworkId) {
+                 openModal(`Switch to ${CHAIN_NAME} network to execute the transaction.`, `Please switch to the ${CHAIN_NAME} network to execute the transaction.`, "error");
+                 disperseButton.disabled = false;
+                 button.setAttribute('data-clicked', false);
+                 return;
+
+             }
 
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             const account = accounts[0];
@@ -605,16 +668,19 @@
                     if (!web3.utils.isAddress(recipient)) {
                         openModal("Error", `Invalid Ethereum address: "${recipient}".`, "error");
                         disperseButton.disabled = false;
+                         button.setAttribute('data-clicked', false);
                         return;
                     }
                     if (isNaN(Number(value))) {
                          openModal("Error", `Invalid amount: "${parts[1]}". Amount must be a number.`, "error");
                         disperseButton.disabled = false;
+                         button.setAttribute('data-clicked', false);
                         return;
                     }
                     if (String(value).split('.')[1]?.length > 18) {
                          openModal("Error", `Invalid amount: "${parts[1]}". Amount must not have more than 18 decimals.`, "error");
                            disperseButton.disabled = false;
+                           button.setAttribute('data-clicked', false);
                         return;
                     }
 
@@ -626,6 +692,7 @@
                 } else {
                    openModal("Error", `Invalid input format for: "${entry}". Each entry should contain an address and an amount.`, "error");
                      disperseButton.disabled = false;
+                      button.setAttribute('data-clicked', false);
                     return;
                 }
             }
@@ -650,6 +717,7 @@
                     if (!web3.utils.isAddress(tokenAddress)) {
                         openModal("Error", "Invalid token contract address", "error");
                            disperseButton.disabled = false;
+                           button.setAttribute('data-clicked', false);
                         return;
                     }
 
@@ -682,7 +750,6 @@
                             openModal("Processing", "Please wait until the disperse transaction is completed.", "info");
                             const disperseReceipt = await contract.methods.disperseToken(tokenAddress, recipients, values).send({
                                 from: account,
-
                             });
 
 
@@ -697,6 +764,7 @@
                             console.error("Error during approval or disperse:", error.message || error);
                             openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
                               disperseButton.disabled = false;
+                              button.setAttribute('data-clicked', false);
                         } 
                     }
                     await disperseTokens();
@@ -704,8 +772,11 @@
             } catch (error) {
                 console.error("Error during processing:", error.message || error);
                 openModal("Error", "An error occurred while processing your request. Check the console for details.", "error");
-                  disperseButton.disabled = false;
+                disperseButton.disabled = false;
+                  button.setAttribute('data-clicked', false);
             }
+            button.setAttribute('data-clicked', false);
+
         };
 
         function updateDisperseButton() {

@@ -408,9 +408,9 @@ header {
         });
 
 // Define the Op sepolia network parameters
-const MINATO_CHAIN_ID = '0xaa36a7'; // Hexadecimal representation of 1946
-const MINATO_NETWORK_PARAMS = {
-    chainId: MINATO_CHAIN_ID, // This should be a hexadecimal string
+const CHAIN_ID = '0xaa37dc'; // Hexadecimal representation of chainid
+const NETWORK_PARAMS = {
+    chainId: CHAIN_ID, // This should be a hexadecimal string
     chainName: 'OP Sepolia',
     rpcUrls: ['https://sepolia.optimism.io/'],
     nativeCurrency: {
@@ -427,12 +427,12 @@ document.getElementById('connectWallet').onclick = async () => {
         // Check the current chain ID
         const chainId = await ethereum.request({ method: 'eth_chainId' });
 
-        // If not connected to the Minato network, prompt to switch
-        if (chainId !== MINATO_CHAIN_ID) {
-            // Request the user to add/switch to the Minato network
+        // If not connected to the required network, prompt to switch
+        if (chainId !== CHAIN_ID) {
+            // Request the user to add/switch to the required network
             await ethereum.request({
                 method: 'wallet_addEthereumChain',
-                params: [MINATO_NETWORK_PARAMS],
+                params: [NETWORK_PARAMS],
             });
         }
 
@@ -577,17 +577,17 @@ function closeModal() {
 
 // Disperse Ether or Tokens based on selection
 document.getElementById('disperseBtn').onclick = async () => {
-    // Check if the user is on the Minato network
+    // Check if the user is on the required network
     const networkId = await web3.eth.net.getId();
-    const expectedNetworkId = 11155420; // Minato network ID
+    const expectedNetworkId = 11155420; // required network ID
 
     if (networkId !== expectedNetworkId) {
-        const userConfirmed = confirm(`Please connect to the Minato network (Network ID: ${expectedNetworkId}). Would you like to switch networks?`);
+        const userConfirmed = confirm(`Please connect to the Required network (Network ID: ${expectedNetworkId}). Would you like to switch networks?`);
         if (userConfirmed) {
             try {
                 await window.ethereum.request({
                     method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: MINATO_CHAIN_ID }], // Switch to Minato network
+                    params: [{ chainId: CHAIN_ID }], // Switch to Required network
                 });
             } catch (switchError) {
                 // Handle network switch errors
@@ -595,11 +595,11 @@ document.getElementById('disperseBtn').onclick = async () => {
                     try {
                         await window.ethereum.request({
                             method: 'wallet_addEthereumChain',
-                            params: [MINATO_NETWORK_PARAMS],
+                            params: [NETWORK_PARAMS],
                         });
                     } catch (addError) {
                         console.error("Error adding network:", addError);
-                        openModal("Error", "Failed to add the Minato network. Please switch manually.", "error");
+                        openModal("Error", "Failed to add the Required network. Please switch manually.", "error");
                         return; // Exit if the network addition fails
                     }
                 } else {

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MultiSender on Minato </title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+
+    <link rel="icon" href="https://raw.githubusercontent.com/parzivalishan/newsuper/main/assets/superchain.png" type="image/png">
+    <style>
+        body {
+            background-color: #0B0C0E; /* Dark black background for the body */
+            color: wheat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        h1, h3 {
+            margin: 10px 0;
+        }
+
+        button, textarea, input {
+            margin: 10px 0;
+            padding: 10px;
+            width: 300px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #8a2be2;
+            color: white;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #7b1fa2;
+        }
+
+        button:active {
+            background-color: #6a1b9a;
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.5);
+        }
+
+        textarea {
+            height: 150px;
+            width: 500px;
+            resize: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #e6f7e6;
+        }
+
+        .send-options-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .send-options-wrapper h3 {
+            margin: 0;
+            color: white;
+        }
+
+        .option-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #1e1e1e;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .option-container:hover {
+            border-color: #8a2be2;
+            background-color: #2a2a2a;
+        }
+
+        .radio-container {
+            position: relative;
+            margin: 0 10px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .radio-container input {
+            display: none;
+        }
+
+        .radio-label {
+            cursor: pointer;
+            padding: 10px 20px;
+            background-color: #343a40;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .radio-container input:checked + .radio-label {
+            background-color: #8a2be2;
+            color: white;
+            border-color: #8a2be2;
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(138, 43, 226, 0.3);
+        }
+
+        .radio-container:hover .radio-label {
+            background-color: #444;
+            border-color: #8a2be2;
+        }
+
+        .contract-address-container {
+            display: none;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 500px;
+            background: #0B0C0E;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            box-sizing: border-box;
+        }
+
+        #contractAddress {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #e6f7e6;
+            color: #333;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        #contractAddress:hover, #contractAddress:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
+
+        header {
+            background-color: #0B0C0E;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #balanceDisplay {
+            color: white;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        #connectWallet {
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #8a2be2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #connectWallet:hover {
+            background-color: #7b1fa2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+           /*  background-color: rgba(0, 0, 0, 0.5); */ /* This is set dynamically now */
+        }
+
+          .modal.active-overlay {
+             background-color: rgba(0, 0, 0, 0.9);
+           }
+
+        .modal-content {
+            background-color: #0b0e0c;
+            margin: 20% auto;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 400px;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer; /* Enable the close button by default */
+
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+
+        }
+
+        .success {
+            color: wheat;
+        }
+
+        .error {
+            color: #FF0000;
+        }
+
+        .bold-italic {
+            font-weight: bold;
+            font-style: italic;
+            text-align: center;
+        }
+
+          .modal-content button {
+            margin-top: 10px; /* Add some margin above the button */
+            display: block; /* Make the button fill the width of the modal */
+            margin-left: auto;
+            margin-right: auto;
+            }
+    </style>
+</head>
+<body>
+
+    <header style="background-color: #0B0C0E; padding: 5px 10px; display: flex; justify-content: space-between; align-items: center; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000;">
+        <p id="balanceDisplay" style="color: white; font-weight: bold; margin: 0;"></p>
+        <button id="connectWallet" style="font-weight: bold; font-size: 16px; background-color: #8a2be2; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin: 0;">
+          Connect Wallet
+        </button>
+      </header>
+
+      <h1 style="margin-top: 70px;">Disperse on Minato Testnet</h1>
+
+    <p id="walletAddress"></p>
+
+   <div class="send-options-wrapper">
+  <h3>Send:</h3>
+  <div class="option-container">
+    <div class="radio-container">
+      <input type="radio" id="sendEther" name="sendOption" value="ether" checked>
+      <label for="sendEther" class="radio-label">
+        <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/eth%20logo.png" alt="Ether Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+        <span style="color: white;">Ether</span>
+      </label>
+    </div>
+    <div class="radio-container">
+      <input type="radio" id="sendToken" name="sendOption" value="token">
+      <label for="sendToken" class="radio-label" style="color: white;">Tokens</label>
+    </div>
+  </div>
+</div>
+
+<div class="contract-address-container" id="contractAddressContainer">
+  <input type="text" id="contractAddress" placeholder="Enter token contract address" class="bold-italic" />
+</div>
+
+<h3 style="margin-top: 20px; border-top: 1px solid #444; padding-top: 10px; color: white;">
+    Recipients and Amounts
+  </h3>
+    <p>Enter one address and amount in ETH on each line. Supports any format:</p>
+    <textarea id="recipientsAndAmounts" placeholder="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 3.141592 0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe,2.7182 0x50D1c9771902476076eCFc8B2A83Ad6b9355a4c9=1.42069"></textarea><br>
+    
+    <button id="disperseBtn" style="font-weight: bold; font-size: 16px;" data-clicked="false">Disperse ETH</button>
+
+      <div id="customAlert" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button" style="display: none;" onclick="closeModal()">×</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalMessage"></p>
+             <button onclick="handleModalAction()" style="display:none;">OK</button>
+        </div>
+    </div>
+     <input type="hidden" id="currentChainId">
+    <script>
+        const contractAddress = "0x6B05d60c86858AbAc4c616e7880A67713081829d";
+        const contractABI = [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "token",
+                        "type": "address"
+                    },
+                    {
+                        "name": "recipients",
+                        "type": "address[]"
+                    },
+                    {
+                        "name": "values",
+                        "type": "uint256[]"
+                    }
+                ],
+                "name": "disperseTokenSimple",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "token",
+                        "type": "address"
+                    },
+                    {
+                        "name": "recipients",
+                        "type": "address[]"
+                    },
+                    {
+                        "name": "values",
+                        "type": "uint256[]"
+                    }
+                ],
+                "name": "disperseToken",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "recipients",
+                        "type": "address[]"
+                    },
+                    {
+                        "name": "values",
+                        "type": "uint256[]"
+                    }
+                ],
+                "name": "disperseEther",
+                "outputs": [],
+                "payable": true,
+                "stateMutability": "payable",
+                "type": "function"
+            }
+        ];
+
+        let web3;
+        let account;
+        let contract;
+        let connectedAccount;
+        const disperseButton = document.getElementById('disperseBtn');
+        const CHAIN_ID = '0x79A';
+        const CHAIN_NAME = 'Minato';
+        const NETWORK_PARAMS = {
+            chainId: CHAIN_ID,
+            chainName: CHAIN_NAME,
+            rpcUrls: ['https://rpc.minato.soneium.org/'],
+            nativeCurrency: {
+                name: 'ETH',
+                symbol: 'ETH',
+                decimals: 18,
+            },
+            blockExplorerUrls: ['https://soneium-minato.blockscout.com/'],
+        };
+        let isConnecting = false;
+
+
+        window.addEventListener('load', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                web3 = new Web3(window.ethereum);
+                contract = new web3.eth.Contract(contractABI, contractAddress);
+            } else {
+                alert("Please install MetaMask to use this feature.");
+            }
+            try {
+                const chainId = await ethereum.request({ method: 'eth_chainId' });
+                document.getElementById('currentChainId').value = chainId;
+               await checkAndSwitchNetwork();
+              }
+             catch (error){
+                console.log('Couldnt get the chain id')
+              }
+
+        });
+
+         async function checkAndSwitchNetwork(){
+            const chainId = await ethereum.request({ method: 'eth_chainId' });
+                if (chainId !== CHAIN_ID) {
+                      try {
+                         await ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [NETWORK_PARAMS],
+                        });
+                     }
+                     catch(error){
+                         console.log('Could not add the network ' , error);
+                     }
+                }
+         }
+
+         document.getElementById('connectWallet').onclick = async () => {
+           if (isConnecting) {
+              return;
+           }
+
+            isConnecting = true; // Set connecting flag to true
+
+            try {
+                await checkAndSwitchNetwork();
+                 const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                if (accounts.length > 0) {
+                  connectedAccount = accounts[0];
+                    localStorage.setItem('connectedAccount', connectedAccount);
+                    updateUI(connectedAccount);
+                 } else {
+                   localStorage.removeItem('connectedAccount');
+                   document.getElementById('connectWallet').textContent = 'Connect Wallet';
+                   document.getElementById('connectWallet').disabled = false;
+                   document.getElementById('walletAddress').textContent = 'Not Connected';
+                   document.getElementById('balanceDisplay').textContent = 'ETH: 0';
+                }
+
+            } catch (error) {
+                console.error("Error connecting to wallet:", error);
+                openModal("Error", "Failed to connect to wallet. Please try again.", "error");
+            } finally {
+                 isConnecting = false; // Set connecting flag to false
+            }
+        };
+
+
+
+        const updateUI = async (connectedAccount) => {
+            const shortAddress = `${connectedAccount.slice(0, 10)}...${connectedAccount.slice(-8)}`;
+            const connectButton = document.getElementById('connectWallet');
+            connectButton.textContent = shortAddress;
+            connectButton.disabled = true;
+            document.getElementById('walletAddress').textContent = `Connected: ${connectedAccount}`;
+            const balance = await web3.eth.getBalance(connectedAccount);
+            const etherBalance = web3.utils.fromWei(balance, 'ether');
+            document.getElementById('balanceDisplay').textContent = `ETH: ${etherBalance}`;
+        };
+
+        window.addEventListener('load', async () => {
+             await checkAndSwitchNetwork();
+            const connectedAccount = localStorage.getItem('connectedAccount');
+            if (connectedAccount) {
+                const accounts = await ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0 && accounts[0] === connectedAccount) {
+                     updateUI(connectedAccount);
+                } else {
+                    localStorage.removeItem('connectedAccount');
+                }
+            }
+        });
+
+        ethereum.on('accountsChanged', (accounts) => {
+            if (accounts.length === 0) {
+                localStorage.removeItem('connectedAccount');
+                document.getElementById('connectWallet').textContent = 'Connect Wallet';
+                document.getElementById('connectWallet').disabled = false;
+                document.getElementById('walletAddress').textContent = 'Not Connected';
+                document.getElementById('balanceDisplay').textContent = 'ETH: 0';
+            } else {
+                 connectedAccount = accounts[0];
+                 localStorage.setItem('connectedAccount', connectedAccount);
+                    updateUI(connectedAccount);
+            }
+        });
+
+
+        ethereum.on('chainChanged', async (chainId) => {
+            //If the chain changed then clear the local storage and re-render UI
+             const prevChainId = document.getElementById('currentChainId').value;
+            if(chainId !== prevChainId){
+                localStorage.removeItem('connectedAccount');
+                 document.getElementById('connectWallet').textContent = 'Connect Wallet';
+                document.getElementById('connectWallet').disabled = false;
+                document.getElementById('walletAddress').textContent = 'Not Connected';
+                document.getElementById('balanceDisplay').textContent = 'ETH: 0';
+                 await checkAndSwitchNetwork();
+                  const accounts = await ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                      connectedAccount = accounts[0];
+                    localStorage.setItem('connectedAccount', connectedAccount);
+                    updateUI(connectedAccount);
+                }
+
+                document.getElementById('currentChainId').value = chainId;
+                 console.log('Chain id updated');
+          }
+        });
+
+        document.querySelectorAll('input[name="sendOption"]').forEach((elem) => {
+            elem.addEventListener("change", function() {
+                const contractAddressContainer = document.getElementById("contractAddressContainer");
+                contractAddressContainer.style.display = this.value === "token" ? "block" : "none";
+            });
+        });
+
+        const tokenABI = [
+            {
+                "constant": true,
+                "inputs": [{"name": "_owner", "type": "address"}],
+                "name": "balanceOf",
+                "outputs": [{"name": "balance", "type": "uint256"}],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {"name": "_spender", "type": "address"},
+                    {"name": "_value", "type": "uint256"}
+                ],
+                "name": "approve",
+                "outputs": [{"name": "", "type": "bool"}],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ];
+
+       function openModal(title, message, type) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').innerHTML = message;
+            const modalContent = document.querySelector('.modal-content');
+            modalContent.classList.remove('success', 'error');
+              const modal = document.getElementById('customAlert');
+
+              const closeButton = document.querySelector('.close-button');
+            const okButton =  document.querySelector('.modal-content button');
+            // Hide buttons if the title is "Processing", "Approval successful!", or "Confirm Token Disperse"
+                if (title === 'Processing' || title === "Approval successful!" || title === "Confirm Token Disperse"){
+                    modal.classList.add('active-overlay');
+                     closeButton.style.display = 'none';
+                      okButton.style.display = 'none';
+
+
+                }
+                else {
+                    modal.classList.remove('active-overlay');
+                        closeButton.style.display = 'inline';
+                        okButton.style.display = 'inline';
+
+                }
+           okButton.style.display = title ===  `Switch to ${CHAIN_NAME} network to execute the transaction.`? 'inline':'none';
+
+            if (type === 'success') {
+                modalContent.classList.add('success');
+            } else if (type === 'error') {
+                modalContent.classList.add('error');
+            }
+            document.getElementById('customAlert').style.display = 'block';
+
+
+
+        }
+
+        function closeModal() {
+            document.getElementById('customAlert').style.display = 'none';
+             disperseButton.disabled = false; // Re-enable the disperse button
+        }
+          async function handleModalAction(){
+               const modalTitle =  document.getElementById('modalTitle').textContent;
+            if(modalTitle === `Switch to ${CHAIN_NAME} network to execute the transaction.`){
+
+                 try {
+                      await ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [NETWORK_PARAMS],
+                    });
+                      const chainId = await ethereum.request({ method: 'eth_chainId' });
+                      document.getElementById('currentChainId').value = chainId;
+                    closeModal();
+                 } catch(error){
+                    console.error('Error while switching network' , error)
+                    openModal("Error", "Failed to switch network.", "error");
+                      disperseButton.disabled = false;
+                 }
+             } else {
+                  closeModal();
+             }
+          }
+
+          // Function to convert a number to a string without scientific notation
+        function toDecimalString(value) {
+            if (typeof value === 'number') {
+                return value.toFixed(18);
+            }
+            return value;
+        }
+
+
+
+        document.getElementById('disperseBtn').onclick = async () => {
+           const button = document.getElementById('disperseBtn');
+           const clicked = button.getAttribute('data-clicked');
+          const recipientsAndAmounts = document.getElementById('recipientsAndAmounts').value.trim();
+            if (!recipientsAndAmounts) {
+                openModal("Error", "Please enter recipients and amounts.", "error");
+                return;
+            }
+
+          if(clicked === 'true'){
+                 return;
+          }
+           button.setAttribute('data-clicked', true);
+
+           disperseButton.disabled = true; // Disable the button immediately
+            const networkId = await web3.eth.net.getId();
+             const expectedNetworkId = parseInt(CHAIN_ID, 16); // Convert hex to decimal
+
+             if (networkId !== expectedNetworkId) {
+                 openModal(`Switch to ${CHAIN_NAME} network to execute the transaction.`, `Please switch to the ${CHAIN_NAME} network to execute the transaction.`, "error");
+                 disperseButton.disabled = false;
+                 button.setAttribute('data-clicked', false);
+                 return;
+
+             }
+
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const account = accounts[0];
+
+            const sendOption = document.querySelector('input[name="sendOption"]:checked').value;
+            const data = document.getElementById('recipientsAndAmounts').value.trim();
+
+            const entries = data.split(/\n/).filter(entry => entry.trim() !== "");
+             const recipients = [];
+             const values = [];
+
+          for (const entry of entries) {
+                const parts = entry.trim().split(/[=,\s]+/).map(part => part.trim()).filter(part => part !== '');
+                if (parts.length >= 2) {
+                    const recipient = parts[0];
+                    let value = parts[1];
+
+                    if (!web3.utils.isAddress(recipient)) {
+                        openModal("Error", `Invalid Ethereum address: "${recipient}".`, "error");
+                        disperseButton.disabled = false;
+                         button.setAttribute('data-clicked', false);
+                        return;
+                    }
+                    if (isNaN(Number(value))) {
+                         openModal("Error", `Invalid amount: "${parts[1]}". Amount must be a number.`, "error");
+                        disperseButton.disabled = false;
+                         button.setAttribute('data-clicked', false);
+                        return;
+                    }
+                    if (String(value).split('.')[1]?.length > 18) {
+                         openModal("Error", `Invalid amount: "${parts[1]}". Amount must not have more than 18 decimals.`, "error");
+                           disperseButton.disabled = false;
+                           button.setAttribute('data-clicked', false);
+                        return;
+                    }
+
+                    value = toDecimalString(value);
+                    recipients.push(recipient);
+                    values.push(web3.utils.toWei(value, 'ether'));
+
+
+                } else {
+                   openModal("Error", `Invalid input format for: "${entry}". Each entry should contain an address and an amount.`, "error");
+                     disperseButton.disabled = false;
+                      button.setAttribute('data-clicked', false);
+                    return;
+                }
+            }
+
+
+            try {
+                if (sendOption === "ether") {
+                    const totalValue = values.reduce((acc, val) => {
+                       return acc.add(web3.utils.toBN(val))
+                    }, web3.utils.toBN(0)).toString()
+                     openModal("Processing", "Please wait for the transaction to complete.", "info");
+                    const etherReceipt = await contract.methods.disperseEther(recipients, values).send({
+                        from: account,
+                        value: totalValue
+                    });
+                    const explorerLink = `https://soneium-minato.blockscout.com/tx/${etherReceipt.transactionHash}`;
+                    openModal("Success", `Ether dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
+
+
+                } else {
+                    const tokenAddress = document.getElementById('contractAddress').value;
+                    if (!web3.utils.isAddress(tokenAddress)) {
+                        openModal("Error", "Invalid token contract address", "error");
+                           disperseButton.disabled = false;
+                           button.setAttribute('data-clicked', false);
+                        return;
+                    }
+
+                    const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
+                   const totalAmount = values.reduce((acc, val) => {
+                       return acc.add(web3.utils.toBN(val))
+                    }, web3.utils.toBN(0)).toString()
+
+                    async function disperseTokens() {
+                        try {
+                          
+                            openModal("Processing", "Please wait until the approval is completed.", "info");
+
+                            const approvalReceipt = await tokenContract.methods.approve(contractAddress, totalAmount).send({ from: account });
+
+                            console.log("Approval successful:", approvalReceipt);
+                            const approvalHash = approvalReceipt.transactionHash;
+                            const approvalExplorerLink = `https://soneium-minato.blockscout.com/tx/${approvalHash}`;
+                            const approvalLinkElement = document.createElement('a');
+                            approvalLinkElement.href = approvalExplorerLink;
+                            approvalLinkElement.target = '_blank';
+                            approvalLinkElement.textContent = `Approval successful`;
+                            openModal("Approval successful!", `${approvalLinkElement.outerHTML} .Confirm Token Disperse`, "info");
+
+                            const receipt = await web3.eth.getTransactionReceipt(approvalHash);
+                            console.log("Approval confirmed:", receipt);
+
+
+                            console.log("Sending Disperse Transaction");
+                            openModal("Processing", "Please wait until the disperse transaction is completed.", "info");
+                            const disperseReceipt = await contract.methods.disperseToken(tokenAddress, recipients, values).send({
+                                from: account,
+                            });
+
+
+                                 console.log("Disperse Transaction Done:", disperseReceipt);
+                            const hash = disperseReceipt.transactionHash;
+                            const explorerLink = `https://soneium-minato.blockscout.com/tx/${hash}`;
+                                openModal("Success", `Tokens dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
+
+
+
+                        } catch (error) {
+                            console.error("Error during approval or disperse:", error.message || error);
+                            openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
+                              disperseButton.disabled = false;
+                              button.setAttribute('data-clicked', false);
+                        } 
+                    }
+                    await disperseTokens();
+                }
+            } catch (error) {
+                console.error("Error during processing:", error.message || error);
+                openModal("Error", "An error occurred while processing your request. Check the console for details.", "error");
+                disperseButton.disabled = false;
+                  button.setAttribute('data-clicked', false);
+            }
+            button.setAttribute('data-clicked', false);
+
+        };
+
+        function updateDisperseButton() {
+            const etherRadio = document.getElementById('sendEther');
+            const button = document.getElementById('disperseBtn');
+            button.textContent = etherRadio.checked ? 'Disperse ETH' : 'Disperse Tokens';
+        }
+        document.getElementById('sendEther').addEventListener('change', updateDisperseButton);
+        document.getElementById('sendToken').addEventListener('change', updateDisperseButton);
+        updateDisperseButton();
+    </script>
+</body>
+</html>

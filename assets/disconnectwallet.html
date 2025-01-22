@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaMask Connect Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.5.0/web3.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <button id="connect-button">Connect MetaMask</button>
+        <div id="account-info" style="display: none;">
+            <p>Connected Address: <span id="address"></span></p>
+            <p>Network: <span id="network"></span></p>
+            <button id="disconnect-button">Disconnect</button>
+        </div>
+    </div>
+
+    <script>
+        let web3;
+        let currentAccount = null;
+
+        // DOM Elements
+        const connectButton = document.getElementById('connect-button');
+        const disconnectButton = document.getElementById('disconnect-button');
+        const accountInfo = document.getElementById('account-info');
+        const addressSpan = document.getElementById('address');
+        const networkSpan = document.getElementById('network');
+
+        // Check if MetaMask is installed
+        const isMetaMaskInstalled = () => {
+            return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
+        };
+
+        // Initialize Web3
+        const initWeb3 = async () => {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                return true;
+            }
+            return false;
+        };
+
+        // Connect wallet handler
+        const connectWallet = async () => {
+            if (!isMetaMaskInstalled()) {
+                alert('Please install MetaMask!');
+                return;
+            }
+
+            try {
+                // Request account access
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                currentAccount = accounts[0];
+                
+                // Get network ID
+                const networkId = await web3.eth.net.getId();
+                const networkName = getNetworkName(networkId);
+
+                // Update UI
+                connectButton.style.display = 'none';
+                accountInfo.style.display = 'block';
+                addressSpan.textContent = currentAccount;
+                networkSpan.textContent = networkName;
+
+                // Setup account change listener
+                window.ethereum.on('accountsChanged', handleAccountChange);
+                window.ethereum.on('chainChanged', handleChainChange);
+            } catch (error) {
+                console.error('Failed to connect:', error);
+                alert('Failed to connect to MetaMask');
+            }
+        };
+
+        // Handle account change
+        const handleAccountChange = (accounts) => {
+            if (accounts.length === 0) {
+                disconnectWallet();
+            } else if (accounts[0] !== currentAccount) {
+                currentAccount = accounts[0];
+                addressSpan.textContent = currentAccount;
+            }
+        };
+
+        // Handle chain change
+        const handleChainChange = async () => {
+            const networkId = await web3.eth.net.getId();
+            networkSpan.textContent = getNetworkName(networkId);
+        };
+
+        // Disconnect wallet handler
+        const disconnectWallet = () => {
+            currentAccount = null;
+            connectButton.style.display = 'block';
+            accountInfo.style.display = 'none';
+            addressSpan.textContent = '';
+            networkSpan.textContent = '';
+            
+            // Remove listeners
+            window.ethereum.removeListener('accountsChanged', handleAccountChange);
+            window.ethereum.removeListener('chainChanged', handleChainChange);
+        };
+
+        // Helper function to get network name
+        const getNetworkName = (networkId) => {
+            switch(networkId) {
+                case 1: return 'Ethereum Mainnet';
+                case 5: return 'Goerli Testnet';
+                case 11155111: return 'Sepolia Testnet';
+                case 137: return 'Polygon Mainnet';
+                case 80001: return 'Mumbai Testnet';
+                default: return `Chain ID: ${networkId}`;
+            }
+        };
+
+        // Event listeners
+        connectButton.addEventListener('click', connectWallet);
+        disconnectButton.addEventListener('click', disconnectWallet);
+
+        // Initialize on load
+        initWeb3();
+    </script>
+</body>
+</html>

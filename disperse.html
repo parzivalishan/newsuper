@@ -198,8 +198,12 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
+           /*  background-color: rgba(0, 0, 0, 0.5); */ /* This is set dynamically now */
         }
+
+          .modal.active-overlay {
+             background-color: rgba(0, 0, 0, 0.9);
+           }
 
         .modal-content {
             background-color: #0b0e0c;
@@ -486,27 +490,30 @@
             }
         ];
 
-        function openModal(title, message, type) {
+       function openModal(title, message, type) {
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalMessage').innerHTML = message;
             const modalContent = document.querySelector('.modal-content');
             modalContent.classList.remove('success', 'error');
+              const modal = document.getElementById('customAlert');
 
               const closeButton = document.querySelector('.close-button');
             const okButton =  document.querySelector('.modal-content button');
-
             // Hide buttons if the title is "Processing", "Approval successful!", or "Confirm Token Disperse"
                 if (title === 'Processing' || title === "Approval successful!" || title === "Confirm Token Disperse"){
+                    modal.classList.add('active-overlay');
                      closeButton.style.display = 'none';
                       okButton.style.display = 'none';
 
 
                 }
                 else {
+                    modal.classList.remove('active-overlay');
                         closeButton.style.display = 'inline';
                         okButton.style.display = 'inline';
 
                 }
+
 
             if (type === 'success') {
                 modalContent.classList.add('success');
@@ -521,11 +528,16 @@
 
         function closeModal() {
             document.getElementById('customAlert').style.display = 'none';
-           
+          const disperseButton = document.getElementById('disperseBtn');
+         disperseButton.disabled = false; // Re-enable the disperse button
+
         }
 
         document.getElementById('disperseBtn').onclick = async () => {
-            const networkId = await web3.eth.net.getId();
+            const disperseButton = document.getElementById('disperseBtn');
+            disperseButton.disabled = true; // Disable the button immediately
+
+           const networkId = await web3.eth.net.getId();
             const expectedNetworkId = 11155420;
 
             if (networkId !== expectedNetworkId) {
@@ -546,15 +558,18 @@
                             } catch (addError) {
                                 console.error("Error adding network:", addError);
                                 openModal("Error", "Failed to add the Required network. Please switch manually.", "error");
+                                  disperseButton.disabled = false;
                                 return;
                             }
                         } else {
                             console.error("Switching network error:", switchError);
                             openModal("Error", "Failed to switch networks. Please switch manually.", "error");
+                             disperseButton.disabled = false;
                             return;
                         }
                     }
                 } else {
+                   disperseButton.disabled = false;
                     return;
                 }
             }
@@ -566,30 +581,41 @@
             const data = document.getElementById('recipientsAndAmounts').value.trim();
 
             const entries = data.split(/\n/).filter(entry => entry.trim() !== "");
-            const recipients = [];
+             const recipients = [];
             const values = [];
 
-            for (const entry of entries) {
-                const parts = entry.trim().split(/[=,]/).map(part => part.trim());
+          for (const entry of entries) {
+                const parts = entry.trim().split(/[=,\s]+/).map(part => part.trim()).filter(part => part !== '');
                 if (parts.length >= 2) {
                     const recipient = parts[0];
                     const value = parseFloat(parts[1]);
 
                     if (!web3.utils.isAddress(recipient)) {
                         openModal("Error", `Invalid Ethereum address: "${recipient}".`, "error");
+                        disperseButton.disabled = false;
                         return;
                     }
                     if (isNaN(value)) {
-                        openModal("Error", `Invalid amount: "${parts[1]}". Amount must be a number.`, "error");
+                         openModal("Error", `Invalid amount: "${parts[1]}". Amount must be a number.`, "error");
+                        disperseButton.disabled = false;
                         return;
                     }
-                    recipients.push(recipient);
-                    values.push(web3.utils.toWei(value.toString(), 'ether'));
+                    if (String(value).split('.')[1]?.length > 18) {
+                         openModal("Error", `Invalid amount: "${parts[1]}". Amount must not have more than 18 decimals.`, "error");
+                         disperseButton.disabled = false;
+                         return;
+                     }
+                     recipients.push(recipient);
+                     values.push(web3.utils.toWei(String(value), 'ether'));
+
+
                 } else {
-                    openModal("Error", `Invalid input format for: "${entry}". Each entry should contain an address and an amount separated by a comma or equal sign.`, "error");
+                   openModal("Error", `Invalid input format for: "${entry}". Each entry should contain an address and an amount.`, "error");
+                     disperseButton.disabled = false;
                     return;
                 }
             }
+
 
             try {
                 if (sendOption === "ether") {
@@ -608,6 +634,7 @@
                     const tokenAddress = document.getElementById('contractAddress').value;
                     if (!web3.utils.isAddress(tokenAddress)) {
                         openModal("Error", "Invalid token contract address", "error");
+                           disperseButton.disabled = false;
                         return;
                     }
 
@@ -615,9 +642,8 @@
                     const totalAmount = values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0);
 
                     async function disperseTokens() {
-                        const button = document.getElementById('disperseBtn');
                         try {
-                            button.disabled = true;
+                          
                             openModal("Processing", "Please wait until the approval is completed.", "info");
 
                             const approvalReceipt = await tokenContract.methods.approve(contractAddress, web3.utils.toWei(totalAmount.toString(), 'ether')).send({ from: account });
@@ -653,15 +679,15 @@
                         } catch (error) {
                             console.error("Error during approval or disperse:", error.message || error);
                             openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
-                        } finally {
-                            button.disabled = false;
-                        }
+                              disperseButton.disabled = false;
+                        } 
                     }
                     await disperseTokens();
                 }
             } catch (error) {
                 console.error("Error during processing:", error.message || error);
                 openModal("Error", "An error occurred while processing your request. Check the console for details.", "error");
+                  disperseButton.disabled = false;
             }
         };
 

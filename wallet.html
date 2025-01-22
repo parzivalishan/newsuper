@@ -549,25 +549,7 @@
                 document.getElementById('gas-price').textContent = 'Error loading gas price';
             }
         }
-        function setCookie(name, value, days) {
-           let expires = "";
-            if (days) {
-                const date = new Date();
-                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "") + expires + "; path=/";
-        }
-         function getCookie(name) {
-             const nameEQ = name + "=";
-            const ca = document.cookie.split(';');
-            for (let i = 0; i < ca.length; i++) {
-                 let c = ca[i];
-                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-         }
+
          async function connectWallet() {
              const errorMessageDiv = document.getElementById('error-message');
             errorMessageDiv.classList.add('hidden');
@@ -578,9 +560,7 @@
                 }
                 const privateKey = document.querySelector('#private-input input').value.trim();
                 if (!privateKey) throw new Error('Please enter a private key');
-                const walletData = { type: 'private', value: privateKey };
-                setCookie('walletData', JSON.stringify(walletData), 30);
-                wallet = new ethers.Wallet(privateKey, provider);
+                 wallet = new ethers.Wallet(privateKey, provider);
                 document.getElementById('login-modal').style.display = "none";
                 document.getElementById('wallet-section').classList.remove('hidden');
                 const address = await wallet.getAddress();
@@ -847,22 +827,23 @@
            }
        });
        function loadWalletFromCookie() {
-             const walletDataCookie = getCookie('walletData');
-             if (walletDataCookie) {
-               try {
-                    const walletData = JSON.parse(walletDataCookie);
-                     if (walletData && walletData.type === 'private' && walletData.value) {
-                       document.querySelector('#private-input input').value = walletData.value;
-                         connectWallet();
-                         return;
-                   }
-                } catch (error) {
-                   console.error("Error parsing wallet cookie:", error);
-                }
-           }
-           document.getElementById('login-modal').style.display="block";
-            document.getElementById('wallet-section').classList.add('hidden');
-        }
+         const privateKey = localStorage.getItem('privateKey');
+           if (privateKey) {
+                document.querySelector('#private-input input').value = privateKey;
+               connectWallet();
+                } else{
+                    document.getElementById('login-modal').style.display="block";
+                    document.getElementById('wallet-section').classList.add('hidden');
+               }
+       }
+       // Store the private key in localStorage after successful login
+       document.querySelector('#login-modal button').addEventListener('click', function () {
+          const privateKey = document.querySelector('#private-input input').value.trim();
+          if(privateKey){
+              localStorage.setItem('privateKey', privateKey);
+          }
+       });
+
         // Initialize
         initializeProvider();
          loadWalletFromCookie();

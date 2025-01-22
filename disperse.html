@@ -639,8 +639,7 @@
                      openModal("Processing", "Please wait for the transaction to complete.", "info");
                     const etherReceipt = await contract.methods.disperseEther(recipients, values).send({
                         from: account,
-                        value: totalValue,
-                        gas: 300000
+                        value: totalValue
                     });
                     const explorerLink = `https://sepolia-optimism.etherscan.io/tx/${etherReceipt.transactionHash}`;
                     openModal("Success", `Ether dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
@@ -683,7 +682,7 @@
                             openModal("Processing", "Please wait until the disperse transaction is completed.", "info");
                             const disperseReceipt = await contract.methods.disperseToken(tokenAddress, recipients, values).send({
                                 from: account,
-                                gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account })
+
                             });
 
 

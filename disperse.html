@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiSender on Minato </title>
+    <title>MultiSender on Op Sepolia </title>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <style>
         body {
@@ -267,7 +268,7 @@ header {
         </button>
       </header>
 
-      <h1 style="margin-top: 70px;">Disperse on Minato Testnet</h1>
+      <h1 style="margin-top: 70px;">Disperse on OP Sepolia Testnet</h1>
 
 
 
@@ -323,7 +324,7 @@ header {
     </div>
 
     <script>
-        const contractAddress = "0x6B05d60c86858AbAc4c616e7880A67713081829d";
+        const contractAddress = "0xD9A438f95D5c0c0A6E09caD70c357328A7360087";
         const contractABI = [
             {
                 "constant": false,
@@ -406,18 +407,18 @@ header {
             }
         });
 
-// Define the Minato network parameters
-const MINATO_CHAIN_ID = '0x79A'; // Hexadecimal representation of 1946
+// Define the Op sepolia network parameters
+const MINATO_CHAIN_ID = '0xaa36a7'; // Hexadecimal representation of 1946
 const MINATO_NETWORK_PARAMS = {
     chainId: MINATO_CHAIN_ID, // This should be a hexadecimal string
-    chainName: 'Minato',
-    rpcUrls: ['https://rpc.minato.soneium.org/'],
+    chainName: 'OP Sepolia',
+    rpcUrls: ['https://sepolia.optimism.io/'],
     nativeCurrency: {
         name: 'ETH',
         symbol: 'ETH',
         decimals: 18,
     },
-    blockExplorerUrls: ['https://explorer.minato.soneium.org/'], // Use a valid explorer URL if available
+    blockExplorerUrls: ['https://sepolia-optimism.etherscan.io/'], // Use a valid explorer URL if available
 };
 
 // Function to connect wallet
@@ -578,7 +579,7 @@ function closeModal() {
 document.getElementById('disperseBtn').onclick = async () => {
     // Check if the user is on the Minato network
     const networkId = await web3.eth.net.getId();
-    const expectedNetworkId = 1946; // Minato network ID
+    const expectedNetworkId = 11155420; // Minato network ID
 
     if (networkId !== expectedNetworkId) {
         const userConfirmed = confirm(`Please connect to the Minato network (Network ID: ${expectedNetworkId}). Would you like to switch networks?`);
@@ -676,7 +677,7 @@ console.log("Values:", values);
         })
         .on('transactionHash', function(hash) {
             // Create hyperlink for the transaction hash immediately after confirmation
-            const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
+            const explorerLink = `https://sepolia-optimism.etherscan.io/tx/${hash}`;
             const linkElement = document.createElement('a');
             linkElement.href = explorerLink;
             linkElement.target = '_blank'; // Open in a new tab
@@ -724,7 +725,7 @@ console.log("Values:", values);
 
                 // Create hyperlink for the approval transaction hash
                 const approvalHash = approvalReceipt.transactionHash;
-                const approvalExplorerLink = `https://explorer-testnet.soneium.org/tx/${approvalHash}`;
+                const approvalExplorerLink = `https://sepolia-optimism.etherscan.io/tx/${approvalHash}`;
                 const approvalLinkElement = document.createElement('a');
                 approvalLinkElement.href = approvalExplorerLink;
                 approvalLinkElement.target = '_blank';
@@ -748,7 +749,7 @@ console.log("Values:", values);
                             gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account })
                         })
                         .on('transactionHash', function(hash) {
-                            const explorerLink = `https://explorer-testnet.soneium.org/tx/${hash}`;
+                            const explorerLink = `https://sepolia-optimism.etherscan.io/tx/${hash}`;
                             const linkElement = document.createElement('a');
                             linkElement.href = explorerLink;
                             linkElement.target = '_blank';

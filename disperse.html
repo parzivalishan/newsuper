@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,6 @@
     <style>
         body {
             background-color: #0B0C0E; /* Dark black background for the body */
-
             color: wheat;
             display: flex;
             flex-direction: column;
@@ -33,236 +31,228 @@
         }
 
         button {
-  background-color: #8a2be2; /* Electric purple */
-  color: white;
-  cursor: pointer;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #7b1fa2; /* Darker electric purple on hover */
-}
-
-button:active {
-  background-color: #6a1b9a; /* Even darker electric purple when clicked */
-}
-
-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.5); /* Electric purple focus ring */
-}
-
-        textarea {
-            height: 150px; /* Increased height */
-            width: 500px; /* Increased width */
-            resize: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background-color: #e6f7e6; /* Greenish-white color */
+            background-color: #8a2be2;
+            color: white;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
         }
 
+        button:hover {
+            background-color: #7b1fa2;
+        }
 
+        button:active {
+            background-color: #6a1b9a;
+        }
 
-        /* Add this CSS to align "Send:" and .option-container in one line */
-.send-options-wrapper {
-  display: flex;
-  align-items: center; /* Vertically center the items */
-  gap: 10px; /* Space between the heading and the options */
-}
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.5);
+        }
 
-/* Style for the "Send:" heading */
-.send-options-wrapper h3 {
-  margin: 0; /* Remove default margin */
-  color: white; /* White text for better contrast */
-}
+        textarea {
+            height: 150px;
+            width: 500px;
+            resize: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #e6f7e6;
+        }
+
+        .send-options-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .send-options-wrapper h3 {
+            margin: 0;
+            color: white;
+        }
+
         .option-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 10px 0;
-  border: 1px solid #444; /* Darker border for better contrast with dark theme */
-  border-radius: 5px;
-  padding: 10px;
-  background-color: #1e1e1e; /* Dark gray background to match the body */
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #1e1e1e;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
 
-.option-container:hover {
-  border-color: #8a2be2; /* Electric purple border on hover */
-  background-color: #2a2a2a; /* Slightly lighter gray on hover */
-}
+        .option-container:hover {
+            border-color: #8a2be2;
+            background-color: #2a2a2a;
+        }
 
+        .radio-container {
+            position: relative;
+            margin: 0 10px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
 
-.radio-container {
-  position: relative;
-  margin: 0 10px;
-  padding: 10px;
-  border-radius: 5px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+        .radio-container input {
+            display: none;
+        }
 
-.radio-container input {
-  display: none;
-}
+        .radio-label {
+            cursor: pointer;
+            padding: 10px 20px;
+            background-color: #343a40;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
 
-.radio-label {
-  cursor: pointer;
-  padding: 10px 20px;
-  background-color: #343a40; /* Dark gray background */
-  border: 1px solid #444; /* Subtle border */
-  border-radius: 5px;
-  color: white; /* White text for contrast */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
+        .radio-container input:checked + .radio-label {
+            background-color: #8a2be2;
+            color: white;
+            border-color: #8a2be2;
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(138, 43, 226, 0.3);
+        }
 
-.radio-container input:checked + .radio-label {
-  background-color: #8a2be2; /* Electric purple background when selected */
-  color: white; /* White text for contrast */
-  border-color: #8a2be2; /* Electric purple border when selected */
-  transform: translateY(-4px); /* Slight lift effect */
-  box-shadow: 0 6px 12px rgba(138, 43, 226, 0.3); /* Purple shadow for depth */
-}
+        .radio-container:hover .radio-label {
+            background-color: #444;
+            border-color: #8a2be2;
+        }
 
-.radio-container:hover .radio-label {
-  background-color: #444; /* Slightly lighter gray on hover */
-  border-color: #8a2be2; /* Electric purple border on hover */
-}
         .contract-address-container {
-    display: none; /* Initially hide the contract address input */
-    margin-top: 10px; /* Add margin for spacing */
-    width: 100%; /* Make the container responsive */
-    max-width: 500px; /* Set a max-width for larger screens */
-    background: #0B0C0E; /* Updated to gradient background */
-    border-radius: 8px; /* Rounded corners for smooth appearance */
-    padding: 15px; /* Add padding inside the container */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    transition: all 0.3s ease-in-out; /* Smooth transition for visibility changes */
-    box-sizing: border-box; /* Include padding and borders in the width calculation */
-}
+            display: none;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 500px;
+            background: #0B0C0E;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            box-sizing: border-box;
+        }
 
-#contractAddress {
-    width: 100%; /* Make the input field take full width of the container */
-    padding: 12px 15px; /* Increase padding for a more clickable area */
-    font-size: 16px; /* Font size for readability */
-    border: 1px solid #ccc; /* Light border for definition */
-    border-radius: 6px; /* Rounded input field */
-    background-color: #e6f7e6; /* White background for input */
-    color: #333; /* Darker text color */
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle inner shadow */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover/focus effects */
-    box-sizing: border-box; /* Include padding and borders in the width calculation */
-}
+        #contractAddress {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #e6f7e6;
+            color: #333;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
 
-/* Hover and focus states for better interaction */
-#contractAddress:hover, #contractAddress:focus {
-    border-color: #007bff; /* Highlight border on hover and focus */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
-    outline: none; /* Remove default outline */
-}
+        #contractAddress:hover, #contractAddress:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
 
+        header {
+            background-color: #0B0C0E;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-/* Style for the header */
-header {
-  background-color: #0B0C0E; /* Dark background to match body color */
-  padding: 10px; /* Add padding for spacing */
-  display: flex; /* Use flexbox for layout */
-  justify-content: space-between; /* Space out header content */
-  align-items: center; /* Vertically center items */
-}
+        #balanceDisplay {
+            color: white;
+            font-weight: bold;
+            margin: 0;
+        }
 
-/* Style for the balance display */
-#balanceDisplay {
-  color: white; /* White text for contrast */
-  font-weight: bold; /* Bold text */
-  margin: 0; /* Remove default margin */
-}
+        #connectWallet {
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #8a2be2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-/* Style for the Connect Wallet button */
-#connectWallet {
-  font-weight: bold; /* Bold text */
-  font-size: 16px; /* Font size */
-  background-color: #8a2be2; /* Electric purple background */
-  color: white; /* White text */
-  border: none; /* Remove default border */
-  padding: 10px 20px; /* Add padding for better clickability */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background-color 0.3s ease; /* Smooth hover effect */
-}
+        #connectWallet:hover {
+            background-color: #7b1fa2;
+        }
 
-/* Hover effect for the Connect Wallet button */
-#connectWallet:hover {
-  background-color: #7b1fa2; /* Darker purple on hover */
-}
-      
-/* Modal styles */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
-}
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
 
-.modal-content {
-    background-color: #0b0e0c;
-    margin: 20% auto; /* Centered */
-    padding: 15px; /* Adjust padding for smaller size */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 400px; /* Set a fixed width for the modal */
-}
+        .modal-content {
+            background-color: #0b0e0c;
+            margin: 20% auto;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 400px;
+        }
 
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer; /* Enable the close button by default */
 
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
+        }
 
-/* Success and Error Styles */
-.success {
-    color: green; /* Green text for success */
-}
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
 
-.error {
-    color: #FF0000; /* Pure red in hex */
-}
+        }
 
-.bold-italic {
-    font-weight: bold; /* Make text bold */
-    font-style: italic; /* Make text italic */
-    text-align: center; /* Center align text */
-}
+        .success {
+            color: green;
+        }
 
+        .error {
+            color: #FF0000;
+        }
+
+        .bold-italic {
+            font-weight: bold;
+            font-style: italic;
+            text-align: center;
+        }
+
+          .modal-content button {
+            margin-top: 10px; /* Add some margin above the button */
+            display: block; /* Make the button fill the width of the modal */
+            margin-left: auto;
+            margin-right: auto;
+            }
     </style>
 </head>
 <body>
 
     <header style="background-color: #0B0C0E; padding: 5px 10px; display: flex; justify-content: space-between; align-items: center; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000;">
-
-        <!-- Balance Display on the Left -->
-        <p id="balanceDisplay" style="color: white; font-weight: bold; margin: 0;">
-          <!-- Balance will be dynamically inserted here -->
-        </p>
-      
-        <!-- Connect Wallet Button on the Right -->
+        <p id="balanceDisplay" style="color: white; font-weight: bold; margin: 0;"></p>
         <button id="connectWallet" style="font-weight: bold; font-size: 16px; background-color: #8a2be2; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin: 0;">
           Connect Wallet
         </button>
@@ -270,11 +260,7 @@ header {
 
       <h1 style="margin-top: 70px;">Disperse on OP Sepolia Testnet</h1>
 
-
-
     <p id="walletAddress"></p>
-    
-
 
    <div class="send-options-wrapper">
   <h3>Send:</h3>
@@ -283,22 +269,19 @@ header {
       <input type="radio" id="sendEther" name="sendOption" value="ether" checked>
       <label for="sendEther" class="radio-label">
         <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/eth%20logo.png" alt="Ether Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-        <span style="color: white;">Ether</span> <!-- Changed text color to white for better contrast -->
+        <span style="color: white;">Ether</span>
       </label>
     </div>
     <div class="radio-container">
       <input type="radio" id="sendToken" name="sendOption" value="token">
-      <label for="sendToken" class="radio-label" style="color: white;">Tokens</label> <!-- Changed text color to white for better contrast -->
+      <label for="sendToken" class="radio-label" style="color: white;">Tokens</label>
     </div>
   </div>
 </div>
 
-<!-- Contract Address Input -->
 <div class="contract-address-container" id="contractAddressContainer">
   <input type="text" id="contractAddress" placeholder="Enter token contract address" class="bold-italic" />
 </div>
-
-
 
 <h3 style="margin-top: 20px; border-top: 1px solid #444; padding-top: 10px; color: white;">
     Recipients and Amounts
@@ -308,19 +291,13 @@ header {
     
     <button id="disperseBtn" style="font-weight: bold; font-size: 16px;">Disperse ETH</button>
 
-
-
-
-
-      <!-- Modal Structure -->
       <div id="customAlert" class="modal" style="display:none;">
         <div class="modal-content">
-            <span class="close-button" onclick="closeModal()">&times;</span>
+            <span class="close-button" style="display: none;" onclick="closeModal()">×</span>
             <h2 id="modalTitle"></h2>
             <p id="modalMessage"></p>
-            <button onclick="closeModal()">OK</button>
+             <button onclick="closeModal()" style="display:none;">OK</button>
         </div>
-        
     </div>
 
     <script>
@@ -390,9 +367,6 @@ header {
             }
         ];
 
-
-
-
         let web3;
         let account;
         let contract;
@@ -407,409 +381,298 @@ header {
             }
         });
 
-// Define the Op sepolia network parameters
-const CHAIN_ID = '0xaa37dc'; // Hexadecimal representation of chainid
-const NETWORK_PARAMS = {
-    chainId: CHAIN_ID, // This should be a hexadecimal string
-    chainName: 'OP Sepolia',
-    rpcUrls: ['https://sepolia.optimism.io/'],
-    nativeCurrency: {
-        name: 'ETH',
-        symbol: 'ETH',
-        decimals: 18,
-    },
-    blockExplorerUrls: ['https://sepolia-optimism.etherscan.io/'], // Use a valid explorer URL if available
-};
+        const CHAIN_ID = '0xaa37dc';
+        const NETWORK_PARAMS = {
+            chainId: CHAIN_ID,
+            chainName: 'OP Sepolia',
+            rpcUrls: ['https://sepolia.optimism.io/'],
+            nativeCurrency: {
+                name: 'ETH',
+                symbol: 'ETH',
+                decimals: 18,
+            },
+            blockExplorerUrls: ['https://sepolia-optimism.etherscan.io/'],
+        };
 
-// Function to connect wallet
-document.getElementById('connectWallet').onclick = async () => {
-    try {
-        // Check the current chain ID
-        const chainId = await ethereum.request({ method: 'eth_chainId' });
+        document.getElementById('connectWallet').onclick = async () => {
+            try {
+                const chainId = await ethereum.request({ method: 'eth_chainId' });
+                if (chainId !== CHAIN_ID) {
+                    await ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [NETWORK_PARAMS],
+                    });
+                }
+                const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                connectedAccount = accounts[0];
+                localStorage.setItem('connectedAccount', connectedAccount);
+                updateUI(connectedAccount);
 
-        // If not connected to the required network, prompt to switch
-        if (chainId !== CHAIN_ID) {
-            // Request the user to add/switch to the required network
-            await ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [NETWORK_PARAMS],
-            });
-        }
+            } catch (error) {
+                console.error("Error connecting to wallet:", error);
+                openModal("Error", "Failed to connect to wallet. Please try again.", "error");
+            }
+        };
 
-        // Request the accounts
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        const connectedAccount = accounts[0]; // Store the connected account
+        const updateUI = async (connectedAccount) => {
+            const shortAddress = `${connectedAccount.slice(0, 10)}...${connectedAccount.slice(-8)}`;
+            const connectButton = document.getElementById('connectWallet');
+            connectButton.textContent = shortAddress;
+            connectButton.disabled = true;
+            document.getElementById('walletAddress').textContent = `Connected: ${connectedAccount}`;
+            const balance = await web3.eth.getBalance(connectedAccount);
+            const etherBalance = web3.utils.fromWei(balance, 'ether');
+            document.getElementById('balanceDisplay').textContent = `ETH: ${etherBalance}`;
+        };
 
-        // Save the connected account to localStorage
-        localStorage.setItem('connectedAccount', connectedAccount);
+        window.addEventListener('load', async () => {
+            const connectedAccount = localStorage.getItem('connectedAccount');
+            if (connectedAccount) {
+                const accounts = await ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0 && accounts[0] === connectedAccount) {
+                    updateUI(connectedAccount);
+                } else {
+                    localStorage.removeItem('connectedAccount');
+                }
+            }
+        });
 
-        // Update the UI
-        updateUI(connectedAccount);
+        ethereum.on('accountsChanged', (accounts) => {
+            if (accounts.length === 0) {
+                localStorage.removeItem('connectedAccount');
+                document.getElementById('connectWallet').textContent = 'Connect Wallet';
+                document.getElementById('connectWallet').disabled = false;
+                document.getElementById('walletAddress').textContent = 'Not Connected';
+                document.getElementById('balanceDisplay').textContent = 'ETH: 0';
+            } else {
+                connectedAccount = accounts[0];
+                localStorage.setItem('connectedAccount', connectedAccount);
+                updateUI(connectedAccount);
+            }
+        });
 
-    } catch (error) {
-        console.error("Error connecting to wallet:", error);
-        openModal("Error", "Failed to connect to wallet. Please try again.", "error");
-    }
-};
+        ethereum.on('chainChanged', () => {
+            window.location.reload();
+        });
 
-// Function to update the UI with wallet details
-const updateUI = async (connectedAccount) => {
-    // Update the button text with sliced wallet address
-    const shortAddress = `${connectedAccount.slice(0, 10)}...${connectedAccount.slice(-8)}`;
-    const connectButton = document.getElementById('connectWallet');
-    connectButton.textContent = shortAddress; // Replace button text with short address
-
-    // Optionally, disable the button or change its appearance
-    connectButton.disabled = true; // Disable button after connecting
-
-    // Display the connected wallet address
-    document.getElementById('walletAddress').textContent = `Connected: ${connectedAccount}`;
-
-    // Fetch and display the wallet balance
-    const balance = await web3.eth.getBalance(connectedAccount); // Use connectedAccount to fetch balance
-    const etherBalance = web3.utils.fromWei(balance, 'ether'); // Convert balance from Wei to Ether
-    document.getElementById('balanceDisplay').textContent = `ETH: ${etherBalance}`;
-};
-
-// Check if a wallet is already connected on page load
-window.addEventListener('load', async () => {
-    const connectedAccount = localStorage.getItem('connectedAccount');
-
-    if (connectedAccount) {
-        // Check if the wallet is still connected
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
-
-        if (accounts.length > 0 && accounts[0] === connectedAccount) {
-            // Wallet is still connected, update the UI
-            updateUI(connectedAccount);
-        } else {
-            // Wallet is not connected, clear the stored account
-            localStorage.removeItem('connectedAccount');
-        }
-    }
-});
-
-// Handle account or chain changes
-ethereum.on('accountsChanged', (accounts) => {
-    if (accounts.length === 0) {
-        // Wallet disconnected
-        localStorage.removeItem('connectedAccount');
-        document.getElementById('connectWallet').textContent = 'Connect Wallet';
-        document.getElementById('connectWallet').disabled = false;
-        document.getElementById('walletAddress').textContent = 'Not Connected';
-        document.getElementById('balanceDisplay').textContent = 'ETH: 0';
-    } else {
-        // Wallet switched, update the UI
-        const connectedAccount = accounts[0];
-        localStorage.setItem('connectedAccount', connectedAccount);
-        updateUI(connectedAccount);
-    }
-});
-
-ethereum.on('chainChanged', (chainId) => {
-    // Reload the page when the chain changes
-    window.location.reload();
-});
-
-
-
-        // Show or hide the contract address input based on selection
         document.querySelectorAll('input[name="sendOption"]').forEach((elem) => {
             elem.addEventListener("change", function() {
                 const contractAddressContainer = document.getElementById("contractAddressContainer");
-                if (this.value === "token") {
-                    contractAddressContainer.style.display = "block"; // Show input for contract address
-                } else {
-                    contractAddressContainer.style.display = "none"; // Hide input for contract address
-                }
+                contractAddressContainer.style.display = this.value === "token" ? "block" : "none";
             });
         });
 
+        const tokenABI = [
+            {
+                "constant": true,
+                "inputs": [{"name": "_owner", "type": "address"}],
+                "name": "balanceOf",
+                "outputs": [{"name": "balance", "type": "uint256"}],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {"name": "_spender", "type": "address"},
+                    {"name": "_value", "type": "uint256"}
+                ],
+                "name": "approve",
+                "outputs": [{"name": "", "type": "bool"}],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ];
 
-        // Define the token ABI (replace this with the actual ABI of your token)
-const tokenABI = [
-    {
-        "constant": true,
-        "inputs": [{"name": "_owner", "type": "address"}],
-        "name": "balanceOf",
-        "outputs": [{"name": "balance", "type": "uint256"}],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {"name": "_spender", "type": "address"},
-            {"name": "_value", "type": "uint256"}
-        ],
-        "name": "approve",
-        "outputs": [{"name": "", "type": "bool"}],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        // Add other function definitions as needed
-    }
-];
+        function openModal(title, message, type) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').innerHTML = message;
+            const modalContent = document.querySelector('.modal-content');
+            modalContent.classList.remove('success', 'error');
 
-function openModal(title, message, type) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalMessage').innerHTML = message; // Use innerHTML to allow HTML content
+              const closeButton = document.querySelector('.close-button');
+            const okButton =  document.querySelector('.modal-content button');
 
-    const modalContent = document.querySelector('.modal-content');
+            // Hide buttons if the title is "Processing", "Approval successful!", or "Confirm Token Disperse"
+                if (title === 'Processing' || title === "Approval successful!" || title === "Confirm Token Disperse"){
+                     closeButton.style.display = 'none';
+                      okButton.style.display = 'none';
 
-    if (type === 'success') {
-        modalContent.classList.add('success');
-        modalContent.classList.remove('error');
-    } else if (type === 'error') {
-        modalContent.classList.add('error');
-        modalContent.classList.remove('success');
-    }
 
-    document.getElementById('customAlert').style.display = 'block';
-}
+                }
+                else {
+                        closeButton.style.display = 'inline';
+                        okButton.style.display = 'inline';
 
-function closeModal() {
-    document.getElementById('customAlert').style.display = 'none';
-}
+                }
 
-// Disperse Ether or Tokens based on selection
-document.getElementById('disperseBtn').onclick = async () => {
-    // Check if the user is on the required network
-    const networkId = await web3.eth.net.getId();
-    const expectedNetworkId = 11155420; // required network ID
+            if (type === 'success') {
+                modalContent.classList.add('success');
+            } else if (type === 'error') {
+                modalContent.classList.add('error');
+            }
+            document.getElementById('customAlert').style.display = 'block';
 
-    if (networkId !== expectedNetworkId) {
-        const userConfirmed = confirm(`Please connect to the Required network (Network ID: ${expectedNetworkId}). Would you like to switch networks?`);
-        if (userConfirmed) {
-            try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: CHAIN_ID }], // Switch to Required network
-                });
-            } catch (switchError) {
-                // Handle network switch errors
-                if (switchError.code === 4902) {
+
+
+        }
+
+        function closeModal() {
+            document.getElementById('customAlert').style.display = 'none';
+           
+        }
+
+        document.getElementById('disperseBtn').onclick = async () => {
+            const networkId = await web3.eth.net.getId();
+            const expectedNetworkId = 11155420;
+
+            if (networkId !== expectedNetworkId) {
+                const userConfirmed = confirm(`Please connect to the Required network (Network ID: ${expectedNetworkId}). Would you like to switch networks?`);
+                if (userConfirmed) {
                     try {
                         await window.ethereum.request({
-                            method: 'wallet_addEthereumChain',
-                            params: [NETWORK_PARAMS],
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: CHAIN_ID }],
                         });
-                    } catch (addError) {
-                        console.error("Error adding network:", addError);
-                        openModal("Error", "Failed to add the Required network. Please switch manually.", "error");
-                        return; // Exit if the network addition fails
+                    } catch (switchError) {
+                        if (switchError.code === 4902) {
+                            try {
+                                await window.ethereum.request({
+                                    method: 'wallet_addEthereumChain',
+                                    params: [NETWORK_PARAMS],
+                                });
+                            } catch (addError) {
+                                console.error("Error adding network:", addError);
+                                openModal("Error", "Failed to add the Required network. Please switch manually.", "error");
+                                return;
+                            }
+                        } else {
+                            console.error("Switching network error:", switchError);
+                            openModal("Error", "Failed to switch networks. Please switch manually.", "error");
+                            return;
+                        }
                     }
                 } else {
-                    console.error("Switching network error:", switchError);
-                    openModal("Error", "Failed to switch networks. Please switch manually.", "error");
-                    return; // Exit if the network switch fails
+                    return;
                 }
             }
-        } else {
-            return; // Exit if the user chooses not to switch networks
-        }
-    }
 
-    // Fetch the connected account here
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0]; // Retrieve the first account
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const account = accounts[0];
 
-    const sendOption = document.querySelector('input[name="sendOption"]:checked').value;
-    const data = document.getElementById('recipientsAndAmounts').value.trim();
+            const sendOption = document.querySelector('input[name="sendOption"]:checked').value;
+            const data = document.getElementById('recipientsAndAmounts').value.trim();
 
-    // Split input data by newlines and commas
-// Split input data by newlines to get individual entries
-const entries = data.split(/\n/).filter(entry => entry.trim() !== "");
+            const entries = data.split(/\n/).filter(entry => entry.trim() !== "");
+            const recipients = [];
+            const values = [];
 
-const recipients = [];
-const values = [];
+            for (const entry of entries) {
+                const parts = entry.trim().split(/[=,]/).map(part => part.trim());
+                if (parts.length >= 2) {
+                    const recipient = parts[0];
+                    const value = parseFloat(parts[1]);
 
-for (const entry of entries) {
-    // Split each entry by comma or equal sign
-    const parts = entry.trim().split(/[=,]/).map(part => part.trim());
-
-    console.log("Entry:", entry);
-    console.log("Parts:", parts);
-
-    if (parts.length >= 2) {
-        const recipient = parts[0];
-        const value = parseFloat(parts[1]);
-
-        console.log("Recipient:", recipient);
-        console.log("Value:", value);
-
-        // Validate Ethereum address
-        if (!web3.utils.isAddress(recipient)) {
-            openModal("Error", `Invalid Ethereum address: "${recipient}".`, "error");
-            return;
-        }
-
-        // Validate amount
-        if (isNaN(value)) {
-            openModal("Error", `Invalid amount: "${parts[1]}". Amount must be a number.`, "error");
-            return;
-        }
-
-        // Add to recipients and values arrays
-        recipients.push(recipient);
-        values.push(web3.utils.toWei(value.toString(), 'ether'));
-    } else {
-        openModal("Error", `Invalid input format for: "${entry}". Each entry should contain an address and an amount separated by a comma or equal sign.`, "error");
-        return;
-    }
-}
-
-console.log("Recipients:", recipients);
-console.log("Values:", values);
-
-    try {
-    if (sendOption === "ether") {
-        const totalValue = web3.utils.toWei(values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0).toString(), 'ether');
-
-        // Send ether and start polling for confirmation
-        const etherReceipt = await contract.methods.disperseEther(recipients, values).send({
-            from: account,
-            value: totalValue,
-            gas: 300000 // Adjust as necessary
-        })
-        .on('transactionHash', function(hash) {
-            // Create hyperlink for the transaction hash immediately after confirmation
-            const explorerLink = `https://sepolia-optimism.etherscan.io/tx/${hash}`;
-            const linkElement = document.createElement('a');
-            linkElement.href = explorerLink;
-            linkElement.target = '_blank'; // Open in a new tab
-            linkElement.textContent = `View Transaction: ${hash}`;
-
-            document.body.appendChild(linkElement);
-
-            // Start polling for confirmation
-            const interval = setInterval(async () => {
-                const receipt = await web3.eth.getTransactionReceipt(hash);
-                if (receipt) {
-                    clearInterval(interval); // Stop polling if we have a receipt
-                    openModal("Success", `Ether dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
+                    if (!web3.utils.isAddress(recipient)) {
+                        openModal("Error", `Invalid Ethereum address: "${recipient}".`, "error");
+                        return;
+                    }
+                    if (isNaN(value)) {
+                        openModal("Error", `Invalid amount: "${parts[1]}". Amount must be a number.`, "error");
+                        return;
+                    }
+                    recipients.push(recipient);
+                    values.push(web3.utils.toWei(value.toString(), 'ether'));
+                } else {
+                    openModal("Error", `Invalid input format for: "${entry}". Each entry should contain an address and an amount separated by a comma or equal sign.`, "error");
+                    return;
                 }
-            }, 100); // Check every 100 milliseconds
-        })
-        .on('error', function(error) {
-            console.error("Error during disperse:", error.message || error);
-            openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
-        });
-
-    } else { 
-        const tokenAddress = document.getElementById('contractAddress').value;
-        if (!web3.utils.isAddress(tokenAddress)) {
-            openModal("Error", "Invalid token contract address", "error");
-            return;
-        }
-
-        const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
-        const totalAmount = values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0); // Calculate total amount
-
-        // Function to disperse tokens
-        async function disperseTokens() {
-            const button = document.getElementById('disperseBtn');
+            }
 
             try {
-                // Step 1: Disable the button to prevent further clicks
-                button.disabled = true;
-                openModal("Processing", "Please wait until the approval is completed.", "info");
+                if (sendOption === "ether") {
+                    const totalValue = web3.utils.toWei(values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0).toString(), 'ether');
+                     openModal("Processing", "Please wait for the transaction to complete.", "info");
+                    const etherReceipt = await contract.methods.disperseEther(recipients, values).send({
+                        from: account,
+                        value: totalValue,
+                        gas: 300000
+                    });
+                    const explorerLink = `https://sepolia-optimism.etherscan.io/tx/${etherReceipt.transactionHash}`;
+                    openModal("Success", `Ether dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
 
-                // Step 2: Approve the disperse contract to spend tokens
-                const approvalReceipt = await tokenContract.methods.approve(contractAddress, web3.utils.toWei(totalAmount.toString(), 'ether')).send({ from: account });
 
-                console.log("Approval successful:", approvalReceipt);
-
-                // Create hyperlink for the approval transaction hash
-                const approvalHash = approvalReceipt.transactionHash;
-                const approvalExplorerLink = `https://sepolia-optimism.etherscan.io/tx/${approvalHash}`;
-                const approvalLinkElement = document.createElement('a');
-                approvalLinkElement.href = approvalExplorerLink;
-                approvalLinkElement.target = '_blank';
-                approvalLinkElement.textContent = `Approval successful`; // Only show a user-friendly message
-
-                // Update modal message to indicate approval success
-                openModal("Approval successful!", `${approvalLinkElement.outerHTML} .Confirm Token Disperse`, "info");
-
-                // Start polling for approval confirmation
-                const approvalInterval = setInterval(async () => {
-                    const receipt = await web3.eth.getTransactionReceipt(approvalHash);
-                    if (receipt) {
-                        clearInterval(approvalInterval);
-                        
-                        // Stop polling if we have a receipt
-                        console.log("Approval confirmed:", receipt);
-
-                        // Step 3: Now disperse tokens
-                        const disperseReceipt = await contract.methods.disperseToken(tokenAddress, recipients, values).send({
-                            from: account,
-                            gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account })
-                        })
-                        .on('transactionHash', function(hash) {
-                            const explorerLink = `https://sepolia-optimism.etherscan.io/tx/${hash}`;
-                            const linkElement = document.createElement('a');
-                            linkElement.href = explorerLink;
-                            linkElement.target = '_blank';
-                            linkElement.textContent = `View Transaction: ${hash}`;
-                            document.body.appendChild(linkElement);
-
-                            // Start polling for confirmation of disperse transaction
-                            const disperseInterval = setInterval(async () => {
-                                const disperseReceipt = await web3.eth.getTransactionReceipt(hash);
-                                if (disperseReceipt) {
-                                    clearInterval(disperseInterval); // Stop polling if we have a receipt
-                                    openModal("Success", `Tokens dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
-                                }
-                            }, 100); // Check every 100 milliseconds
-                        })
-                        .on('error', function(error) {
-                            console.error("Error during disperse:", error.message || error);
-                            openModal("Error", "An error occurred while dispersing. Check the console for details.", "error");
-                        });
+                } else {
+                    const tokenAddress = document.getElementById('contractAddress').value;
+                    if (!web3.utils.isAddress(tokenAddress)) {
+                        openModal("Error", "Invalid token contract address", "error");
+                        return;
                     }
-                }, 100); // Check every 100 milliseconds for approval confirmation
 
+                    const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
+                    const totalAmount = values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0);
+
+                    async function disperseTokens() {
+                        const button = document.getElementById('disperseBtn');
+                        try {
+                            button.disabled = true;
+                            openModal("Processing", "Please wait until the approval is completed.", "info");
+
+                            const approvalReceipt = await tokenContract.methods.approve(contractAddress, web3.utils.toWei(totalAmount.toString(), 'ether')).send({ from: account });
+
+                            console.log("Approval successful:", approvalReceipt);
+                            const approvalHash = approvalReceipt.transactionHash;
+                            const approvalExplorerLink = `https://sepolia-optimism.etherscan.io/tx/${approvalHash}`;
+                            const approvalLinkElement = document.createElement('a');
+                            approvalLinkElement.href = approvalExplorerLink;
+                            approvalLinkElement.target = '_blank';
+                            approvalLinkElement.textContent = `Approval successful`;
+                            openModal("Approval successful!", `${approvalLinkElement.outerHTML} .Confirm Token Disperse`, "info");
+
+                            const receipt = await web3.eth.getTransactionReceipt(approvalHash);
+                            console.log("Approval confirmed:", receipt);
+
+
+                            console.log("Sending Disperse Transaction");
+                            openModal("Processing", "Please wait until the disperse transaction is completed.", "info");
+                            const disperseReceipt = await contract.methods.disperseToken(tokenAddress, recipients, values).send({
+                                from: account,
+                                gas: await contract.methods.disperseToken(tokenAddress, recipients, values).estimateGas({ from: account })
+                            });
+
+
+                                 console.log("Disperse Transaction Done:", disperseReceipt);
+                            const hash = disperseReceipt.transactionHash;
+                            const explorerLink = `https://sepolia-optimism.etherscan.io/tx/${hash}`;
+                                openModal("Success", `Tokens dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
+
+
+
+                        } catch (error) {
+                            console.error("Error during approval or disperse:", error.message || error);
+                            openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
+                        } finally {
+                            button.disabled = false;
+                        }
+                    }
+                    await disperseTokens();
+                }
             } catch (error) {
-                console.error("Error during approval or disperse:", error.message || error);
-                openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
-            } finally {
-                // Step 4: Re-enable the button after the transaction is complete
-                button.disabled = false;
+                console.error("Error during processing:", error.message || error);
+                openModal("Error", "An error occurred while processing your request. Check the console for details.", "error");
             }
+        };
+
+        function updateDisperseButton() {
+            const etherRadio = document.getElementById('sendEther');
+            const button = document.getElementById('disperseBtn');
+            button.textContent = etherRadio.checked ? 'Disperse ETH' : 'Disperse Tokens';
         }
-
-        // Call the disperseTokens function
-        await disperseTokens();
-    }
-} catch (error) {
-    console.error("Error during processing:", error.message || error);
-    openModal("Error", "An error occurred while processing your request. Check the console for details.", "error");
-}
-};
-
-
- // Add this at the end of your script block
- function updateDisperseButton() {
-        const etherRadio = document.getElementById('sendEther');
-        const button = document.getElementById('disperseBtn');
-        
-        if (etherRadio.checked) {
-            button.textContent = 'Disperse ETH';
-        } else {
-            button.textContent = 'Disperse Tokens';
-        }
-    }
-
-    // Event listeners for radio buttons
-    document.getElementById('sendEther').addEventListener('change', updateDisperseButton);
-    document.getElementById('sendToken').addEventListener('change', updateDisperseButton);
-
-    // Initial button text setup
-    updateDisperseButton();
-
+        document.getElementById('sendEther').addEventListener('change', updateDisperseButton);
+        document.getElementById('sendToken').addEventListener('change', updateDisperseButton);
+        updateDisperseButton();
     </script>
 </body>
 </html>

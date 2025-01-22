@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MultiSender on Op Sepolia </title>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+
+    <link rel="icon" href="https://raw.githubusercontent.com/parzivalishan/newsuper/main/assets/superchain.png" type="image/png">
     <style>
         body {
             background-color: #0B0C0E; /* Dark black background for the body */
@@ -232,7 +234,7 @@
         }
 
         .success {
-            color: green;
+            color: wheat;
         }
 
         .error {
@@ -533,6 +535,16 @@
 
         }
 
+          // Function to convert a number to a string without scientific notation
+        function toDecimalString(value) {
+            if (typeof value === 'number') {
+                return value.toFixed(18);
+            }
+            return value;
+        }
+
+
+
         document.getElementById('disperseBtn').onclick = async () => {
             const disperseButton = document.getElementById('disperseBtn');
             disperseButton.disabled = true; // Disable the button immediately
@@ -582,31 +594,33 @@
 
             const entries = data.split(/\n/).filter(entry => entry.trim() !== "");
              const recipients = [];
-            const values = [];
+             const values = [];
 
           for (const entry of entries) {
                 const parts = entry.trim().split(/[=,\s]+/).map(part => part.trim()).filter(part => part !== '');
                 if (parts.length >= 2) {
                     const recipient = parts[0];
-                    const value = parseFloat(parts[1]);
+                    let value = parts[1];
 
                     if (!web3.utils.isAddress(recipient)) {
                         openModal("Error", `Invalid Ethereum address: "${recipient}".`, "error");
                         disperseButton.disabled = false;
                         return;
                     }
-                    if (isNaN(value)) {
+                    if (isNaN(Number(value))) {
                          openModal("Error", `Invalid amount: "${parts[1]}". Amount must be a number.`, "error");
                         disperseButton.disabled = false;
                         return;
                     }
                     if (String(value).split('.')[1]?.length > 18) {
                          openModal("Error", `Invalid amount: "${parts[1]}". Amount must not have more than 18 decimals.`, "error");
-                         disperseButton.disabled = false;
-                         return;
-                     }
-                     recipients.push(recipient);
-                     values.push(web3.utils.toWei(String(value), 'ether'));
+                           disperseButton.disabled = false;
+                        return;
+                    }
+
+                    value = toDecimalString(value);
+                    recipients.push(recipient);
+                    values.push(web3.utils.toWei(value, 'ether'));
 
 
                 } else {
@@ -619,7 +633,9 @@
 
             try {
                 if (sendOption === "ether") {
-                    const totalValue = web3.utils.toWei(values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0).toString(), 'ether');
+                    const totalValue = values.reduce((acc, val) => {
+                       return acc.add(web3.utils.toBN(val))
+                    }, web3.utils.toBN(0)).toString()
                      openModal("Processing", "Please wait for the transaction to complete.", "info");
                     const etherReceipt = await contract.methods.disperseEther(recipients, values).send({
                         from: account,
@@ -639,14 +655,16 @@
                     }
 
                     const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
-                    const totalAmount = values.reduce((acc, val) => acc + parseFloat(web3.utils.fromWei(val, 'ether')), 0);
+                   const totalAmount = values.reduce((acc, val) => {
+                       return acc.add(web3.utils.toBN(val))
+                    }, web3.utils.toBN(0)).toString()
 
                     async function disperseTokens() {
                         try {
                           
                             openModal("Processing", "Please wait until the approval is completed.", "info");
 
-                            const approvalReceipt = await tokenContract.methods.approve(contractAddress, web3.utils.toWei(totalAmount.toString(), 'ether')).send({ from: account });
+                            const approvalReceipt = await tokenContract.methods.approve(contractAddress, totalAmount).send({ from: account });
 
                             console.log("Approval successful:", approvalReceipt);
                             const approvalHash = approvalReceipt.transactionHash;

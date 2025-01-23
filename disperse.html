@@ -133,7 +133,7 @@
         }
 
         .contract-address-container {
-            display: none;
+            display: block; /* Changed to block to show by default */
             margin-top: 10px;
             width: 100%;
             max-width: 500px;
@@ -172,8 +172,6 @@
             justify-content: space-between;
             align-items: center;
         }
-
- 
 
         #connectWallet {
             font-weight: bold;
@@ -237,6 +235,10 @@
             border-top: none;
             border-radius: 0 0 5px 5px;
             z-index: 1000;
+        }
+
+        .custom-dropdown:hover .dropdown-options {
+            display: block; /* Show dropdown on hover */
         }
 
         .dropdown-option {
@@ -326,12 +328,10 @@
         </button>
     </header>
 
- 
-
-    <div class="network-select-container">
+    <div class="network-select-container" style="margin-top: 50px;">
         <label for="networkSelect">Select Network:</label>
         <div class="custom-dropdown">
-            <div class="selected-option" onclick="toggleDropdown()">
+            <div class="selected-option">
                 <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/op%20logo.svg" alt="opSepolia">
                 <span>opSepolia</span>
             </div>
@@ -354,14 +354,14 @@
         <h3>Send:</h3>
         <div class="option-container">
             <div class="radio-container">
-                <input type="radio" id="sendEther" name="sendOption" value="ether" checked>
+                <input type="radio" id="sendEther" name="sendOption" value="ether">
                 <label for="sendEther" class="radio-label">
                     <img src="https://raw.githubusercontent.com/parzivalishan/newsuper/5f9711105cc92983d0ea9f3d0066c8a3fb30be3a/assets/eth-logo.svg" alt="Ether Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
                     <span style="color: white;">Ether</span>
                 </label>
             </div>
             <div class="radio-container">
-                <input type="radio" id="sendToken" name="sendOption" value="token">
+                <input type="radio" id="sendToken" name="sendOption" value="token" checked> <!-- Default selection -->
                 <label for="sendToken" class="radio-label" style="color: white;">Tokens</label>
             </div>
         </div>
@@ -377,7 +377,7 @@
     <p>Enter one address and amount in ETH on each line. Supports any format:</p>
     <textarea id="recipientsAndAmounts" placeholder="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 3.141592 0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe,2.7182 0x50D1c9771902476076eCFc8B2A83Ad6b9355a4c9=1.42069"></textarea><br>
 
-    <button id="disperseBtn" style="font-weight: bold; font-size: 16px;" data-clicked="false">Disperse ETH</button>
+    <button id="disperseBtn" style="font-weight: bold; font-size: 16px;" data-clicked="false">Disperse Tokens</button> <!-- Updated button text -->
 
     <div id="customAlert" class="modal" style="display:none;">
         <div class="modal-content">

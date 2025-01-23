@@ -1,0 +1,20 @@
+{
+    "networks": {
+        "opSepolia": {
+            "contractAddress": "0xD9A438f95D5c0c0A6E09caD70c357328A7360087",
+            "chainId": "0xaa37dc",
+            "chainName": "Op Sepolia",
+            "rpcUrls": ["https://sepolia.optimism.io/"],
+            "blockExplorerUrls": ["https://sepolia-optimism.etherscan.io/"],
+            "imageUrl": "https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/op%20logo.svg"
+        },
+        "minato": {
+            "contractAddress": "0x6B05d60c86858AbAc4c616e7880A67713081829d",
+            "chainId": "0x79a",
+            "chainName": "Minato",
+            "rpcUrls": ["https://rpc.minato.soneium.org/"],
+            "blockExplorerUrls": ["https://soneium-minato.blockscout.com/"],
+            "imageUrl": "https://raw.githubusercontent.com/parzivalishan/newsuper/refs/heads/main/assets/minato3.svg"
+        }
+    }
+}

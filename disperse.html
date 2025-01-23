@@ -777,168 +777,178 @@
         }
 
         document.getElementById('disperseBtn').onclick = async () => {
-            const button = document.getElementById('disperseBtn');
-            const clicked = button.getAttribute('data-clicked');
-            const recipientsAndAmounts = document.getElementById('recipientsAndAmounts').value.trim();
-            if (!recipientsAndAmounts) {
-                openModal("Error", "Please enter recipients and amounts.", "error");
-                return;
-            }
+    const button = document.getElementById('disperseBtn');
+    const clicked = button.getAttribute('data-clicked');
+    const recipientsAndAmounts = document.getElementById('recipientsAndAmounts').value.trim();
+    if (!recipientsAndAmounts) {
+        openModal("Error", "Please enter recipients and amounts.", "error");
+        return;
+    }
 
-            if (clicked === 'true') {
-                return;
-            }
-            button.setAttribute('data-clicked', true);
+    if (clicked === 'true') {
+        return;
+    }
+    button.setAttribute('data-clicked', true);
 
-            disperseButton.disabled = true; // Disable the button immediately
-            const selectedConfig = getNetworkConfig(currentNetwork);
+    disperseButton.disabled = true; // Disable the button immediately
+    const selectedConfig = getNetworkConfig(currentNetwork);
 
-            const networkId = await web3.eth.net.getId();
-            const expectedNetworkId = parseInt(selectedConfig.chainId, 16); // Convert hex to decimal
+    try {
+        const networkId = await web3.eth.net.getId();
+        const expectedNetworkId = parseInt(selectedConfig.chainId, 16); // Convert hex to decimal
 
-
-            if (networkId !== expectedNetworkId) {
-                openModal(`Switch to ${selectedConfig.chainName} network to execute the transaction.`, `Please switch to the ${selectedConfig.chainName} network to execute the transaction.`, "error");
-                disperseButton.disabled = false;
-                button.setAttribute('data-clicked', false);
-                return;
-
-            }
-
-
-            const accounts = await window.ethereum.request({
-                method: 'eth_requestAccounts'
+        if (networkId !== expectedNetworkId) {
+            // Automatically switch network
+            await ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                    chainId: selectedConfig.chainId,
+                    chainName: selectedConfig.chainName,
+                    rpcUrls: selectedConfig.rpcUrls,
+                    nativeCurrency: {
+                        name: 'ETH',
+                        symbol: 'ETH',
+                        decimals: 18,
+                    },
+                    blockExplorerUrls: selectedConfig.blockExplorerUrls,
+                }],
             });
-            const account = accounts[0];
+            
+            // Verify network switch
+            const newNetworkId = await web3.eth.net.getId();
+            if (newNetworkId !== expectedNetworkId) {
+                throw new Error('Network switch failed');
+            }
+        }
 
-            const sendOption = document.querySelector('input[name="sendOption"]:checked').value;
-            const data = document.getElementById('recipientsAndAmounts').value.trim();
+        const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+        });
+        const account = accounts[0];
 
-            const entries = data.split(/\n/).filter(entry => entry.trim() !== "");
-            const recipients = [];
-            const values = [];
+        const sendOption = document.querySelector('input[name="sendOption"]:checked').value;
+        const data = document.getElementById('recipientsAndAmounts').value.trim();
 
-            for (const entry of entries) {
-                const parts = entry.trim().split(/[=,\s]+/).map(part => part.trim()).filter(part => part !== '');
-                if (parts.length >= 2) {
-                    const recipient = parts[0];
-                    let value = parts[1];
+        const entries = data.split(/\n/).filter(entry => entry.trim() !== "");
+        const recipients = [];
+        const values = [];
 
-                    if (!web3.utils.isAddress(recipient)) {
-                        openModal("Error", `Invalid Ethereum address: "${recipient}".`, "error");
-                        disperseButton.disabled = false;
-                        button.setAttribute('data-clicked', false);
-                        return;
-                    }
-                    if (isNaN(Number(value))) {
-                        openModal("Error", `Invalid amount: "${parts[1]}". Amount must be a number.`, "error");
-                        disperseButton.disabled = false;
-                        button.setAttribute('data-clicked', false);
-                        return;
-                    }
-                    if (String(value).split('.')[1]?.length > 18) {
-                        openModal("Error", `Invalid amount: "${parts[1]}". Amount must not have more than 18 decimals.`, "error");
-                        disperseButton.disabled = false;
-                        button.setAttribute('data-clicked', false);
-                        return;
-                    }
+        for (const entry of entries) {
+            const parts = entry.trim().split(/[=,\s]+/).map(part => part.trim()).filter(part => part !== '');
+            if (parts.length >= 2) {
+                const recipient = parts[0];
+                let value = parts[1];
 
-                    value = toDecimalString(value);
-                    recipients.push(recipient);
-                    values.push(web3.utils.toWei(value, 'ether'));
-
-
-                } else {
-                    openModal("Error", `Invalid input format for: "${entry}". Each entry should contain an address and an amount.`, "error");
+                if (!web3.utils.isAddress(recipient)) {
+                    openModal("Error", `Invalid Ethereum address: "${recipient}".`, "error");
                     disperseButton.disabled = false;
                     button.setAttribute('data-clicked', false);
                     return;
                 }
+                if (isNaN(Number(value))) {
+                    openModal("Error", `Invalid amount: "${parts[1]}". Amount must be a number.`, "error");
+                    disperseButton.disabled = false;
+                    button.setAttribute('data-clicked', false);
+                    return;
+                }
+                if (String(value).split('.')[1]?.length > 18) {
+                    openModal("Error", `Invalid amount: "${parts[1]}". Amount must not have more than 18 decimals.`, "error");
+                    disperseButton.disabled = false;
+                    button.setAttribute('data-clicked', false);
+                    return;
+                }
+
+                value = toDecimalString(value);
+                recipients.push(recipient);
+                values.push(web3.utils.toWei(value, 'ether'));
+            } else {
+                openModal("Error", `Invalid input format for: "${entry}". Each entry should contain an address and an amount.`, "error");
+                disperseButton.disabled = false;
+                button.setAttribute('data-clicked', false);
+                return;
             }
+        }
 
+        try {
+            if (sendOption === "ether") {
+                const totalValue = values.reduce((acc, val) => {
+                    return acc.add(web3.utils.toBN(val))
+                }, web3.utils.toBN(0)).toString()
+                openModal("Processing", "Please wait for the transaction to complete.", "info");
+                const etherReceipt = await contract.methods.disperseEther(recipients, values).send({
+                    from: account,
+                    value: totalValue
+                });
+                const explorerLink = `${selectedConfig.blockExplorerUrls}/tx/${etherReceipt.transactionHash}`;
+                openModal("Success", `Ether dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
+            } else {
+                const tokenAddress = document.getElementById('contractAddress').value;
+                if (!web3.utils.isAddress(tokenAddress)) {
+                    openModal("Error", "Invalid token contract address", "error");
+                    disperseButton.disabled = false;
+                    button.setAttribute('data-clicked', false);
+                    return;
+                }
 
-            try {
-                if (sendOption === "ether") {
-                    const totalValue = values.reduce((acc, val) => {
-                        return acc.add(web3.utils.toBN(val))
-                    }, web3.utils.toBN(0)).toString()
-                    openModal("Processing", "Please wait for the transaction to complete.", "info");
-                    const etherReceipt = await contract.methods.disperseEther(recipients, values).send({
-                        from: account,
-                        value: totalValue
-                    });
-                    const explorerLink = `${selectedConfig.blockExplorerUrls}/tx/${etherReceipt.transactionHash}`;
-                    openModal("Success", `Ether dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
+                const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
+                const totalAmount = values.reduce((acc, val) => {
+                    return acc.add(web3.utils.toBN(val))
+                }, web3.utils.toBN(0)).toString()
 
+                async function disperseTokens() {
+                    try {
+                        openModal("Processing", "Please wait until the approval is completed.", "info");
 
-                } else {
-                    const tokenAddress = document.getElementById('contractAddress').value;
-                    if (!web3.utils.isAddress(tokenAddress)) {
-                        openModal("Error", "Invalid token contract address", "error");
+                        const approvalReceipt = await tokenContract.methods.approve(selectedConfig.contractAddress, totalAmount).send({
+                            from: account
+                        });
+
+                        console.log("Approval successful:", approvalReceipt);
+                        const approvalHash = approvalReceipt.transactionHash;
+                        const approvalExplorerLink = `${selectedConfig.blockExplorerUrls}/tx/${approvalHash}`;
+                        const approvalLinkElement = document.createElement('a');
+                        approvalLinkElement.href = approvalExplorerLink;
+                        approvalLinkElement.target = '_blank';
+                        approvalLinkElement.textContent = `Approval successful`;
+                        openModal("Approval successful!", `${approvalLinkElement.outerHTML} .Confirm Token Disperse`, "info");
+
+                        const receipt = await web3.eth.getTransactionReceipt(approvalHash);
+                        console.log("Approval confirmed:", receipt);
+
+                        console.log("Sending Disperse Transaction");
+                        openModal("Processing", "Please wait until the disperse transaction is completed.", "info");
+                        const disperseReceipt = await contract.methods.disperseToken(tokenAddress, recipients, values).send({
+                            from: account,
+                        });
+
+                        console.log("Disperse Transaction Done:", disperseReceipt);
+                        const hash = disperseReceipt.transactionHash;
+                        const explorerLink = `${selectedConfig.blockExplorerUrls}/tx/${hash}`;
+                        openModal("Success", `Tokens dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
+                    } catch (error) {
+                        console.error("Error during approval or disperse:", error.message || error);
+                        openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
                         disperseButton.disabled = false;
                         button.setAttribute('data-clicked', false);
-                        return;
-                    }
-
-                    const tokenContract = new web3.eth.Contract(tokenABI, tokenAddress);
-                    const totalAmount = values.reduce((acc, val) => {
-                        return acc.add(web3.utils.toBN(val))
-                    }, web3.utils.toBN(0)).toString()
-
-                    async function disperseTokens() {
-                        try {
-
-                            openModal("Processing", "Please wait until the approval is completed.", "info");
-
-                            const approvalReceipt = await tokenContract.methods.approve(selectedConfig.contractAddress, totalAmount).send({
-                                from: account
-                            });
-
-                            console.log("Approval successful:", approvalReceipt);
-                            const approvalHash = approvalReceipt.transactionHash;
-                            const approvalExplorerLink = `${selectedConfig.blockExplorerUrls}/tx/${approvalHash}`;
-                            const approvalLinkElement = document.createElement('a');
-                            approvalLinkElement.href = approvalExplorerLink;
-                            approvalLinkElement.target = '_blank';
-                            approvalLinkElement.textContent = `Approval successful`;
-                            openModal("Approval successful!", `${approvalLinkElement.outerHTML} .Confirm Token Disperse`, "info");
-
-                            const receipt = await web3.eth.getTransactionReceipt(approvalHash);
-                            console.log("Approval confirmed:", receipt);
-
-
-                            console.log("Sending Disperse Transaction");
-                            openModal("Processing", "Please wait until the disperse transaction is completed.", "info");
-                            const disperseReceipt = await contract.methods.disperseToken(tokenAddress, recipients, values).send({
-                                from: account,
-                            });
-
-
-                                 console.log("Disperse Transaction Done:", disperseReceipt);
-                            const hash = disperseReceipt.transactionHash;
-                           const explorerLink = `${selectedConfig.blockExplorerUrls}/tx/${hash}`;
-                                openModal("Success", `Tokens dispersed successfully!<br><a href='${explorerLink}' target='_blank'>View Transaction</a>`, "success");
-
-
-
-                        } catch (error) {
-                            console.error("Error during approval or disperse:", error.message || error);
-                            openModal("Error", "An error occurred while approving or dispersing tokens. Check the console for details.", "error");
-                              disperseButton.disabled = false;
-                              button.setAttribute('data-clicked', false);
-                        } 
-                    }
-                    await disperseTokens();
+                    } 
                 }
-            } catch (error) {
-                console.error("Error during processing:", error.message || error);
-                openModal("Error", "An error occurred while processing your request. Check the console for details.", "error");
-                disperseButton.disabled = false;
-                  button.setAttribute('data-clicked', false);
+                await disperseTokens();
             }
+        } catch (error) {
+            console.error("Error during processing:", error.message || error);
+            openModal("Error", "An error occurred while processing your request. Check the console for details.", "error");
+            disperseButton.disabled = false;
             button.setAttribute('data-clicked', false);
-
-        };
+        }
+    } catch (error) {
+        console.error('Error while switching network', error);
+        openModal("Error", "Failed to switch network.", "error");
+        disperseButton.disabled = false;
+        button.setAttribute('data-clicked', false);
+    }
+    
+    button.setAttribute('data-clicked', false);
+};
 
         document.getElementById('networkSelect').addEventListener('change', function(){
             updateContract();
@@ -958,5 +968,5 @@
         updateDisperseButton();
     </script>
 
-</body>
+    </body>
 </html>

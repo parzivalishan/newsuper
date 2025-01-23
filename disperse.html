@@ -238,8 +238,8 @@
         }
 
         .custom-dropdown:hover .dropdown-options {
-            display: block; /* Show dropdown on hover */
-        }
+    display: none; /* Remove this line */
+}
 
         .dropdown-option {
             display: flex;
@@ -950,11 +950,30 @@
         };
 
         function selectOption(value, imageSrc, text) {
-            const selectedOption = document.querySelector(".selected-option");
-            selectedOption.innerHTML = `<img src="${imageSrc}" alt="${value}"><span>${text}</span>`;
-            currentNetwork = value;
-            updateContract();
-        }
+    const selectedOption = document.querySelector(".selected-option");
+    selectedOption.innerHTML = `<img src="${imageSrc}" alt="${value}"><span>${text}</span>`;
+    currentNetwork = value;
+    updateContract();
+
+    // Close the dropdown after selection
+    const dropdownOptions = document.getElementById('dropdownOptions');
+    dropdownOptions.style.display = 'none';
+}
+
+// Add event listener to show dropdown when the selected option is clicked
+document.querySelector('.selected-option').addEventListener('click', function() {
+    const dropdownOptions = document.getElementById('dropdownOptions');
+    dropdownOptions.style.display = dropdownOptions.style.display === 'block' ? 'none' : 'block';
+});
+
+// Close the dropdown if clicked outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.querySelector('.custom-dropdown');
+    if (!dropdown.contains(event.target)) {
+        const dropdownOptions = document.getElementById('dropdownOptions');
+        dropdownOptions.style.display = 'none';
+    }
+});
 
         function updateDisperseButton() {
             const etherRadio = document.getElementById('sendEther');

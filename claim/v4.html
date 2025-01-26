@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Unlocking Schedule</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Modern Color Palette */
+        :root {
+            --bg-dark: #121418;
+            --bg-card: #1E2329;
+            --text-primary: #E6E8EB;
+            --text-secondary: #8C9196;
+            --accent-primary: #4DE8D5;
+            --accent-secondary: #2A73FF;
+            --border-color: rgba(255,255,255,0.1);
+        }
+
+        /* Reset and Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Centered Connect Wallet Button (when not connected) */
+        .connect-wallet-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        /* Top Connect Wallet Button (when connected) */
+        .connect-wallet-top {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        /* Main Container (hidden when wallet is not connected) */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            margin: 0 auto 30px;
+            display: none; /* Hidden by default */
+        }
+
+        /* Heading Styles */
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            color: var(--accent-primary);
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-dark);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+        }
+
+        .btn-claim {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-dark);
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .btn-claim:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+        }
+
+        /* Message Styles */
+        #message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            background-color: rgba(77, 232, 213, 0.1);
+            color: var(--accent-primary);
+        }
+
+        #message.error {
+            background-color: rgba(255, 70, 70, 0.1);
+            color: #FF4646;
+        }
+
+        /* Vesting Details Grid */
+        .vesting-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .vesting-card {
+            background-color: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .vesting-card:hover {
+            background-color: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+        }
+
+        .vesting-card h3 {
+            color: var(--accent-primary);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .vesting-card p {
+            color: var(--text-secondary);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container, .chart-container {
+                padding: 20px;
+            }
+
+            .connect-wallet-top {
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            .btn-claim {
+                width: 100%;
+                font-size: 1rem;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Connect Wallet Button (Centered when not connected) -->
+    <div id="connectWalletContainer" class="connect-wallet-center">
+        <button id="connectWalletButton" class="btn btn-primary">Connect Wallet</button>
+    </div>
+
+    <!-- Main Container (Hidden when wallet is not connected) -->
+    <div class="container">
+        <!-- Connect Wallet Button at the Top (when connected) -->
+        <div id="connectWalletTop" class="connect-wallet-top" style="display: none;">
+            <button id="connectWalletButtonTop" class="btn btn-primary">Connected: 0x...1234</button>
+        </div>
+
+        <h1>Token Unlocking Schedule</h1>
+        <button id="claimButton" class="btn btn-claim">Claim All</button>
+        <div id="message"></div>
+
+        <!-- Vesting Details Grid -->
+        <div class="vesting-details">
+            <div class="vesting-card">
+                <h3>Vesting Type</h3>
+                <p><strong>Gradual Unlock with Cliff</strong></p>
+            </div>
+            <div class="vesting-card">
+                <h3>Total Allocation</h3>
+                <p><strong id="totalAllocation">0 Tokens</strong></p>
+            </div>
+            <div class="vesting-card">
+                <h3>Initial Unlock</h3>
+                <p><strong>20%</strong> on January 26, 2025</p>
+            </div>
+            <div class="vesting-card">
+                <h3>Cliff Period</h3>
+                <p><strong>1 Month</strong></p>
+            </div>
+            <div class="vesting-card">
+                <h3>Monthly Unlock</h3>
+                <p><strong>10%</strong> starting February 26, 2025</p>
+            </div>
+            <div class="vesting-card">
+                <h3>Fully Unlocked</h3>
+                <p><strong>October 26, 2025</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Container -->
+    <div class="chart-container">
+        <canvas id="tokenChart" width="800" height="400"></canvas>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        const contractAddress = '0xc7D87939c1A6f558E8333fdA035EA8C5b6165816';
+        const tokenAddress = '0x2Bfca80Ae01C0916Eae1788FE09Ea4d0ccDdc15B';
+        const contractABI = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_token",
+                        "type": "address"
+                    }
+                ],
+                "name": "claimAll",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ];
+
+        const baseSepoliaChainId = '0x14a34'; // Base Sepolia Chain ID
+        const baseSepoliaNetwork = {
+            chainId: baseSepoliaChainId,
+            chainName: 'Base Sepolia',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18,
+            },
+            rpcUrls: ['https://sepolia.base.org'],
+            blockExplorerUrls: ['https://sepolia-explorer.base.org'],
+        };
+
+        const connectWalletButton = document.getElementById('connectWalletButton');
+        const connectWalletButtonTop = document.getElementById('connectWalletButtonTop');
+        const connectWalletContainer = document.getElementById('connectWalletContainer');
+        const connectWalletTop = document.getElementById('connectWalletTop');
+        const claimButton = document.getElementById('claimButton');
+        const messageDiv = document.getElementById('message');
+        const totalAllocationElement = document.getElementById('totalAllocation');
+        const container = document.querySelector('.container');
+        const chartContainer = document.querySelector('.chart-container');
+
+        let account = null;
+        let chart = null;
+
+        // Function to update UI based on wallet connection status
+        function updateUI(isConnected) {
+            if (isConnected) {
+                // Hide the centered Connect Wallet button
+                connectWalletContainer.style.display = 'none';
+                // Show the Connect Wallet button at the top
+                connectWalletTop.style.display = 'block';
+                // Show the main content
+                container.style.display = 'block';
+                chartContainer.style.display = 'block';
+            } else {
+                // Show the centered Connect Wallet button
+                connectWalletContainer.style.display = 'block';
+                // Hide the Connect Wallet button at the top
+                connectWalletTop.style.display = 'none';
+                // Hide the main content
+                container.style.display = 'none';
+                chartContainer.style.display = 'none';
+            }
+        }
+
+        // Check if wallet is already connected on page load
+        window.addEventListener('load', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    account = accounts[0];
+                    connectWalletButton.textContent = `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
+                    connectWalletButtonTop.textContent = `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
+                    showMessage('Wallet already connected!');
+                    updateUI(true);
+
+                    // Fetch and display the user's allocation
+                    const allocation = await fetchAllocation(account);
+                    totalAllocationElement.textContent = `${allocation} Tokens`;
+                    showMessage(`Your total allocation: ${allocation} tokens`);
+
+                    // Generate and render the chart
+                    const { labels, data } = generateChartData(allocation);
+                    renderChart(labels, data);
+                } else {
+                    updateUI(false);
+                }
+            } else {
+                updateUI(false);
+            }
+        });
+
+        connectWalletButton.addEventListener('click', connectWallet);
+        connectWalletButtonTop.addEventListener('click', connectWallet);
+        claimButton.addEventListener('click', claimTokens);
+
+        // Listen for account changes
+        window.ethereum.on('accountsChanged', async (accounts) => {
+            if (accounts.length > 0) {
+                account = accounts[0];
+                connectWalletButton.textContent = `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
+                connectWalletButtonTop.textContent = `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
+                showMessage('Wallet connected successfully!');
+                updateUI(true);
+
+                // Fetch and display the user's allocation
+                const allocation = await fetchAllocation(account);
+                totalAllocationElement.textContent = `${allocation} Tokens`;
+                showMessage(`Your total allocation: ${allocation} tokens`);
+
+                // Generate and render the chart
+                const { labels, data } = generateChartData(allocation);
+                renderChart(labels, data);
+            } else {
+                account = null;
+                connectWalletButton.textContent = 'Connect Wallet';
+                connectWalletButtonTop.textContent = 'Connect Wallet';
+                showMessage('Wallet disconnected.');
+                updateUI(false);
+            }
+        });
+
+        // Listen for chain changes
+        window.ethereum.on('chainChanged', (chainId) => {
+            if (chainId === baseSepoliaChainId) {
+                showMessage('Connected to Base Sepolia network.');
+            } else {
+                showError('Please switch to Base Sepolia network to claim tokens.');
+            }
+        });
+
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                showError('Please install MetaMask or another compatible Web3 wallet provider.');
+                return;
+            }
+
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                account = accounts[0];
+                connectWalletButton.textContent = `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
+                connectWalletButtonTop.textContent = `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
+                showMessage('Wallet connected successfully!');
+                updateUI(true);
+
+                // Fetch and display the user's allocation
+                const allocation = await fetchAllocation(account);
+                totalAllocationElement.textContent = `${allocation} Tokens`;
+                showMessage(`Your total allocation: ${allocation} tokens`);
+
+                // Generate and render the chart
+                const { labels, data } = generateChartData(allocation);
+                renderChart(labels, data);
+
+                // Check and switch to Base Sepolia network
+                await switchToBaseSepolia();
+            } catch (error) {
+                showError(`Error connecting wallet: ${error.message}`);
+            }
+        }
+
+        async function switchToBaseSepolia() {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const network = await provider.getNetwork();
+
+            if (network.chainId !== parseInt(baseSepoliaChainId, 16)) {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: baseSepoliaChainId }],
+                    });
+                } catch (switchError) {
+                    // This error code indicates that the chain has not been added to MetaMask
+                    if (switchError.code === 4902) {
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [baseSepoliaNetwork],
+                            });
+                        } catch (addError) {
+                            showError(`Failed to add Base Sepolia network: ${addError.message}`);
+                        }
+                    } else {
+                        showError(`Failed to switch to Base Sepolia network: ${switchError.message}`);
+                    }
+                }
+            }
+        }
+
+        async function claimTokens() {
+            if (!account) {
+                showError('Please connect your wallet first.');
+                return;
+            }
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const network = await provider.getNetwork();
+
+            if (network.chainId !== parseInt(baseSepoliaChainId, 16)) {
+                showError('Please switch to Base Sepolia network to claim tokens.');
+                return;
+            }
+
+            try {
+                const signer = provider.getSigner();
+                const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+                showMessage('Claiming tokens... Please confirm the transaction in your wallet.');
+                const transaction = await contract.claimAll(tokenAddress);
+
+                showMessage('Transaction sent. Waiting for confirmation...');
+
+                await transaction.wait();
+                showMessage('Tokens claimed successfully!');
+            } catch (error) {
+                showError(`Error claiming tokens: ${error.message}`);
+            }
+        }
+
+        function showMessage(message) {
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('error');
+        }
+
+        function showError(errorMessage) {
+            messageDiv.textContent = errorMessage;
+            messageDiv.classList.add('error');
+        }
+
+        // Fetch allocations from the JSON file
+        async function fetchAllocation(walletAddress) {
+            try {
+                const response = await fetch('./allocations.json');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch allocations');
+                }
+                const allocations = await response.json();
+                console.log('Fetched allocations:', allocations); // Debugging: Log fetched data
+                console.log('Wallet address:', walletAddress); // Debugging: Log wallet address
+
+                // Normalize the wallet address to lowercase
+                const normalizedAddress = walletAddress.toLowerCase();
+
+                // Normalize JSON keys to lowercase
+                const normalizedAllocations = {};
+                for (const key in allocations) {
+                    normalizedAllocations[key.toLowerCase()] = allocations[key];
+                }
+
+                return normalizedAllocations[normalizedAddress] || 0; // Return 0 if the address is not found
+            } catch (error) {
+                console.error('Error fetching allocation:', error);
+                return 0;
+            }
+        }
+
+        // Generate chart data based on allocation
+        function generateChartData(allocation) {
+            const totalAllocation = allocation;
+            const initialUnlock = totalAllocation * 0.2; // 20% initial unlock
+            const monthlyUnlock = totalAllocation * 0.1; // 10% monthly unlock
+            const cliffMonths = 1; // 1-month cliff
+
+            const labels = []; // X-axis labels (dates)
+            const data = []; // Y-axis values (cumulative unlocked tokens)
+
+            const startDate = new Date(2025, 0, 26); // January 26, 2025 (months are 0-indexed)
+
+            // Initial unlock
+            labels.push(startDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }));
+            data.push(initialUnlock);
+
+            // Monthly unlocks after cliff
+            let currentUnlock = initialUnlock;
+            for (let i = 1; i <= 12; i++) { // 12 months of unlocks
+                const date = new Date(startDate);
+                date.setMonth(startDate.getMonth() + cliffMonths + i);
+
+                // Stop if we've reached 100% allocation
+                if (currentUnlock >= totalAllocation) break;
+
+                // Add monthly unlock
+                currentUnlock += monthlyUnlock;
+                currentUnlock = Math.min(currentUnlock, totalAllocation); // Cap at total allocation
+
+                labels.push(date.toLocaleDateString("en-US", { month: "short", year: "numeric" }));
+                data.push(currentUnlock);
+            }
+
+            return { labels, data };
+        }
+
+        // Render the chart
+        function renderChart(labels, data) {
+            const ctx = document.getElementById('tokenChart').getContext('2d');
+            if (chart) {
+                chart.destroy(); // Destroy existing chart if it exists
+            }
+            chart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Token Unlock",
+                            data: data,
+                            borderColor: "#4DE8D5",
+                            backgroundColor: "rgba(77, 232, 213, 0.1)",
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: "#4DE8D5",
+                            pointRadius: 5,
+                            pointHoverRadius: 8,
+                            borderWidth: 2,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "top",
+                            labels: {
+                                color: "#E6E8EB",
+                                font: {
+                                    size: 14,
+                                },
+                            },
+                        },
+                        title: {
+                            display: true,
+                            text: "Token Unlocking Progress",
+                            color: "#E6E8EB",
+                            font: {
+                                size: 18,
+                            },
+                        },
+                        tooltip: {
+                            backgroundColor: "#1E2329",
+                            titleColor: "#4DE8D5",
+                            bodyColor: "#E6E8EB",
+                            borderColor: "rgba(255,255,255,0.1)",
+                            borderWidth: 1,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: "Date",
+                                color: "#E6E8EB",
+                                font: {
+                                    size: 14,
+                                },
+                            },
+                            ticks: {
+                                color: "#E6E8EB",
+                            },
+                            grid: {
+                                color: "rgba(255,255,255,0.1)",
+                            },
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: "Tokens Unlocked",
+                                color: "#E6E8EB",
+                                font: {
+                                    size: 14,
+                                },
+                            },
+                            ticks: {
+                                color: "#E6E8EB",
+                            },
+                            grid: {
+                                color: "rgba(255,255,255,0.1)",
+                            },
+                        },
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: "easeInOutQuart",
+                    },
+                },
+            });
+        }
+    </script>
+</body>
+</html>

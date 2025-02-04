@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EVM Wallet Detector & Connector</title>
+    <style>
+        /* Dark Theme Variables */
+        :root {
+            --bg-color: #121212;
+            --text-color: #FFFFFF;
+            --container-bg: #1E1E1E;
+            --shadow-color: rgba(255, 255, 255, 0.05);
+            --border-color: #333333;
+            --detected-bg: #2E7D32;
+            --detected-color: #FFFFFF;
+            --button-bg: #2962FF;
+            --button-hover-bg: #0D47A1;
+            --accent-color: #64B5F6;
+            --input-bg: #262626;
+            --input-border: #424242;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #container {
+            background-color: var(--container-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            text-align: center;
+            width: 450px;
+            transition: background-color 0.3s;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: var(--accent-color);
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 30px;
+            font-size: 1.15em;
+            color: #B0BEC5;
+        }
+
+        #wallet-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        #wallet-icons img {
+            width: 40px;
+            height: 40px;
+            margin: 0 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        #wallet-icons img:hover {
+            transform: scale(1.1);
+        }
+
+        #wallet-icons img.hidden {
+            display: none;
+        }
+
+        button {
+            background-color: var(--button-bg);
+            border: none;
+            color: var(--text-color);
+            padding: 14px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 17px;
+            font-weight: 500;
+            margin-top: 30px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: var(--button-hover-bg);
+            transform: translateY(-2px);
+        }
+
+        #connect-status, #wallet-connect-status {
+            margin-top: 25px;
+            font-size: 1.25em;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        #account-info {
+            margin-top: 15px;
+            color: #90A4AE;
+            font-size: 1.1em;
+        }
+
+        #switch-network-button {
+            margin-top: 20px;
+            background-color: #43A047;
+            color: var(--text-color);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        #switch-network-button:hover {
+            background-color: #2E7D32;
+            transform: translateY(-2px);
+        }
+
+        /* Settings Icon Styles */
+        #settings-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #settings-icon {
+            width: 30px;
+            height: 30px;
+            fill: var(--text-color);
+            transition: fill 0.3s;
+            display: block; /* Makes the SVG a block-level element */
+        }
+
+        #settings-icon:hover {
+            fill: var(--accent-color);
+        }
+
+        /* Settings Panel Styles */
+        #settings-panel {
+            position: absolute;
+            top: 45px; /* Adjust position */
+            right: 10px;
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            padding: 20px;
+            width: 250px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden; /* Prevents content overflow issues */
+        }
+
+        #settings-panel.open {
+            display: block;
+        }
+
+        #settings-panel label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        #settings-panel input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        /* Improved Checkbox Styling */
+        #settings-panel input[type="checkbox"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            vertical-align: middle; /* Align checkbox nicely with text */
+        }
+
+        #settings-panel input[type="checkbox"]:checked {
+            background-color: var(--button-bg);
+            border-color: var(--button-bg);
+        }
+
+        #settings-panel input[type="checkbox"]:checked::before {
+            content: '\2713'; /* Unicode checkmark */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-color);
+            font-size: 12px;
+        }
+        #chain-id {
+            margin-top: 15px;
+            color: #90A4AE;
+            font-size: 1.1em;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="settings-container">
+        <svg id="settings-icon" viewBox="0 0 24 24">
+            <path d="M19.14,12.94c0.04-0.3,0.06-0.59,0.06-0.94c0-0.32-0.03-0.62-0.07-0.94l2.03-1.58c0.26-0.2,0.4-0.5,0.4-0.83c0-0.33-0.14-0.64-0.4-0.83l-3-2.4c-0.26-0.2-0.61-0.32-0.96-0.32s-0.7,0.11-0.96,0.32l-2.03,1.58c-0.31-0.27-0.61-0.5-0.91-0.68c-0.36-0.22-0.76-0.34-1.19-0.34s-0.83,0.12-1.19,0.34c-0.3,0.18-0.59,0.41-0.91-0.68l-2.03-1.58c-0.26-0.2-0.61-0.32-0.96-0.32s-0.7,0.11-0.96,0.32l-3,2.4c0.26,0.2,0.4-0.5,0.4-0.83c0,0.33,0.14,0.64,0.4,0.83l2.03,1.58c0.04,0.3,0.07,0.6,0.07,0.94c0,0.32-0.03,0.62-0.07,0.94l-2.03,1.58c-0.26,0.2-0.4,0.5-0.4,0.83c0,0.33,0.14,0.64,0.4,0.83l3,2.4c0.26,0.2,0.61,0.32,0.96,0.32s0.7-0.11,0.96-0.32l2.03-1.58c0.31,0.27,0.61,0.5,0.91,0.68c0.36,0.22,0.76,0.34,1.19,0.34s0.83-0.12,1.19-0.34c0.3-0.18,0.59-0.41,0.91-0.68l2.03,1.58c0.26,0.2,0.61,0.32,0.96,0.32s0.7-0.11,0.96-0.32l3-2.4c0.26,0.2,0.4-0.5,0.4-0.83c0-0.33-0.14-0.64-0.4-0.83l-2.03-1.58C19.1,13.54,19.14,13.24,19.14,12.94M12,15c-1.65,0-3-1.35-3-3s1.35-3,3-3s3,1.35,3,3S13.65,15,12,15Z"></path>
+        </svg>
+    </div>
+
+    <div id="container">
+        <h1>EVM Wallet Connector</h1>
+        <p>Select a wallet to connect to this dApp.</p>
+
+        <div id="wallet-icons">
+            <img id="metamask-icon" src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="Metamask" data-wallet="metamask" class="hidden">
+            <img id="brave-icon" src="https://brave.com/static-assets/images/brave-logo-sans-text.svg" alt="Brave" data-wallet="brave" class="hidden">
+            <img id="coinbase-icon" src="https://cdn.iconscout.com/icon/free/png-512/free-coinbase-logo-icon-download-in-svg-png-gif-file-formats--web-crypro-trading-platform-logos-pack-icons-7651204.png?f=webp&w=256" alt="Coinbase" data-wallet="coinbase" class="hidden">
+            <img id="trustwallet-icon" src="https://avatars.githubusercontent.com/u/32179889?s=200&v=4" alt="Trust Wallet" data-wallet="trustwallet" class="hidden">
+        </div>
+
+        <button id="detect-button">Detect Wallets</button>
+
+        <div id="wallet-connect-status"></div>
+
+        <div id="connect-status">Not Connected</div>
+        <div id="account-info"></div>
+        <div id="chain-id"></div>
+
+        <button id="switch-network-button">Switch to Linea Sepolia</button>
+    </div>
+
+    <div id="settings-panel">
+        <label>
+            <input type="checkbox" id="show-all-wallets"> View All Wallets
+        </label>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const detectButton = document.getElementById('detect-button');
+        const connectStatus = document.getElementById('connect-status');
+        const accountInfo = document.getElementById('account-info');
+        const walletConnectStatus = document.getElementById('wallet-connect-status');
+        const switchNetworkButton = document.getElementById('switch-network-button');
+        const settingsIcon = document.getElementById('settings-icon');
+        const settingsPanel = document.getElementById('settings-panel');
+        const showAllWalletsCheckbox = document.getElementById('show-all-wallets');
+        const chainIdDisplay = document.getElementById('chain-id');
+
+        const metamaskIcon = document.getElementById('metamask-icon');
+        const braveIcon = document.getElementById('brave-icon');
+        const coinbaseIcon = document.getElementById('coinbase-icon');
+        const trustwalletIcon = document.getElementById('trustwallet-icon');
+
+        let currentAccount = null;
+        let isConnected = false;
+        let isSettingsOpen = false;
+
+        // Linea Sepolia Chain ID and Parameters
+        const lineaSepoliaChainId = '0xe705'; // Linea Sepolia Testnet Chain ID
+        const lineaSepoliaChainIdHex = '0xe705';
+        const lineaSepoliaNetworkParams = {
+            chainId: lineaSepoliaChainId,
+            chainName: 'Linea Sepolia Testnet',
+            nativeCurrency: {
+                name: 'Sepolia Ether', // Corrected name
+                symbol: 'ETH',          // Corrected symbol (up to 6 characters)
+                decimals: 18
+            },
+            rpcUrls: ['https://rpc.sepolia.linea.build'],
+            blockExplorerUrls: ['https://sepolia.lineascan.build']
+        };
+
+        function updateWalletStatus(element, isDetected) {
+            // Intentionally empty
+        }
+
+
+        function toggleWalletVisibility(icon, isDetected, showAll) {
+            if (isDetected || showAll) {
+                icon.classList.remove('hidden');
+            } else {
+                icon.classList.add('hidden');
+            }
+        }
+
+        async function detectWallets() {
+            let metamaskDetected = false;
+            let braveDetected = false;
+            let coinbaseDetected = false;
+            let trustwalletDetected = false;
+
+            // Metamask
+            if (window.ethereum && window.ethereum.isMetaMask) {
+                metamaskDetected = true;
+            }
+
+            // Brave Wallet
+            if (window.ethereum && navigator.brave) {
+                braveDetected = true;
+            } else if (window.ethereum && navigator.userAgent.toLowerCase().includes("brave")) {
+                braveDetected = true; //Less reliable.
+            }
+
+            // Coinbase Wallet - Revised Logic
+            if (window.ethereum && window.ethereum.isCoinbaseWallet) {
+                coinbaseDetected = true;
+            } else if (window.coinbaseWalletExtension) {
+                coinbaseDetected = true; //Alternative detection for Coinbase Wallet extension
+            }
+
+            // Trust Wallet - Revised Logic
+            if (window.trustwallet || (window.ethereum && window.ethereum.isTrust)) {
+                trustwalletDetected = true;
+            } else if (window.ethereum && window.ethereum.isTrustWallet) {
+                trustwalletDetected = true; //Another way Trust Wallet may inject
+            }
+
+            const showAll = showAllWalletsCheckbox.checked;
+
+            toggleWalletVisibility(metamaskIcon, metamaskDetected, showAll);
+            toggleWalletVisibility(braveIcon, braveDetected, showAll);
+            toggleWalletVisibility(coinbaseIcon, coinbaseDetected, showAll);
+            toggleWalletVisibility(trustwalletIcon, trustwalletDetected, showAll);
+        }
+
+        async function getChainId() {
+            if (window.ethereum) {
+                try {
+                    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    return chainId;
+                } catch (error) {
+                    console.error("Error getting chain ID:", error);
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+
+        async function connectWallet(walletType) {
+             if (!window.ethereum) {
+                walletConnectStatus.textContent = "Ethereum provider not found.";
+                connectStatus.textContent = "Not Connected";
+                accountInfo.textContent = "";
+                chainIdDisplay.textContent = "";
+                switchNetworkButton.style.display = 'none';
+                isConnected = false;
+                return;
+            }
+
+            let provider = window.ethereum;
+
+            switch (walletType) {
+                case 'metamask':
+                    if (!window.ethereum.isMetaMask) {
+                        walletConnectStatus.textContent = "MetaMask not detected.";
+                        return;
+                    }
+                    break;
+                case 'brave':
+                    if (!navigator.brave) {
+                        walletConnectStatus.textContent = "Brave Wallet not detected.";
+                        return;
+                    }
+                    break;
+                case 'coinbase':
+                    if (!window.ethereum.isCoinbaseWallet && !window.coinbaseWalletExtension) {
+                        walletConnectStatus.textContent = "Coinbase Wallet not detected.";
+                        return;
+                    }
+                    break;
+                case 'trustwallet':
+                    if (!window.trustwallet && (!window.ethereum || !window.ethereum.isTrust || !window.ethereum.isTrustWallet)) {
+                        walletConnectStatus.textContent = "Trust Wallet not detected.";
+                        return;
+                    }
+                    //If the wallet injects `trustwallet` use that provider , otherwise use ethereum.
+                    provider = window.trustwallet || window.ethereum;
+                    break;
+                default:
+                    walletConnectStatus.textContent = "Unknown wallet type.";
+                    return;
+            }
+
+            try {
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
+                currentAccount = accounts[0];
+                connectStatus.textContent = "Connected";
+                walletConnectStatus.textContent = `Connected with ${walletType}`;
+                accountInfo.textContent = `Account: ${currentAccount}`;
+                isConnected = true;
+                switchNetworkButton.style.display = 'none';
+
+                const chainId = await getChainId();
+                if (chainId === lineaSepoliaChainIdHex) {
+                    chainIdDisplay.textContent = "Connected to Linea Sepolia";
+                } else {
+                    chainIdDisplay.textContent = `Chain ID: ${chainId}`;
+                     switchNetworkButton.style.display = 'inline-block';
+                }
+
+            } catch (error) {
+                console.error("Connection error:", error);
+                connectStatus.textContent = "Connection Failed";
+                accountInfo.textContent = "";
+                chainIdDisplay.textContent = ""; // Clear chain ID on failure
+                walletConnectStatus.textContent = `Connection to ${walletType} failed.`;
+                switchNetworkButton.style.display = 'none'; // Hide the switch network button
+                isConnected = false;
+
+                if (error.code === 4001) {
+                    // User rejected request
+                    walletConnectStatus.textContent = `User rejected connection request from ${walletType}`;
+                } else if (error.code === -32602) {
+                    // Invalid params error (e.g., already processing request)
+                    walletConnectStatus.textContent = `Connection in progress with another wallet.  Please try again.`;
+                } else {
+                    walletConnectStatus.textContent = `Connection to ${walletType} failed: ${error.message}`;
+                }
+            }
+        }
+
+        async function switchNetwork() {
+            if (!window.ethereum) {
+                walletConnectStatus.textContent = "Ethereum provider not found.";
+                return;
+            }
+
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: lineaSepoliaChainId }],
+                });
+                walletConnectStatus.textContent = "Successfully switched to Linea Sepolia!";
+                const chainId = await getChainId(); // Update chain ID after switching
+                if (chainId === lineaSepoliaChainIdHex) {
+                    chainIdDisplay.textContent = "Connected to Linea Sepolia";
+                     switchNetworkButton.style.display = 'none';
+                } else {
+                    chainIdDisplay.textContent = `Chain ID: ${chainId}`;
+                     switchNetworkButton.style.display = 'inline-block';
+                }
+
+            } catch (switchError) {
+                // This error code indicates that the chain has not been added to MetaMask.
+                if (switchError.code === 4902) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [lineaSepoliaNetworkParams],
+                        });
+                        walletConnectStatus.textContent = "Linea Sepolia added and switched!";
+                         const chainId = await getChainId(); // Update chain ID after adding
+                          if (chainId === lineaSepoliaChainIdHex) {
+                            chainIdDisplay.textContent = "Connected to Linea Sepolia";
+                             switchNetworkButton.style.display = 'none';
+                        } else {
+                            chainIdDisplay.textContent = `Chain ID: ${chainId}`;
+                             switchNetworkButton.style.display = 'inline-block';
+                        }
+
+                    } catch (addError) {
+                        console.error("Error adding Linea Sepolia network:", addError);
+                        walletConnectStatus.textContent = `Error adding Linea Sepolia network: ${addError.message}`;
+                    }
+                } else {
+                    console.error("Error switching to Linea Sepolia network:", switchError);
+                    walletConnectStatus.textContent = `Error switching to Linea Sepolia network: ${switchError.message}`;
+                }
+            }
+        }
+
+          async function checkConnection() {
+            if (window.ethereum) {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        connectStatus.textContent = "Connected";
+                        accountInfo.textContent = `Account: ${currentAccount}`;
+                        isConnected = true;
+
+                        const chainId = await getChainId();
+                         if (chainId === lineaSepoliaChainIdHex) {
+                            chainIdDisplay.textContent = "Connected to Linea Sepolia";
+                             switchNetworkButton.style.display = 'none';
+                        } else {
+                            chainIdDisplay.textContent = `Chain ID: ${chainId}`;
+                             switchNetworkButton.style.display = 'inline-block';
+                        }
+
+                    } else {
+                        connectStatus.textContent = "Not Connected";
+                        accountInfo.textContent = "";
+                        chainIdDisplay.textContent = "";
+                        switchNetworkButton.style.display = 'none';
+                        isConnected = false;
+                    }
+                } catch (error) {
+                    console.error("Error checking connection:", error);
+                    connectStatus.textContent = "Not Connected";
+                    accountInfo.textContent = "";
+                    chainIdDisplay.textContent = "";
+                    switchNetworkButton.style.display = 'none';
+                    isConnected = false;
+                }
+            } else {
+                    connectStatus.textContent = "Not Connected";
+                    accountInfo.textContent = "";
+                    chainIdDisplay.textContent = "";
+                    switchNetworkButton.style.display = 'none';
+                    isConnected = false;
+            }
+        }
+
+
+        // Attach click listeners to wallet icons
+        const walletIcons = document.querySelectorAll('#wallet-icons img');
+        walletIcons.forEach(icon => {
+            icon.addEventListener('click', () => {
+                const walletType = icon.dataset.wallet;
+                connectWallet(walletType);
+            });
+        });
+
+        // Function to close settings panel
+        function closeSettingsPanel() {
+            isSettingsOpen = false;
+            settingsPanel.classList.remove('open');
+        }
+
+        // Attach click listener to the entire document
+        document.addEventListener('click', (event) => {
+            // If the clicked element is not inside the settings panel or the settings icon, close the panel
+            if (!settingsPanel.contains(event.target) && !settingsContainer.contains(event.target) && isSettingsOpen) {
+                closeSettingsPanel();
+            }
+        });
+
+
+        // Attach click listener to settings icon to toggle settings panel visibility
+        const settingsContainer = document.getElementById('settings-container');
+        settingsContainer.addEventListener('click', (event) => {
+             isSettingsOpen = !isSettingsOpen;
+            settingsPanel.classList.toggle('open', isSettingsOpen);
+             event.stopPropagation();
+        });
+
+        showAllWalletsCheckbox.addEventListener('change', () => {
+            detectWallets();
+        });
+
+        // Attach click listener to the switch network button
+        switchNetworkButton.addEventListener('click', switchNetwork);
+
+        // Initial detection on load
+        detectWallets();
+
+        detectButton.addEventListener('click', detectWallets);
+
+         // Automatically check connection on load
+        checkConnection();
+
+        // Listen for account changes
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                console.log("Accounts changed:", accounts);
+                checkConnection();
+            });
+
+            // Listen for chain ID changes
+            window.ethereum.on('chainChanged', (chainId) => {
+                console.log("Chain changed:", chainId);
+                checkConnection();
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
